@@ -1,17 +1,26 @@
 {
-  "name": "VAULTIFYER OS",
-  "short_name": "Vaultifyer",
-  "description": "hecho por Jokercillo ©2026",
-  "start_url": "./index.html",
-  "display": "standalone",
-  "background_color": "#D4FF00",
-  "theme_color": "#111111",
-  "icons":[
-    {
-      "src": "https://i.postimg.cc/zfW7YqVf/haz-el-logo-de-una-image.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any maskable"
-    }
-  ]
+    "name": "POSTER.",
+    "short_name": "POSTER",
+    "description": "Algoritmo de publicación de tenis en grupos de Facebook. Para vendedores.",
+    "start_url": "./poster.html",
+    "display": "standalone",
+    "background_color": "#0D0D0D",
+    "theme_color": "#0D0D0D",
+    "orientation": "portrait-primary",
+    "icons": [
+        {
+            "src": "https://via.placeholder.com/192x192/1DB954/000000?text=P.",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "https://via.placeholder.com/512x512/1DB954/000000?text=P.",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any maskable"
+        }
+    ],
+    "categories": ["productivity", "business"],
+    "lang": "es-MX"
 }

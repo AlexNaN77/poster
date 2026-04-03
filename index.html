@@ -3,1504 +3,1802 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VAULTIFYER - OS</title>
-    <!-- EL LOGO MAMADOR -->
-    <link rel="icon" type="image/png" href="https://i.postimg.cc/zfW7YqVf/haz-el-logo-de-una-image.png">
-    
-    <!-- PA QUE SE HAGA APP NATIVA (PWA) -->
+    <title>POSTER.</title>
     <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#D4FF00">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@900&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
-    <!-- confetti pa las ventas alvrga🎉 -->
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+    <meta name="theme-color" content="#0D0D0D">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Montserrat:wght@900;800;700&display=swap" rel="stylesheet">
+
     <style>
+        /* =============================================
+           VARIABLES Y BASE
+        ============================================= */
         :root {
-            --amarillo-toxico: #D4FF00;
-            --negro-abismo: #111111;
-            --blanco-puro: #FFFFFF;
-            --rojo-sangre: #FF003C;
-            --verde-dolar: #00FF66;
-            --azul-electric: #00E5FF;
+            --bg: #0D0D0D;
+            --surface: #161616;
+            --surface2: #1F1F1F;
+            --surface3: #2A2A2A;
+            --border: #2E2E2E;
+
+            --green: #1DB954;
+            --green-dim: rgba(29, 185, 84, 0.15);
+            --yellow: #F5C518;
+            --yellow-dim: rgba(245, 197, 24, 0.15);
+            --red: #FF4136;
+            --red-dim: rgba(255, 65, 54, 0.15);
+            --blue: #00B4D8;
+            --blue-dim: rgba(0, 180, 216, 0.15);
+            --orange: #FF6B35;
+            --orange-dim: rgba(255, 107, 53, 0.15);
+            --purple: #B36AFF;
+            --gray: #555;
+            --gray-dim: rgba(85, 85, 85, 0.2);
+
+            --text: #FFFFFF;
+            --text-muted: #888;
+            --text-dim: #555;
+
+            --shadow-green: 4px 4px 0px var(--green);
+            --shadow-yellow: 4px 4px 0px var(--yellow);
+            --shadow-red: 4px 4px 0px var(--red);
         }
 
-        * { box-sizing: border-box; }
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        html { scroll-behavior: smooth; }
 
         body {
-            background-color: var(--amarillo-toxico);
-            color: var(--negro-abismo);
-            font-family: 'Space Mono', monospace;
-            margin: 0;
-            padding: 0;
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: 'Space Grotesk', sans-serif;
+            min-height: 100vh;
             overflow-x: hidden;
         }
 
         h1, h2, h3 {
             font-family: 'Montserrat', sans-serif;
             text-transform: uppercase;
-            margin: 0;
+            letter-spacing: -1px;
         }
 
-        /* NAVBAR RESPONSIVO */
-        .navbar {
-            background-color: var(--negro-abismo);
-            color: var(--amarillo-toxico);
-            padding: 15px 20px;
+        /* =============================================
+           SCROLLBAR PERRA
+        ============================================= */
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: var(--surface); }
+        ::-webkit-scrollbar-thumb { background: var(--green); border-radius: 2px; }
+
+        /* =============================================
+           HEADER / NAVBAR
+        ============================================= */
+        .header {
+            background: var(--surface);
+            border-bottom: 2px solid var(--border);
+            padding: 16px 24px;
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            border-bottom: 8px solid var(--blanco-puro);
-            flex-wrap: wrap;
-            gap: 10px;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(12px);
         }
 
-        .navbar h1 {
-            font-size: clamp(1.5rem, 5vw, 2.5rem); /* Se hace chico en cel */
-            letter-spacing: -2px;
-            text-shadow: 2px 2px 0px var(--rojo-sangre);
-        }
-
-        .perfil-nav { display: flex; align-items: center; gap: 10px; }
-        .foto-perfil {
-            width: 40px; height: 40px;
-            background-color: var(--blanco-puro);
-            border-radius: 50%;
-            border: 3px solid var(--amarillo-toxico);
-        }
-
-        .container { padding: 20px; max-width: 1200px; margin: 0 auto; }
-
-        .stats-rapidas {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            margin-bottom: 30px;
-        }
-
-        .caja-stat {
-            background-color: var(--negro-abismo);
-            padding: 15px;
-            border: 4px solid var(--negro-abismo);
-            box-shadow: 8px 8px 0px rgba(0,0,0,0.2);
-            transition: all 0.2s ease-out; /* la magia del movimiento */
-        }
-
-        .caja-stat:hover {
-            transform: translate(-5px, -5px);
-            box-shadow: 12px 12px 0px var(--rojo-sangre); /* tu sombra roja pa */
-        }
-
-        .caja-stat h2 { color: var(--amarillo-toxico); font-size: 1rem; margin-bottom: 5px; }
-        .caja-stat .numero { font-size: 2.5rem; font-family: 'Montserrat', sans-serif; color: var(--verde-dolar); }
-
-        .titulo-seccion {
-            font-size: clamp(2rem, 8vw, 4rem);
-            color: var(--negro-abismo);
-            text-shadow: 3px 3px 0px var(--blanco-puro);
-            margin-bottom: 15px;
-            line-height: 0.9;
-            letter-spacing: -2px;
-        }
-
-        /* BOTONES MAMADORES */
-        .btn-mamon {
-            background-color: var(--negro-abismo);
-            color: var(--amarillo-toxico);
+        .logo {
+            font-size: 1.8rem;
             font-family: 'Montserrat', sans-serif;
-            font-size: 1rem;
-            padding: 12px 20px;
-            border: none;
-            cursor: pointer;
-            box-shadow: 6px 6px 0px var(--rojo-sangre);
-            text-transform: uppercase;
-            transition: all 0.1s;
-        }
-        .btn-mamon:active { transform: translate(4px, 4px); box-shadow: 2px 2px 0px var(--rojo-sangre); }
-        
-        .btn-secundario {
-            background-color: var(--blanco-puro);
-            color: var(--negro-abismo);
-            border: 3px solid var(--negro-abismo);
-            padding: 8px 15px;
-            font-family: 'Space Mono', monospace;
-            font-weight: bold;
-            cursor: pointer;
-            box-shadow: 4px 4px 0px var(--azul-electric);
-        }
-        .btn-secundario:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0px var(--azul-electric); }
-
-        /* GRID DE TENIS */
-        .grid-inventario {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 25px;
+            font-weight: 900;
+            letter-spacing: -3px;
+            color: var(--text);
         }
 
-        .tarjeta-item {
-            background-color: var(--blanco-puro);
-            border: 5px solid var(--negro-abismo);
-            box-shadow: 8px 8px 0px var(--negro-abismo);
+        .logo span { color: var(--green); }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        /* =============================================
+           RELOJ Y BADGE DE HORARIO
+        ============================================= */
+        .clock-block {
             display: flex;
             flex-direction: column;
-            transition: all 0.2s ease-out;
+            align-items: flex-end;
+            gap: 4px;
         }
 
-        .tarjeta-item:hover {
-            transform: translate(-4px, -4px);
-            box-shadow: 12px 12px 0px var(--azul-electric);
-        }
-
-        .tarjeta-foto {
-            width: 100%; height: 250px;
-            background-color: #eee;
-            border-bottom: 5px solid var(--negro-abismo);
-            background-size: cover; background-position: center;
-        }
-
-        .tarjeta-info { padding: 15px; flex-grow: 1; display: flex; flex-direction: column; }
-        
-        .titulo-bodrio { font-weight: bold; font-size: 1.2rem; margin-bottom: 10px; text-transform: uppercase;}
-        
-        .copy-fb {
-            background-color: #f4f4f4;
-            border-left: 4px solid var(--azul-electric);
-            padding: 10px;
-            font-size: 0.85rem;
-            color: #333;
-            margin-bottom: 15px;
-            white-space: pre-wrap;
-            cursor: pointer;
-            transition: all 0.2s;
-            position: relative;
-        }
-
-        .copy-fb:hover {
-            background-color: var(--amarillo-toxico);
-            color: var(--negro-abismo);
-            border-left: 4px solid var(--rojo-sangre);
-        }
-        
-        .copy-fb::after {
-            content: "👆 Click pa' copiar";
-            display: block;
-            font-size: 0.7rem;
-            font-weight: bold;
-            color: var(--rojo-sangre);
-            margin-top: 5px;
-            text-transform: uppercase;
-        }
-
-        .detalles-extras {
-            margin-bottom: 15px;
-            font-size: 0.8rem;
-        }
-        .detalle-badge {
-            display: inline-block;
-            background: var(--negro-abismo);
-            color: var(--blanco-puro);
-            padding: 2px 6px;
-            margin: 2px;
-            border-radius: 4px;
-        }
-
-        .precio-tag {
-            background-color: var(--rojo-sangre);
-            color: var(--blanco-puro);
-            padding: 5px 10px;
+        .clock-time {
             font-family: 'Montserrat', sans-serif;
-            font-size: 1.5rem;
-            display: inline-block;
-            transform: rotate(-2deg);
-            box-shadow: 3px 3px 0px var(--negro-abismo);
-            margin-top: auto;
-            align-self: flex-start;
-        }
-
-        /* ==========================================
-           MODAL DARK/MAMADOR (EL FORMULARIO)
-           ========================================== */
-        .modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background-color: rgba(0,0,0,0.85);
-            display: none; justify-content: center; align-items: flex-start;
-            z-index: 999; overflow-y: auto; padding: 20px;
-            backdrop-filter: blur(5px);
-        }
-
-        @keyframes dropIn {
-            0% { transform: translateY(-50px) scale(0.95); opacity: 0; }
-            100% { transform: translateY(0) scale(1); opacity: 1; }
-        }
-
-        .modal-content {
-            background-color: var(--negro-abismo);
-            width: 100%; max-width: 600px;
-            border: 4px solid var(--amarillo-toxico);
-            box-shadow: 15px 15px 0px var(--rojo-sangre);
-            padding: 25px;
-            color: var(--blanco-puro);
-            position: relative;
-            margin-top: 20px; margin-bottom: 20px;
-            animation: dropIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-        }
-
-        .cerrar-modal {
-            position: absolute; top: 10px; right: 15px;
-            color: var(--rojo-sangre); font-size: 2rem; font-family: 'Montserrat';
-            cursor: pointer; background: none; border: none; font-weight: bold;
-        }
-
-        .modal-header {
-            color: var(--amarillo-toxico);
-            font-size: 2rem; margin-bottom: 20px;
-            border-bottom: 2px solid var(--blanco-puro); padding-bottom: 10px;
-        }
-
-        .form-group { margin-bottom: 15px; }
-        .form-group label {
-            display: block; color: var(--azul-electric);
-            text-transform: uppercase; font-weight: bold; margin-bottom: 5px; font-size: 0.9rem;
-        }
-        
-        .input-mamador {
-            width: 100%; background-color: transparent;
-            border: 2px solid var(--blanco-puro);
-            color: var(--amarillo-toxico);
-            font-family: 'Space Mono', monospace;
-            padding: 10px; font-size: 1rem;
-            outline: none;
-        }
-        .input-mamador:focus { border-color: var(--rojo-sangre); }
-        
-        textarea.input-mamador { resize: vertical; min-height: 100px; color: var(--blanco-puro); }
-
-        .campos-dinamicos-container {
-            background: rgba(255,255,255,0.05);
-            padding: 10px; border: 1px dashed var(--verde-dolar);
-            margin-bottom: 15px;
-        }
-
-        .fila-dinamica {
-            display: flex; gap: 10px; margin-bottom: 10px;
-        }
-
-        /* cositas para la carga de foto */
-        .foto-preview {
-            width: 100%; height: 150px; border: 2px dashed var(--amarillo-toxico);
-            display: flex; justify-content: center; align-items: center;
-            color: #666; margin-top: 10px; background-size: cover; background-position: center;
-        }
-        
-        /* ==========================================
-           BOTONES DE ACCIÓN (VENDER, EDITAR, BORRAR)
-           ========================================== */
-        .acciones-tarjeta { display: flex; gap: 10px; margin-top: 15px; }
-        .btn-accion {
-            flex: 1; padding: 10px; font-size: 1.5rem; cursor: pointer;
-            border: 3px solid var(--negro-abismo); background-color: var(--blanco-puro);
-            transition: all 0.2s ease-out; display: flex; justify-content: center; align-items: center;
-        }
-        .btn-accion:hover { transform: translate(-4px, -4px); box-shadow: 4px 4px 0px var(--negro-abismo); }
-        .btn-delete:hover { background-color: var(--rojo-sangre); color: var(--blanco-puro); }
-        .btn-edit:hover { background-color: var(--azul-electric); color: var(--blanco-puro); }
-        .btn-sell:hover { background-color: var(--verde-dolar); color: var(--negro-abismo); }
-        
-.btn-boost:hover { background-color: var(--amarillo-toxico); color: var(--negro-abismo); }
-        
-        /* ESTILOS DEL SISTEMA DE BOOST */
-        .boost-item {
-            background: rgba(255,255,255,0.05); 
-            border-left: 5px solid var(--amarillo-toxico);
-            padding: 15px; margin-bottom: 10px; 
-            display: flex; flex-direction: column; gap: 10px;
-            transition: all 0.2s;
-        }
-        .boost-item.hecho {
-            border-left-color: var(--verde-dolar);
-            opacity: 0.5;
-            background: rgba(0,255,102,0.05);
-        }
-        .boost-acciones { display: flex; gap: 10px; flex-wrap: wrap; }
-        
-        /* ==========================================
-           MODALES DE VENTA Y RESUMEN
-           ========================================== */
-        .resumen-venta { text-align: center; }
-        .resumen-venta .gran-numero { 
-            font-size: 4.5rem; color: var(--verde-dolar); 
-            font-family: 'Montserrat', sans-serif; text-shadow: 3px 3px 0px var(--negro-abismo);
-            margin: 10px 0; line-height: 1;
-        }
-        .resumen-venta .sub-texto { color: var(--azul-electric); font-weight: bold; font-size: 1.2rem; text-transform: uppercase; }
-        
-        /* ==========================================
-           SECCIÓN FINANZAS (EL COLCHÓN Y LOS GASTOS)
-           ========================================== */
-        .billetera-container {
-            background-color: var(--negro-abismo);
-            color: var(--blanco-puro);
-            padding: 30px;
-            border: 5px solid var(--blanco-puro);
-            box-shadow: 12px 12px 0px var(--rojo-sangre);
-            margin-bottom: 40px;
-            position: relative;
-        }
-        .saldo-gigante {
-            font-size: clamp(3rem, 10vw, 5rem); 
-            font-family: 'Montserrat'; color: var(--verde-dolar);
-            margin: 10px 0 20px 0; text-shadow: 3px 3px 0px var(--blanco-puro);
+            font-size: 1.4rem;
+            font-weight: 900;
+            letter-spacing: -1px;
+            color: var(--text);
             line-height: 1;
         }
-        .historial-lista {
-            max-height: 250px; overflow-y: auto; background: rgba(255,255,255,0.05);
-            border: 2px solid #333; padding: 10px; margin-top: 20px;
-        }
-        .movimiento-item {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 10px; border-bottom: 1px dashed #555; font-size: 0.9rem;
-        }
-        .ingreso { color: var(--verde-dolar); font-weight: bold; font-size: 1.1rem;}
-        .gasto { color: var(--rojo-sangre); font-weight: bold; font-size: 1.1rem;}
-        .badge-propietario {
-            display: inline-block; padding: 3px 8px; font-weight: bold; font-size: 0.8rem;
-            text-transform: uppercase; margin-bottom: 10px; border: 2px solid var(--negro-abismo);
-        }
-        
-        /* ==========================================
-           ETIQUETAS FINANCIERAS Y BOTONES EXTRAS
-           ========================================== */
-        .etiqueta-mov {
-            display: inline-block;
-            background: rgba(255,255,255,0.1);
-            color: var(--amarillo-toxico);
-            padding: 2px 8px;
-            border-radius: 12px;
-            font-size: 0.75rem;
-            margin-left: 10px;
-            border: 1px solid var(--amarillo-toxico);
-        }
-        .etiqueta-gasto { border-color: var(--rojo-sangre); color: var(--rojo-sangre); }
-        .etiqueta-ingreso { border-color: var(--verde-dolar); color: var(--verde-dolar); }
-        
-        .botones-finanzas {
-            display: flex; gap: 15px; margin-bottom: 15px; flex-wrap: wrap;
-        }
-        
-        /* ==========================================
-           MODAL DE PERFIL Y BOTONES DE PELIGRO
-           ========================================== */
-        .btn-peligro {
-            background-color: var(--negro-abismo); color: var(--rojo-sangre);
-            border: 2px solid var(--rojo-sangre); padding: 10px; cursor: pointer;
-            font-family: 'Space Mono', monospace; font-weight: bold; width: 100%;
-            margin-bottom: 10px; transition: all 0.2s;
-        }
-        .btn-peligro:hover { background-color: var(--rojo-sangre); color: var(--blanco-puro); }
-        
-        .zona-peligro {
-            border: 2px dashed var(--rojo-sangre); padding: 15px; margin-top: 20px;
-            background: rgba(255,0,60,0.05);
+
+        .time-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.65rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border: 1.5px solid transparent;
+            transition: all 0.4s ease;
+            animation: badgePulse 2s ease-in-out infinite;
         }
 
-        /* ==========================================
-           METAS Y DESEOS (LA LISTA DE COMPRAS)
-           ========================================== */
-        .tarjeta-meta {
-            background-color: var(--negro-abismo); border: 5px solid var(--azul-electric);
-            box-shadow: 8px 8px 0px var(--azul-electric); color: var(--blanco-puro);
-            display: flex; flex-direction: column; transition: all 0.2s;
+        @keyframes badgePulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.75; }
         }
-        .tarjeta-meta:hover { transform: translate(-4px, -4px); box-shadow: 12px 12px 0px var(--blanco-puro); }
-        .meta-foto { width: 100%; height: 200px; background-size: cover; background-position: center; border-bottom: 3px solid var(--azul-electric); }
-        
-        .barra-progreso-bg {
-            background: #333; height: 20px; width: 100%; border: 2px solid var(--blanco-puro);
-            margin-top: 15px; position: relative; overflow: hidden;
+
+        .badge-peak {
+            background: var(--orange-dim);
+            border-color: var(--orange);
+            color: var(--orange);
+            animation: badgePulse 1s ease-in-out infinite, peakGlow 2s ease-in-out infinite;
         }
-        .barra-progreso-fill {
-            background: var(--verde-dolar); height: 100%; width: 0%;
-            transition: width 0.5s ease-out;
+
+        @keyframes peakGlow {
+            0%, 100% { box-shadow: 0 0 8px rgba(255, 107, 53, 0.3); }
+            50% { box-shadow: 0 0 20px rgba(255, 107, 53, 0.6); }
         }
-        .porcentaje-meta {
-            position: absolute; top: 0; left: 50%; transform: translateX(-50%);
-            font-size: 0.8rem; font-weight: bold; color: var(--negro-abismo); line-height: 18px;
+
+        .badge-good {
+            background: var(--green-dim);
+            border-color: var(--green);
+            color: var(--green);
         }
-        
-        /* ==========================================
-           BITÁCORA Y ATARRAYASOS (NUEVO PEDO)
-           ========================================== */
-        .acciones-tarjeta {
-            flex-wrap: wrap; /* pa que no se apachurren los 5 botones alv */
+
+        .badge-dead {
+            background: var(--gray-dim);
+            border-color: var(--gray);
+            color: var(--gray);
         }
-        
-        .callout {
-            background-color: rgba(0,0,0,0.4);
-            border-left: 6px solid var(--blanco-puro);
-            padding: 15px;
-            margin-bottom: 15px;
+
+        .badge-food {
+            background: var(--yellow-dim);
+            border-color: var(--yellow);
+            color: var(--yellow);
+        }
+
+        .badge-meh {
+            background: var(--blue-dim);
+            border-color: var(--blue);
+            color: var(--blue);
+        }
+
+        /* =============================================
+           LAYOUT PRINCIPAL
+        ============================================= */
+        .app-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 24px 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 28px;
+        }
+
+        /* =============================================
+           CARDS / SECCIONES
+        ============================================= */
+        .card {
+            background: var(--surface);
+            border: 2px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
             position: relative;
-            box-shadow: 4px 4px 0px rgba(0,0,0,0.5);
+            transition: border-color 0.2s;
         }
-        .callout-titulo {
-            font-weight: bold;
-            font-family: 'Montserrat', sans-serif;
-            text-transform: uppercase;
-            margin-bottom: 8px;
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .card-title {
             font-size: 1.1rem;
+            font-weight: 900;
+            letter-spacing: -0.5px;
+            text-transform: uppercase;
             display: flex;
             align-items: center;
             gap: 8px;
         }
-        .callout-texto {
-            color: var(--blanco-puro);
-            font-size: 0.9rem;
-            white-space: pre-wrap;
-            font-family: 'Space Mono', monospace;
+
+        .section-label {
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--text-muted);
+            margin-bottom: 16px;
+        }
+
+        /* =============================================
+           QUINCENA CALENDAR
+        ============================================= */
+        .quincenal-banner {
+            background: linear-gradient(135deg, #1a1200 0%, #1F1F1F 100%);
+            border: 2px solid var(--yellow);
+            border-radius: 16px;
+            padding: 20px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            flex-wrap: wrap;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .quincenal-banner::before {
+            content: '💰';
+            position: absolute;
+            right: -10px;
+            top: -10px;
+            font-size: 5rem;
+            opacity: 0.06;
+        }
+
+        .quincenal-today-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--yellow);
+            font-weight: 700;
+        }
+
+        .quincenal-today-num {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 900;
+            line-height: 1;
+            letter-spacing: -2px;
+        }
+
+        .quincenal-alert {
+            background: var(--yellow-dim);
+            border: 1.5px solid var(--yellow);
+            color: var(--yellow);
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            display: none;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .quincenal-alert.visible { display: inline-flex; }
+
+        .calendar-strip {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .cal-day {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            background: var(--surface3);
+            color: var(--text-muted);
+            border: 1.5px solid transparent;
+            transition: all 0.2s;
+        }
+
+        .cal-day.today {
+            border-color: var(--text);
+            color: var(--text);
+            background: var(--surface2);
+        }
+
+        .cal-day.quincena {
+            background: var(--yellow-dim);
+            border-color: var(--yellow);
+            color: var(--yellow);
+            font-weight: 800;
+        }
+
+        .cal-day.today.quincena {
+            background: var(--yellow);
+            color: #000;
+            border-color: var(--yellow);
+            box-shadow: 0 0 16px rgba(245, 197, 24, 0.5);
+            animation: quincenaPulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes quincenaPulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 16px rgba(245, 197, 24, 0.5); }
+            50% { transform: scale(1.1); box-shadow: 0 0 24px rgba(245, 197, 24, 0.8); }
+        }
+
+        /* =============================================
+           FORM INPUTS
+        ============================================= */
+        .form-row {
+            display: flex;
+            gap: 10px;
+            align-items: flex-end;
+            flex-wrap: wrap;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            flex: 1;
+            min-width: 140px;
+        }
+
+        .form-group label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        .inp {
+            background: var(--surface2);
+            border: 2px solid var(--border);
+            color: var(--text);
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 500;
+            padding: 10px 14px;
+            border-radius: 10px;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            width: 100%;
+        }
+
+        .inp:focus {
+            border-color: var(--green);
+            box-shadow: 0 0 0 3px rgba(29, 185, 84, 0.15);
+        }
+
+        .inp::placeholder { color: var(--text-dim); }
+
+        select.inp {
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23888' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            padding-right: 32px;
+        }
+
+        /* =============================================
+           BOTONES
+        ============================================= */
+        .btn {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 800;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 11px 20px;
+            border: 2px solid transparent;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.15s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            white-space: nowrap;
+        }
+
+        .btn:active { transform: translate(2px, 2px); }
+
+        .btn-primary {
+            background: var(--green);
+            color: #000;
+            border-color: var(--green);
+            box-shadow: var(--shadow-green);
+        }
+        .btn-primary:hover { background: #17a349; box-shadow: 6px 6px 0px var(--green); }
+        .btn-primary:active { box-shadow: 1px 1px 0px var(--green); }
+
+        .btn-yellow {
+            background: var(--yellow);
+            color: #000;
+            border-color: var(--yellow);
+            box-shadow: var(--shadow-yellow);
+        }
+        .btn-yellow:hover { box-shadow: 6px 6px 0px var(--yellow); }
+        .btn-yellow:active { box-shadow: 1px 1px 0px var(--yellow); }
+
+        .btn-red {
+            background: transparent;
+            color: var(--red);
+            border-color: var(--red);
+            box-shadow: none;
+            padding: 8px 12px;
+            font-size: 0.75rem;
+        }
+        .btn-red:hover { background: var(--red-dim); box-shadow: 3px 3px 0px var(--red); }
+
+        .btn-ghost {
+            background: transparent;
+            color: var(--text-muted);
+            border-color: var(--border);
+        }
+        .btn-ghost:hover { border-color: var(--text-muted); color: var(--text); }
+
+        .btn-icon {
+            padding: 8px;
+            min-width: 36px;
+            justify-content: center;
+        }
+
+        /* =============================================
+           PRIORITY TAGS
+        ============================================= */
+        .priority-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.65rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border: 1.5px solid;
+        }
+
+        .priority-high { background: var(--red-dim); border-color: var(--red); color: var(--red); }
+        .priority-medium { background: var(--yellow-dim); border-color: var(--yellow); color: var(--yellow); }
+        .priority-low { background: var(--gray-dim); border-color: var(--gray); color: var(--gray); }
+
+        /* =============================================
+           ITEMS LIST
+        ============================================= */
+        .items-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .item-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--surface2);
+            border: 1.5px solid var(--border);
+            border-radius: 10px;
+            padding: 12px 16px;
+            gap: 12px;
+            transition: all 0.2s;
+            animation: slideIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-10px) scale(0.97); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .item-row:hover {
+            border-color: var(--surface3);
+            background: var(--surface3);
+        }
+
+        .item-name {
+            font-weight: 600;
+            font-size: 0.95rem;
+            flex: 1;
+        }
+
+        .item-row-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 32px;
+            color: var(--text-dim);
+            font-size: 0.85rem;
+        }
+
+        .empty-state .empty-icon {
+            font-size: 2.5rem;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        /* =============================================
+           GRUPOS (TIER SYSTEM)
+        ============================================= */
+        .groups-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 10px;
+        }
+
+        .group-chip {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            background: var(--surface2);
+            border: 1.5px solid var(--border);
+            border-radius: 10px;
+            padding: 12px;
+            transition: all 0.2s;
+        }
+
+        .group-chip:hover { border-color: var(--surface3); }
+
+        .tier-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            flex-shrink: 0;
+            margin-top: 5px;
+        }
+
+        .tier-a .tier-dot { background: var(--green); box-shadow: 0 0 6px var(--green); }
+        .tier-b .tier-dot { background: var(--yellow); box-shadow: 0 0 6px var(--yellow); }
+        .tier-c .tier-dot { background: var(--gray); }
+
+        .group-name {
+            font-size: 0.8rem;
+            font-weight: 600;
+            line-height: 1.3;
+        }
+
+        .group-desc {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            margin-top: 2px;
+            line-height: 1.4;
+        }
+
+        .tier-label {
+            font-size: 0.65rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 2px 8px;
+            border-radius: 4px;
+            margin-bottom: 8px;
+            display: inline-block;
+        }
+
+        .tier-label-a { background: rgba(29,185,84,0.15); color: var(--green); }
+        .tier-label-b { background: rgba(245,197,24,0.15); color: var(--yellow); }
+        .tier-label-c { background: rgba(85,85,85,0.15); color: var(--gray); }
+
+        /* =============================================
+           SESSION GENERATOR
+        ============================================= */
+        .session-config {
+            display: flex;
+            gap: 12px;
+            align-items: flex-end;
+            flex-wrap: wrap;
+        }
+
+        .time-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--surface2);
+            border: 1.5px solid var(--border);
+            border-radius: 10px;
+            padding: 10px 14px;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        /* =============================================
+           CHECKLIST
+        ============================================= */
+        .checklist-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .checklist-group {
+            background: var(--surface2);
+            border: 1.5px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.3s;
+            animation: slideIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+
+        .checklist-group.completed {
+            opacity: 0.5;
+            border-color: var(--green);
+        }
+
+        .checklist-group-header {
+            padding: 14px 18px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 1.5px solid var(--border);
+            background: var(--surface3);
+        }
+
+        .post-number {
+            width: 28px;
+            height: 28px;
+            background: var(--green);
+            color: #000;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 900;
+            font-size: 0.8rem;
+            flex-shrink: 0;
+        }
+
+        .checklist-group.completed .post-number {
+            background: var(--surface3);
+            color: var(--text-muted);
+        }
+
+        .post-info { flex: 1; }
+
+        .post-item-name {
+            font-weight: 700;
+            font-size: 0.95rem;
+        }
+
+        .post-group-name {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 1px;
+        }
+
+        .checklist-steps {
+            padding: 12px 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .checklist-step {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            user-select: none;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .checklist-step:last-child { border-bottom: none; }
+
+        .step-checkbox {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--border);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transition: all 0.2s;
+            background: transparent;
+        }
+
+        .checklist-step.done .step-checkbox {
+            background: var(--green);
+            border-color: var(--green);
+        }
+
+        .step-checkmark {
+            opacity: 0;
+            color: #000;
+            font-size: 0.7rem;
+            font-weight: 900;
+            transition: opacity 0.15s;
+        }
+
+        .checklist-step.done .step-checkmark { opacity: 1; }
+
+        .step-label {
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--text);
+            transition: all 0.2s;
+            flex: 1;
+        }
+
+        .checklist-step.done .step-label {
+            text-decoration: line-through;
+            color: var(--text-dim);
+        }
+
+        .step-type-badge {
+            font-size: 0.65rem;
+            padding: 2px 7px;
+            border-radius: 4px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .type-publish { background: rgba(0,180,216,0.15); color: var(--blue); }
+        .type-boost { background: rgba(179,106,255,0.15); color: var(--purple); }
+
+        /* =============================================
+           PROGRESS BAR
+        ============================================= */
+        .progress-container {
+            margin-bottom: 16px;
+        }
+
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .progress-bar-bg {
+            height: 6px;
+            background: var(--surface3);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: var(--green);
+            border-radius: 3px;
+            transition: width 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        /* =============================================
+           STATS BAR (SESION)
+        ============================================= */
+        .session-stats {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
+        }
+
+        .stat-chip {
+            background: var(--surface2);
+            border: 1.5px solid var(--border);
+            border-radius: 8px;
+            padding: 8px 14px;
+            font-size: 0.75rem;
+        }
+
+        .stat-chip strong {
+            display: block;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 900;
+            line-height: 1;
+            margin-bottom: 2px;
+        }
+
+        .stat-chip span { color: var(--text-muted); }
+
+        /* =============================================
+           HORARIOS TABLE
+        ============================================= */
+        .horarios-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .horario-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 12px;
+            border-radius: 8px;
+            background: var(--surface2);
+            border: 1.5px solid transparent;
+            font-size: 0.8rem;
+            transition: all 0.3s;
+        }
+
+        .horario-row.active-now {
+            border-color: var(--orange) !important;
+            background: var(--orange-dim) !important;
+        }
+
+        .horario-time {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            font-size: 0.8rem;
+            min-width: 90px;
+            color: var(--text-muted);
+        }
+
+        .horario-row.active-now .horario-time { color: var(--orange); }
+
+        .horario-label { flex: 1; font-weight: 500; }
+
+        /* =============================================
+           HORARIO COLORS
+        ============================================= */
+        .hr-peak { border-color: rgba(255,107,53,0.3); }
+        .hr-good { border-color: rgba(29,185,84,0.2); }
+        .hr-dead { border-color: rgba(85,85,85,0.2); }
+        .hr-food { border-color: rgba(245,197,24,0.2); }
+        .hr-meh { border-color: rgba(0,180,216,0.2); }
+
+        /* =============================================
+           MODAL
+        ============================================= */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(8px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 500;
+            padding: 20px;
+        }
+
+        .modal-overlay.open { display: flex; }
+
+        .modal {
+            background: var(--surface);
+            border: 2px solid var(--border);
+            border-radius: 20px;
+            padding: 28px;
+            max-width: 420px;
+            width: 100%;
+            animation: modalIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+
+        @keyframes modalIn {
+            from { transform: scale(0.9) translateY(20px); opacity: 0; }
+            to { transform: scale(1) translateY(0); opacity: 1; }
+        }
+
+        .modal-title {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 1.2rem;
+            padding: 4px;
+            line-height: 1;
+            transition: color 0.2s;
+        }
+
+        .modal-close:hover { color: var(--red); }
+
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        /* =============================================
+           TOAST NOTIFICATION
+        ============================================= */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: var(--surface);
+            border: 2px solid var(--green);
+            color: var(--text);
+            padding: 12px 20px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            z-index: 9999;
+            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .toast.show { transform: translateX(-50%) translateY(0); }
+
+        /* =============================================
+           DIVIDER
+        ============================================= */
+        .divider {
+            height: 1px;
+            background: var(--border);
+            margin: 16px 0;
+        }
+
+        /* =============================================
+           RESET / DANGER ZONE
+        ============================================= */
+        .danger-zone {
+            border: 1.5px dashed var(--red);
+            border-radius: 12px;
+            padding: 16px;
+            background: rgba(255,65,54,0.03);
+        }
+
+        .danger-zone-title {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--red);
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .btn-row {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        /* =============================================
+           RESPONSIVE
+        ============================================= */
+        @media (max-width: 600px) {
+            .header { padding: 12px 16px; }
+            .logo { font-size: 1.4rem; }
+            .clock-time { font-size: 1.1rem; }
+            .app-container { padding: 16px 12px; }
+            .card { padding: 18px; }
+            .groups-grid { grid-template-columns: 1fr 1fr; }
+        }
+
+        /* =============================================
+           ALL DONE ANIMATION
+        ============================================= */
+        .all-done-banner {
+            background: linear-gradient(135deg, rgba(29,185,84,0.2), rgba(29,185,84,0.05));
+            border: 2px solid var(--green);
+            border-radius: 16px;
+            padding: 24px;
+            text-align: center;
+            display: none;
+            animation: slideIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+
+        .all-done-banner.visible { display: block; }
+
+        .all-done-banner .done-icon {
+            font-size: 3rem;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .all-done-banner h3 {
+            color: var(--green);
+            font-size: 1.4rem;
+            margin-bottom: 4px;
+        }
+
+        .all-done-banner p {
+            color: var(--text-muted);
+            font-size: 0.85rem;
         }
     </style>
 </head>
 <body>
 
-    <nav class="navbar">
-        <h1>VAULTIFYER.</h1>
-        <div class="perfil-nav" onclick="abrirPerfil()" style="cursor: pointer; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'" title="Configurar Perfil y Sistema">
-            <div style="text-align: right;">
-                <strong style="display:block;" id="nav-nombre">el_patron_xd</strong>
-                <small style="color: var(--azul-electric);" id="nav-bio">Dueño y Patrón</small>
+    <!-- HEADER -->
+    <header class="header">
+        <div class="logo">POSTER<span>.</span></div>
+        <div class="header-right">
+            <div class="clock-block">
+                <div class="clock-time" id="clock-display">00:00:00</div>
+                <div class="time-badge badge-dead" id="time-badge">⬛ Cargando...</div>
             </div>
-            <div class="foto-perfil" id="nav-foto" style="background-size: cover; background-position: center; background-image: url('https://via.placeholder.com/50');"></div>
         </div>
-    </nav>
+    </header>
 
-    <div class="container">
-        <!-- DASHBOARD -->
-        <div class="stats-rapidas">
-            <div class="caja-stat">
-                <h2>FERIA INVERTIDA</h2>
-                <div class="numero" id="stat-inversion">$0</div>
+    <div class="app-container">
+
+        <!-- QUINCENA CALENDAR -->
+        <div class="quincenal-banner" id="quincena-section">
+            <div>
+                <div class="quincenal-today-label">Hoy es</div>
+                <div class="quincenal-today-num" id="today-display">—</div>
+                <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 2px;" id="month-display">—</div>
             </div>
-            <div class="caja-stat">
-                <h2>VALOR DE VENTA</h2>
-                <div class="numero" style="color: var(--blanco-puro);" id="stat-venta">$0</div>
+            <div id="quincena-alert" class="quincenal-alert">
+                💰 ¡DÍA DE QUINCENA! Satura los grupos grandes ahorita.
             </div>
-            <!-- caja de vendido hoy -->
-            <div class="caja-stat" style="border-color: var(--azul-electric);">
-                <h2>VENDIDO HOY 💸</h2>
-                <div class="numero" style="color: var(--azul-electric);" id="stat-vendido-hoy">$0</div>
-            </div>
-            <!-- SE ACABA LA CAJA NUEVA -->
-            <div class="caja-stat">
-                <h2>ÍTEMS EN CAJÓN</h2>
-                <div class="numero" style="color: var(--amarillo-toxico);" id="stat-pares">0</div>
-            </div>
-        </div>
-        
-        <!-- SECCIÓN DE FINANZAS (NUEVO) -->
-        <div class="billetera-container">
-            <h2 style="color: var(--amarillo-toxico);">MI FERIA (EL COLCHÓN) 💰</h2>
-            <div class="saldo-gigante" id="saldo-actual">$0</div>
-            
-            <div class="botones-finanzas">
-                <button class="btn-mamon" style="flex: 1; background: var(--verde-dolar); color: var(--negro-abismo);" onclick="abrirIngreso()">+ CAYÓ FERIA A LA BOLSA</button>
-                <button class="btn-mamon" style="flex: 1; background: var(--rojo-sangre); color: var(--blanco-puro);" onclick="abrirGasto()">- ANOTAR GASTO</button>
-            </div>
-            <button class="btn-secundario" style="width: 100%; border-color: var(--amarillo-toxico); box-shadow: 4px 4px 0px var(--amarillo-toxico);" onclick="exportarTicket()">📥 DESCARGAR TICKET DE FINANZAS (.JSON)</button>
-            
-            <h3 style="margin-top: 25px; font-size: 1.2rem; border-bottom: 2px solid #333; padding-bottom: 5px;">HISTORIAL DE MOVIMIENTOS:</h3>
-            <div class="historial-lista" id="lista-movimientos">
-                <!-- Se inyecta con JS -->
-            </div>
-        </div>
-        
-        <!-- SECCIÓN DE METAS Y DESEOS (NUEVO) -->
-        <div class="billetera-container" style="border-color: var(--azul-electric); box-shadow: 12px 12px 0px var(--azul-electric);">
-            <h2 style="color: var(--azul-electric);">MIS METAS Y DESEOS 🎯</h2>
-            <p style="color: #aaa; font-size: 0.9rem;">¿Pa' qué chingados estamos chambeando? Pa' esto:</p>
-            
-            <button class="btn-mamon" style="background: var(--azul-electric); color: var(--negro-abismo); margin-bottom: 20px;" onclick="abrirModalMeta()">+ AGREGAR META NUEVA</button>
-            
-            <div class="grid-inventario" id="contenedor-metas">
-                <!-- Se inyectan las metas con JS -->
+            <div>
+                <div class="section-label" style="margin-bottom: 10px;">Este mes</div>
+                <div class="calendar-strip" id="calendar-strip"></div>
             </div>
         </div>
 
-        <h1 class="titulo-seccion">EL CAJÓN<br>DE LAS CHÁCHARAS.</h1>
-        <button class="btn-mamon" style="margin-bottom: 30px;" onclick="abrirModal()">+ AGREGAR NUEVA MADRE</button>
+        <!-- MIS ITEMS A PUBLICAR -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">🛒 Mis items pa' publicar</div>
+            </div>
 
-        <div class="grid-inventario" id="contenedor-items">
-            <!-- SE INYECTA CON JS -->
-        </div>
-    </div>
-
-    <!-- EL MODAL DARK/MAMADOR -->
-    <div class="modal-overlay" id="modal-agregar">
-        <div class="modal-content">
-            <button class="cerrar-modal" onclick="cerrarModal()">X</button>
-            <h2 class="modal-header">NUEVA CHÁCHARA</h2>
-            
-            <form id="form-item">
-                <div class="form-group">
-                    <label>¿Qué chingados es? (Título corto)</label>
-                    <input type="text" id="inp-titulo" class="input-mamador" placeholder="Ej: Jordan 13 azul marino" required>
+            <div class="form-row" style="margin-bottom: 16px;">
+                <div class="form-group" style="flex: 2; min-width: 180px;">
+                    <label>Nombre del producto</label>
+                    <input type="text" id="inp-item-name" class="inp" placeholder="Ej: Jordan 4 Retro negro...">
                 </div>
-                
-                <div class="form-group" style="border-left: 4px solid var(--rojo-sangre); padding-left: 10px; background: rgba(255,0,60,0.1);">
-                    <label style="color: var(--blanco-puro);">¿De quién es esta madre?</label>
-                    <select id="inp-dueno" class="input-mamador" style="background: var(--negro-abismo); color: var(--amarillo-toxico); font-weight: bold;">
-                        <option value="mio">Mío de mí 😎 (100% pa mi)</option>
-                        <option value="tio">De mi Tío 🧔🏻 (Yo nomás lo muevo)</option>
+                <div class="form-group" style="min-width: 130px;">
+                    <label>Prioridad de venta</label>
+                    <select id="inp-item-priority" class="inp">
+                        <option value="high">🔴 ALTA</option>
+                        <option value="medium" selected>🟡 MEDIA</option>
+                        <option value="low">⚫ BAJA</option>
                     </select>
                 </div>
+                <button class="btn btn-primary" onclick="addItem()" style="flex-shrink:0; align-self:flex-end;">
+                    + Agregar
+                </button>
+            </div>
 
-                <div style="display: flex; gap: 15px;">
-                    <div class="form-group" style="flex: 1;">
-                        <label>Me costó ($)</label>
-                        <input type="number" id="inp-compra" class="input-mamador" placeholder="500" required>
-                    </div>
-                    <div class="form-group" style="flex: 1;">
-                        <label>Lo doy en ($)</label>
-                        <input type="number" id="inp-venta" class="input-mamador" placeholder="1200" required>
-                    </div>
+            <div class="items-list" id="items-list">
+                <div class="empty-state" id="items-empty">
+                    <span class="empty-icon">👟</span>
+                    Agrega los tenis que quieres publicar hoy we.
                 </div>
-
-                <div class="form-group">
-                    <label>Sube la foto padrino</label>
-                    <input type="file" id="inp-foto" accept="image/*" class="input-mamador" style="padding: 5px;">
-                    <div class="foto-preview" id="preview-caja">Vista previa we</div>
-                </div>
-
-                <div class="form-group">
-                    <label>Copy pa' Facebook (El verbo)</label>
-                    <textarea id="inp-copy" class="input-mamador" placeholder="Escribe aquí tu poesía de ventas..."></textarea>
-                </div>
-
-                <div class="campos-dinamicos-container" id="contenedor-dinamico">
-                    <label>Detalles Extra (Talla, Condición, etc)</label>
-                    <!-- Aqui caen los inputs extras -->
-                </div>
-                <button type="button" class="btn-secundario" onclick="agregarCampoDinamico()" style="margin-bottom: 20px;">+ Agregar detalle extra</button>
-
-                <button type="submit" class="btn-mamon" style="width: 100%; background: var(--rojo-sangre); color: white;">GUARDAR EN LA BÓVEDA</button>
-            </form>
+            </div>
         </div>
-    </div>
-    
-    <!-- MODAL DE METAS (LISTA DE DESEOS) -->
-    <div class="modal-overlay" id="modal-meta">
-        <div class="modal-content" style="border-color: var(--azul-electric); box-shadow: 15px 15px 0px var(--azul-electric);">
-            <button class="cerrar-modal" onclick="document.getElementById('modal-meta').style.display='none'" style="color: var(--blanco-puro);">X</button>
-            <h2 class="modal-header" style="color: var(--azul-electric);">NUEVA META 🎯</h2>
-            <form id="form-meta">
-                <div class="form-group">
-                    <label>¿Qué chingados quieres comprar/hacer?</label>
-                    <input type="text" id="inp-meta-titulo" class="input-mamador" placeholder="Ej: iPhone 18 Pro Max" required>
+
+        <!-- GENERAR SESION -->
+        <div class="card" id="session-card">
+            <div class="card-header">
+                <div class="card-title">⚡ Generar sesión de publicaciones</div>
+            </div>
+
+            <div class="session-config">
+                <div class="form-group" style="min-width: 160px; max-width: 200px;">
+                    <label>¿Cuántas publicaciones?</label>
+                    <input type="number" id="inp-num-posts" class="inp" value="5" min="1" max="30">
                 </div>
-                <div class="form-group">
-                    <label>¿De a cómo es el chistecito? ($)</label>
-                    <input type="number" id="inp-meta-precio" class="input-mamador" placeholder="25000" required>
+                <div class="time-indicator" id="session-time-indicator">
+                    <span id="session-badge-preview">🟢 Buen horario</span>
                 </div>
-                <div class="form-group">
-                    <label>Sube foto pa' motivarte padrino (Opcional)</label>
-                    <input type="file" id="inp-meta-foto" accept="image/*" class="input-mamador" style="padding: 5px;">
-                    <div class="foto-preview" id="preview-meta">Vista previa we</div>
-                </div>
-                <div class="form-group">
-                    <label>Descripción (Nyeheheheh)</label>
-                    <textarea id="inp-meta-desc" class="input-mamador" placeholder="Ej: Pa jugar al Warzone en ultra..."></textarea>
-                </div>
-                <button type="submit" class="btn-mamon" style="width: 100%; background: var(--azul-electric); color: var(--negro-abismo);">FIJAR META ALV</button>
-            </form>
+                <button class="btn btn-yellow" onclick="generateSession()" style="flex-shrink:0; align-self:flex-end;">
+                    🎯 Generar checklist
+                </button>
+            </div>
+            <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 12px;">
+                El algoritmo distribuye tus publicaciones según la prioridad de cada ítem y el horario actual. En hora peak satura los grupos Tier A.
+            </p>
         </div>
-    </div>
 
-    <!-- MODAL DE PERFIL Y CONFIGURACIÓN MAESTRA -->
-    <div class="modal-overlay" id="modal-perfil">
-        <div class="modal-content" style="max-width: 500px; border-color: var(--blanco-puro); box-shadow: 15px 15px 0px var(--blanco-puro);">
-            <button class="cerrar-modal" onclick="document.getElementById('modal-perfil').style.display='none'" style="color: var(--rojo-sangre);">X</button>
-            <h2 class="modal-header" style="color: var(--blanco-puro);">EL PATRÓN 👑</h2>
-            
-            <form id="form-perfil">
-                <div class="form-group">
-                    <label>Apodo / Nombre</label>
-                    <input type="text" id="inp-perfil-nombre" class="input-mamador" required>
-                </div>
-                <div class="form-group">
-                    <label>Bio (Quién eres we)</label>
-                    <input type="text" id="inp-perfil-bio" class="input-mamador">
-                </div>
-                <div class="form-group">
-                    <label>Foto de perfil (Sube archivo)</label>
-                    <input type="file" id="inp-perfil-foto" accept="image/*" class="input-mamador" style="padding: 5px;">
-                </div>
-                <button type="submit" class="btn-mamon" style="width: 100%; background: var(--blanco-puro); color: var(--negro-abismo); margin-bottom: 20px;">GUARDAR PERFIL</button>
-            </form>
+        <!-- CHECKLIST ACTIVO -->
+        <div class="card" id="checklist-card" style="display: none;">
+            <div class="card-header">
+                <div class="card-title">📋 Sesión activa</div>
+                <button class="btn btn-ghost" onclick="clearSession()">Limpiar</button>
+            </div>
 
-            <h3 style="color: var(--amarillo-toxico); margin-top: 20px; border-bottom: 2px solid #555; padding-bottom: 5px;">SISTEMA (IMPORT/EXPORT)</h3>
-            <button class="btn-secundario" style="width: 100%; margin-bottom: 10px;" onclick="exportarBaseDeDatos()">📥 EXPORTAR TODO EL SISTEMA (.JSON)</button>
-            
-            <!-- Botón falso para activar el input file oculto -->
-            <button class="btn-secundario" style="width: 100%; margin-bottom: 10px;" onclick="document.getElementById('inp-importar').click()">📤 IMPORTAR SISTEMA (.JSON)</button>
-            <input type="file" id="inp-importar" accept=".json" style="display:none;" onchange="importarBaseDeDatos(event)">
+            <div class="progress-container">
+                <div class="progress-info">
+                    <span id="progress-text">0 / 0 pasos completados</span>
+                    <span id="progress-pct" style="color: var(--green); font-weight: 700;">0%</span>
+                </div>
+                <div class="progress-bar-bg">
+                    <div class="progress-bar-fill" id="progress-bar" style="width: 0%;"></div>
+                </div>
+            </div>
 
-            <div class="zona-peligro">
-                <h3 style="color: var(--rojo-sangre); margin-top: 0;">ZONA DE PELIGRO 💀</h3>
-                <button class="btn-peligro" onclick="borrarHistorialSinDinero()">BORRAR HISTORIAL (DEJA EL DINERO INTACTO)</button>
-                <button class="btn-peligro" onclick="borrarDinero()">VACIAR BILLETERA (PONER DINERO A $0)</button>
-                <button class="btn-peligro" onclick="borrarInventario()">BORRAR INVENTARIO (CHÁCHARAS)</button>
-                <button class="btn-peligro" style="background: var(--rojo-sangre); color: var(--blanco-puro);" onclick="factoryReset()">⚠️ FORMATEAR TODO A LA VERGA ⚠️</button>
+            <div class="session-stats" id="session-stats"></div>
+
+            <div class="all-done-banner" id="all-done-banner">
+                <span class="done-icon">🏆</span>
+                <h3>¡SESIÓN COMPLETADA!</h3>
+                <p>Chingón we, ya tiraste todo. Espera la hora pico de las 8pm y vuelve a darle.</p>
+            </div>
+
+            <div class="checklist-container" id="checklist-container"></div>
+        </div>
+
+        <!-- HORARIOS -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">⏰ Horarios de publicación</div>
+            </div>
+            <div class="horarios-grid" id="horarios-grid">
+                <!-- se renderizan con JS -->
+            </div>
+        </div>
+
+        <!-- GRUPOS -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">👥 Grupos de Facebook</div>
+            </div>
+
+            <div style="margin-bottom: 14px;">
+                <span class="tier-label tier-label-a">Tier A — Top tier</span>
+            </div>
+            <div class="groups-grid" style="margin-bottom: 18px;">
+                <div class="group-chip tier-a">
+                    <div class="tier-dot"></div>
+                    <div>
+                        <div class="group-name">Bazar Zapotlán Ciudad Guzmán 1</div>
+                        <div class="group-desc">Top tier, mucha actividad.</div>
+                    </div>
+                </div>
+                <div class="group-chip tier-a">
+                    <div class="tier-dot"></div>
+                    <div>
+                        <div class="group-name">Bazar Zapotlán de Todo</div>
+                        <div class="group-desc">Top tier, bastante actividad por regla general.</div>
+                    </div>
+                </div>
+                <div class="group-chip tier-a">
+                    <div class="tier-dot"></div>
+                    <div>
+                        <div class="group-name">Bazar Zapotlán Ciudad Guzmán</div>
+                        <div class="group-desc">Tier A sólido.</div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="margin-bottom: 14px;">
+                <span class="tier-label tier-label-b">Tier B — Buenos pero con detalles</span>
+            </div>
+            <div class="groups-grid" style="margin-bottom: 18px;">
+                <div class="group-chip tier-b">
+                    <div class="tier-dot"></div>
+                    <div>
+                        <div class="group-name">Bazar Ciudad Guzmán y Alrededores</div>
+                        <div class="group-desc">Mucha actividad pero también mucho post basura.</div>
+                    </div>
+                </div>
+                <div class="group-chip tier-b">
+                    <div class="tier-dot"></div>
+                    <div>
+                        <div class="group-name">Bazar Zapotlán Cd. Guzmán</div>
+                        <div class="group-desc">Tiene administración, poca actividad real.</div>
+                    </div>
+                </div>
+                <div class="group-chip tier-b">
+                    <div class="tier-dot"></div>
+                    <div>
+                        <div class="group-name">La Pulguita Zapotlán</div>
+                        <div class="group-desc">Actividad casi exclusiva de compradores.</div>
+                    </div>
+                </div>
+                <div class="group-chip tier-b">
+                    <div class="tier-dot"></div>
+                    <div>
+                        <div class="group-name">Zapotlán Bazar</div>
+                        <div class="group-desc">Buen grupo, poca actividad.</div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="margin-bottom: 14px;">
+                <span class="tier-label tier-label-c">Tier C — Grupos pequeños</span>
+            </div>
+            <div class="groups-grid">
+                <div class="group-chip tier-c" style="opacity: 0.5;">
+                    <div class="tier-dot"></div>
+                    <div>
+                        <div class="group-name">Grupos pequeños</div>
+                        <div class="group-desc">Poca gente, poco tráfico. Usar sólo si hay tiempo de sobra.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- DATOS -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">⚙️ Datos</div>
+            </div>
+            <div class="danger-zone">
+                <div class="danger-zone-title">⚠️ Zona de peligro</div>
+                <div class="btn-row">
+                    <button class="btn btn-red" onclick="confirmClearItems()">🗑 Borrar todos los items</button>
+                    <button class="btn btn-red" onclick="confirmClearAll()">💀 Borrar TODO</button>
+                </div>
+            </div>
+        </div>
+
+    </div><!-- end app-container -->
+
+    <!-- CONFIRM MODAL -->
+    <div class="modal-overlay" id="confirm-modal">
+        <div class="modal">
+            <div class="modal-title">
+                <span id="confirm-title">¿Seguro?</span>
+                <button class="modal-close" onclick="closeConfirm()">✕</button>
+            </div>
+            <p id="confirm-msg" style="color: var(--text-muted); font-size: 0.9rem;"></p>
+            <div class="modal-actions">
+                <button class="btn btn-ghost" onclick="closeConfirm()">Cancelar</button>
+                <button class="btn btn-red" id="confirm-ok-btn">Borrar</button>
             </div>
         </div>
     </div>
-    
-    <!-- MODAL DE BITÁCORA (CHISME Y LLANTO) -->
-    <div class="modal-overlay" id="modal-bitacora">
-        <div class="modal-content" style="max-width: 600px; border-color: var(--amarillo-toxico); box-shadow: 15px 15px 0px var(--negro-abismo);">
-            <button class="cerrar-modal" onclick="document.getElementById('modal-bitacora').style.display='none'" style="color: var(--blanco-puro);">X</button>
-            <h2 class="modal-header" id="header-bitacora" style="color: var(--amarillo-toxico); font-size: 1.5rem;">BITÁCORA</h2>
-            
-            <form id="form-bitacora" style="margin-bottom: 25px; border-bottom: 2px dashed #555; padding-bottom: 20px;">
-                <div style="display: flex; gap: 10px; margin-bottom: 10px; flex-wrap: wrap;">
-                    <div class="form-group" style="flex: 1; margin-bottom: 0;">
-                        <label>Tipo de apunte</label>
-                        <select id="inp-bitacora-tipo" class="input-mamador" style="background: var(--negro-abismo);">
-                            <option value="aviso">⚠️ Aviso / Alerta</option>
-                            <option value="peligro">💀 Peligro (Coyones, Estafas)</option>
-                            <option value="recordatorio">📌 Recordatorio</option>
-                            <option value="vendido">🤑 Éxito / Vendido</option>
-                            <option value="perdida">📉 Pérdida / Merma</option>
-                            <option value="cita">💬 Cita / Lo que te dijeron</option>
-                            <option value="comentario">📝 Comentario pendejo</option>
-                        </select>
-                    </div>
-                    <div class="form-group" style="flex: 2; margin-bottom: 0;">
-                        <label>Título / Resumen</label>
-                        <input type="text" id="inp-bitacora-titulo" class="input-mamador" placeholder="Ej: Me dejaron en visto w" required>
-                    </div>
-                </div>
-                
-                <div class="form-group">
-                    <label>Echate el chisme completo</label>
-                    <textarea id="inp-bitacora-texto" class="input-mamador" placeholder="nmms nomas no se va este pinshi par me traen a puras vueltas..." style="min-height: 80px;" required></textarea>
-                </div>
-                
-                <button type="submit" class="btn-mamon" style="width: 100%; background: var(--blanco-puro); color: var(--negro-abismo);">+ ANOTAR EN LA LIBRETA</button>
-            </form>
 
-            <h3 style="color: var(--blanco-puro); margin-bottom: 15px;">HISTORIAL CLINICO:</h3>
-            <div id="lista-bitacora" style="max-height: 400px; overflow-y: auto; padding-right: 5px;">
-                <!-- AQUI CAEN LOS CALLOUTS CON JS -->
-            </div>
-        </div>
-    </div>
-    
-    <!-- MODAL DE BOOST (HACKEANDO AL ZUCKERBERG) -->
-    <div class="modal-overlay" id="modal-boost">
-        <div class="modal-content" style="max-width: 600px; border-color: var(--amarillo-toxico); box-shadow: 15px 15px 0px var(--negro-abismo);">
-            <button class="cerrar-modal" onclick="document.getElementById('modal-boost').style.display='none'" style="color: var(--blanco-puro);">X</button>
-            <h2 class="modal-header" id="header-boost" style="color: var(--amarillo-toxico); font-size: 1.5rem;">BOOSTEO ALGORÍTMICO ⭕</h2>
-            
-            <p style="color: #aaa; font-size: 0.8rem;">Guarda aquí los links de dónde publicaste esta madre. Luego regresas con la cuenta secundaria en el Lite y le das en su madre al algoritmo. 🗣️💠</p>
-
-            <form id="form-boost" style="margin-bottom: 20px; border-bottom: 2px dashed #555; padding-bottom: 20px;">
-                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-                    <div class="form-group" style="flex: 1; min-width: 150px;">
-                        <label>¿En qué pinche grupo fue?</label>
-                        <input type="text" id="inp-boost-grupo" class="input-mamador" placeholder="Ej: Tianguis GDL" required>
-                    </div>
-                    <div class="form-group" style="flex: 2; min-width: 200px;">
-                        <label>Pega el link de Facebook we</label>
-                        <input type="url" id="inp-boost-url" class="input-mamador" placeholder="https://facebook.com/..." required>
-                    </div>
-                </div>
-                <button type="submit" class="btn-mamon" style="width: 100%; background: var(--blanco-puro); color: var(--negro-abismo);">+ GUARDAR LINK PA' LUEGO</button>
-            </form>
-
-            <h3 style="color: var(--blanco-puro); margin-bottom: 15px;">MISIONES PENDIENTES (SECUNDARIA):</h3>
-            <div id="lista-boosts" style="max-height: 350px; overflow-y: auto; padding-right: 5px;">
-                <!-- AQUI CAEN LAS TAREAS DE BOOST CON JS -->
-            </div>
-        </div>
-    </div>
-    
-    <!-- EL SONIDO DE LA CAJA REGISTRADORA 🤑 -->
-    <audio id="sonido-caja" src="https://actions.google.com/sounds/v1/foley/cash_register.ogg" preload="auto"></audio>
-
-    <!-- MODAL PARA PREGUNTAR SI DE VERDAD SE VENDIÓ -->
-    <div class="modal-overlay" id="modal-vender">
-        <div class="modal-content" style="max-width: 400px; border-color: var(--verde-dolar); box-shadow: 15px 15px 0px var(--verde-dolar);">
-            <button class="cerrar-modal" onclick="document.getElementById('modal-vender').style.display='none'" style="color: var(--blanco-puro);">X</button>
-            <h2 class="modal-header" style="color: var(--verde-dolar);">¿YA SE FUE? 💲</h2>
-            <form id="form-vender">
-                <div class="form-group">
-                    <label>¿En cuánto lo soltaste al final padrino?</label>
-                    <!-- ESTO SOLO APARECE SI ES DEL TIO -->
-                <div class="form-group" id="caja-comision-tio" style="display: none; border: 2px dashed var(--amarillo-toxico); padding: 15px; margin-top: 15px;">
-                    <label style="color: var(--amarillo-toxico);">El par era del Tío... ¿Cuánto te dió a ti de comisión? (Si se hizo wei, ponle 0)</label>
-                    <input type="number" id="inp-comision" class="input-mamador" value="0">
-                </div>
-                    <input type="number" id="inp-precio-final" class="input-mamador" style="font-size: 2rem; color: var(--verde-dolar);" required>
-                </div>
-                <button type="submit" class="btn-mamon" style="width: 100%; background: var(--verde-dolar); color: var(--negro-abismo);">¡COBRAR ALV!</button>
-            </form>
-        </div>
+    <!-- TOAST -->
+    <div class="toast" id="toast">
+        <span id="toast-icon">✅</span>
+        <span id="toast-text">Listo</span>
     </div>
 
-    <!-- MODAL DE RESUMEN (EL QUE LANZA CONFETI) -->
-    <div class="modal-overlay" id="modal-resumen">
-        <div class="modal-content resumen-venta" style="border-color: var(--azul-electric); box-shadow: 15px 15px 0px var(--azul-electric);">
-            <button class="cerrar-modal" onclick="document.getElementById('modal-resumen').style.display='none'" style="color: var(--blanco-puro);">X</button>
-            <h2 class="modal-header" style="color: var(--blanco-puro);">¡VENTA CERRADA! 🏆</h2>
-            
-            <div class="sub-texto">TU GANANCIA LIBRE FUE DE:</div>
-            <div class="gran-numero" id="resumen-ganancia">+$0</div>
-            
-            <div class="sub-texto" style="color: var(--amarillo-toxico); margin-top: 20px;">TIEMPO CONTIGO:</div>
-            <div style="font-size: 1.5rem; margin-bottom: 20px;" id="resumen-tiempo">0 días</div>
-            
-            <div class="sub-texto" style="color: var(--blanco-puro);">TOTAL VENDIDO HOY:</div>
-            <div style="font-size: 2rem; color: var(--blanco-puro); font-family: 'Montserrat';" id="resumen-hoy">$0</div>
-            
-            <button type="button" class="btn-mamon" onclick="document.getElementById('modal-resumen').style.display='none'" style="margin-top: 20px; width: 100%; background: var(--azul-electric); color: var(--negro-abismo);">A SEGUIR CHAMBEANDO</button>
-        </div>
-    </div>
-    
-    <!-- MODAL DE GASTOS (LA FUGA) -->
-    <div class="modal-overlay" id="modal-gasto">
-        <div class="modal-content" style="max-width: 400px; border-color: var(--rojo-sangre); box-shadow: 15px 15px 0px var(--rojo-sangre);">
-            <button class="cerrar-modal" onclick="document.getElementById('modal-gasto').style.display='none'" style="color: var(--blanco-puro);">X</button>
-            <h2 class="modal-header" style="color: var(--rojo-sangre);">LA FUGA 💸</h2>
-            <form id="form-gasto">
-                <div class="form-group">
-                    <label>¿En qué pendejada gastaste?</label>
-                    <input type="text" id="inp-gasto-desc" class="input-mamador" placeholder="Ej: Unos tacos" required>
-                </div>
-                
-                <div class="form-group">
-                    <label>Etiqueta (Pa' saber en qué se te va la lana)</label>
-                    <select id="sel-gasto-tag" class="input-mamador" onchange="checkCustomTag('gasto')">
-                        <option value="🍔 Tragazón">🍔 Tragazón</option>
-                        <option value="📈 Inversión mamalona">📈 Inversión mamalona</option>
-                        <option value="👩‍❤️‍👨 Quedando bien (Simp)">👩‍❤️‍👨 Quedando bien (Simp)</option>
-                        <option value="🍺 Desmadre y vicios">🍺 Desmadre y vicios</option>
-                        <option value="🚕 Transporte alv">🚕 Transporte alv</option>
-                        <option value="otro">📝 Otra chingadera (yo la escribo)...</option>
-                    </select>
-                    <input type="text" id="inp-gasto-custom-tag" class="input-mamador" placeholder="Ej: 💅 Corte de pelo" style="display: none; margin-top: 10px; border-color: var(--rojo-sangre);">
-                </div>
-
-                <div class="form-group">
-                    <label>¿Cuánto te bajaron? ($)</label>
-                    <input type="number" id="inp-gasto-monto" class="input-mamador" placeholder="150" required>
-                </div>
-                <button type="submit" class="btn-mamon" style="width: 100%; background: var(--rojo-sangre); color: var(--blanco-puro);">REGISTRAR GASTO</button>
-            </form>
-        </div>
-    </div>
-
-    <!-- MODAL DE INGRESO (CAYÓ FERIA) -->
-    <div class="modal-overlay" id="modal-ingreso">
-        <div class="modal-content" style="max-width: 400px; border-color: var(--verde-dolar); box-shadow: 15px 15px 0px var(--verde-dolar);">
-            <button class="cerrar-modal" onclick="document.getElementById('modal-ingreso').style.display='none'" style="color: var(--blanco-puro);">X</button>
-            <h2 class="modal-header" style="color: var(--verde-dolar);">INGRESO EXTRA 💰</h2>
-            <form id="form-ingreso">
-                <div class="form-group">
-                    <label>¿Por qué te dieron billete? (Motivo)</label>
-                    <input type="text" id="inp-ingreso-desc" class="input-mamador" placeholder="Ej: Mi jefa me dió pa los pasajes" required>
-                </div>
-                
-                <div class="form-group">
-                    <label>Etiqueta</label>
-                    <select id="sel-ingreso-tag" class="input-mamador" onchange="checkCustomTag('ingreso')">
-                        <option value="🎁 Regalo de diosito">🎁 Regalo de diosito</option>
-                        <option value="🤝 Me pagaron lo que debían">🤝 Me pagaron lo que debían</option>
-                        <option value="💼 Chamba extra">💼 Chamba extra</option>
-                        <option value="otro">📝 Otro pedo (yo lo escribo)...</option>
-                    </select>
-                    <input type="text" id="inp-ingreso-custom-tag" class="input-mamador" placeholder="Ej: 🐕 Paseé al perro" style="display: none; margin-top: 10px; border-color: var(--verde-dolar);">
-                </div>
-
-                <div class="form-group">
-                    <label>¿De a cómo fue el aliviane? ($)</label>
-                    <input type="number" id="inp-ingreso-monto" class="input-mamador" placeholder="500" required>
-                </div>
-                <button type="submit" class="btn-mamon" style="width: 100%; background: var(--verde-dolar); color: var(--negro-abismo);">ECHAR A LA BOLSA</button>
-            </form>
-        </div>
-    </div>
-
-   <!-- EL JAVASCRIPT FINANCIERO ALV -->
     <script>
-        // LA MAGIA DEL LOCALSTORAGE (5 CAJONES AHORA)
-        const STORAGE_INVENTARIO = 'vaultifyer_datos_v1';
-        const STORAGE_VENDIDOS = 'vaultifyer_vendidos_v1'; 
-        const STORAGE_MOVIMIENTOS = 'vaultifyer_movimientos_v1'; 
-        const STORAGE_PERFIL = 'vaultifyer_perfil_v1';
-        const STORAGE_METAS = 'vaultifyer_metas_v1';
-        
-        let inventario =[]; let vendidos = []; let movimientos = []; let metas =[];
-        let perfil = { nombre: "el_patron_xd", bio: "Dueño y Patrón", foto: "" };
-        
-        let fotoBase64 = ""; let fotoMetaBase64 = ""; let fotoPerfilBase64 = "";
-        let idEditando = null; let idVendiendo = null; 
-        let saldoRealGlobal = 0; // Pa usarlo en las metas
-        
-        // ===============================================
-        // LA PRENSA HIDRÁULICA (COMPRESOR DE FOTOS) 🗜️
-        // ===============================================
-        function comprimirImagen(file, callback) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const img = new Image();
-                img.onload = function() {
-                    const canvas = document.createElement('canvas');
-                    
-                    // Le bajamos los huevos a la resolución (800px max de ancho)
-                    const MAX_WIDTH = 800;
-                    let scaleSize = MAX_WIDTH / img.width;
-                    
-                    // si la foto de milagro ya es chiquita, no la hacemos más grande
-                    if (img.width < MAX_WIDTH) scaleSize = 1;
-                    
-                    canvas.width = img.width * scaleSize;
-                    canvas.height = img.height * scaleSize;
+        // =============================================
+        // STORAGE KEYS
+        // =============================================
+        const STORAGE_ITEMS    = 'poster_items_v1';
+        const STORAGE_SESSION  = 'poster_session_v1';
 
-                    const ctx = canvas.getContext('2d');
-                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        // =============================================
+        // STATE
+        // =============================================
+        let items   = [];
+        let session = null; // { tasks: [], generatedAt: timestamp }
 
-                    // Lo hacemos JPEG bajándole la calidad al 60% (pa que pese nomas unos gramos)
-                    const dataUrl = canvas.toDataURL('image/jpeg', 0.6);
-                    callback(dataUrl);
-                }
-                img.src = e.target.result;
-            }
-            reader.readAsDataURL(file);
-        }
-
-        window.onload = () => {
-            console.log("OS VAULTIFYER DEFINITIVO CORRIENDO ALV 🗣️🔥");
-            const gInv = localStorage.getItem(STORAGE_INVENTARIO);
-            const gVen = localStorage.getItem(STORAGE_VENDIDOS);
-            const gMov = localStorage.getItem(STORAGE_MOVIMIENTOS);
-            const gPer = localStorage.getItem(STORAGE_PERFIL);
-            const gMet = localStorage.getItem(STORAGE_METAS);
-            
-            if(gInv) inventario = JSON.parse(gInv);
-            if(gVen) vendidos = JSON.parse(gVen);
-            if(gMov) movimientos = JSON.parse(gMov);
-            if(gPer) perfil = JSON.parse(gPer);
-            if(gMet) metas = JSON.parse(gMet);
-
-            actualizarUIPerfil();
-            renderizar();
+        // =============================================
+        // GRUPOS DEFINIDOS
+        // =============================================
+        const GROUPS = {
+            tierA: [
+                { id: 'a1', name: 'Bazar Zapotlán Ciudad Guzmán 1', tier: 'A' },
+                { id: 'a2', name: 'Bazar Zapotlán de Todo',           tier: 'A' },
+                { id: 'a3', name: 'Bazar Zapotlán Ciudad Guzmán',     tier: 'A' },
+            ],
+            tierB: [
+                { id: 'b1', name: 'Bazar Ciudad Guzmán y Alrededores', tier: 'B' },
+                { id: 'b2', name: 'Bazar Zapotlán Cd. Guzmán',          tier: 'B' },
+                { id: 'b3', name: 'La Pulguita Zapotlán',               tier: 'B' },
+                { id: 'b4', name: 'Zapotlán Bazar',                     tier: 'B' },
+            ],
+            tierC: [
+                { id: 'c1', name: 'Grupo pequeño Zapotlán', tier: 'C' },
+            ]
         };
 
-        function guardarEnLocal() {
-            localStorage.setItem(STORAGE_INVENTARIO, JSON.stringify(inventario));
-            localStorage.setItem(STORAGE_VENDIDOS, JSON.stringify(vendidos));
-            localStorage.setItem(STORAGE_MOVIMIENTOS, JSON.stringify(movimientos));
-            localStorage.setItem(STORAGE_PERFIL, JSON.stringify(perfil));
-            localStorage.setItem(STORAGE_METAS, JSON.stringify(metas));
-        }
+        const ALL_GROUPS = [
+            ...GROUPS.tierA,
+            ...GROUPS.tierB,
+            ...GROUPS.tierC,
+        ];
 
-        // ===============================================
-        // SISTEMA DE PERFIL Y CONFIG
-        // ===============================================
-        function actualizarUIPerfil() {
-            document.getElementById('nav-nombre').innerText = perfil.nombre;
-            document.getElementById('nav-bio').innerText = perfil.bio;
-            if(perfil.foto) document.getElementById('nav-foto').style.backgroundImage = `url(${perfil.foto})`;
-        }
+        // =============================================
+        // HORARIOS
+        // =============================================
+        const HORARIOS = [
+            { start: 8,    end: 8.5,  type: 'peak', label: '🏔 HORARIO PEAK',          css: 'hr-peak',  badgeClass: 'badge-peak' },
+            { start: 8.5,  end: 9,    type: 'good', label: '🟢 Horario Bueno',          css: 'hr-good',  badgeClass: 'badge-good' },
+            { start: 9,    end: 10,   type: 'good', label: '🟢 Horario Bueno',          css: 'hr-good',  badgeClass: 'badge-good' },
+            { start: 10,   end: 11.5, type: 'dead', label: '😵 Horario Muerto',         css: 'hr-dead',  badgeClass: 'badge-dead' },
+            { start: 11.5, end: 12,   type: 'dead', label: '😵 Horario Muerto',         css: 'hr-dead',  badgeClass: 'badge-dead' },
+            { start: 12,   end: 14,   type: 'peak', label: '🏔 HORARIO PEAK',           css: 'hr-peak',  badgeClass: 'badge-peak' },
+            { start: 14,   end: 15,   type: 'food', label: '🍔 Hora de la Comida',      css: 'hr-food',  badgeClass: 'badge-food' },
+            { start: 15,   end: 16,   type: 'dead', label: '😵 Horario Muerto',         css: 'hr-dead',  badgeClass: 'badge-dead' },
+            { start: 16,   end: 17,   type: 'meh',  label: '😐 Horario Meh',           css: 'hr-meh',   badgeClass: 'badge-meh' },
+            { start: 17,   end: 18,   type: 'dead', label: '😵 Horario Muerto',         css: 'hr-dead',  badgeClass: 'badge-dead' },
+            { start: 18,   end: 20,   type: 'good', label: '🟢 Horario Bueno',          css: 'hr-good',  badgeClass: 'badge-good' },
+            { start: 20,   end: 24,   type: 'peak', label: '🏔 HORARIO PEAK',           css: 'hr-peak',  badgeClass: 'badge-peak' },
+            { start: 0,    end: 8,    type: 'dead', label: '😵 Horario Muerto (noche)', css: 'hr-dead',  badgeClass: 'badge-dead' },
+        ];
 
-        function abrirPerfil() {
-            document.getElementById('inp-perfil-nombre').value = perfil.nombre;
-            document.getElementById('inp-perfil-bio').value = perfil.bio;
-            document.getElementById('modal-perfil').style.display = 'flex';
-        }
-
-        // FOTO DEL PERFIL CON PRENSA HIDRÁULICA
-        document.getElementById('inp-perfil-foto').addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if(file) {
-                comprimirImagen(file, function(fotoComprimida) {
-                    fotoPerfilBase64 = fotoComprimida;
-                });
+        function getCurrentHorario() {
+            const now  = new Date();
+            const hDec = now.getHours() + now.getMinutes() / 60;
+            for (const h of HORARIOS) {
+                if (hDec >= h.start && hDec < h.end) return h;
             }
-        });
-        document.getElementById('form-perfil').addEventListener('submit', function(e) {
-            e.preventDefault();
-            perfil.nombre = document.getElementById('inp-perfil-nombre').value;
-            perfil.bio = document.getElementById('inp-perfil-bio').value;
-            if(fotoPerfilBase64 !== "") perfil.foto = fotoPerfilBase64;
-            
-            guardarEnLocal(); actualizarUIPerfil();
-            document.getElementById('modal-perfil').style.display = 'none';
-            alert("Perfil guardado patrón 👑");
-        });
-
-        // ===============================================
-        // SISTEMA DE METAS (WISHLIST)
-        // ===============================================
-        function abrirModalMeta() {
-            document.getElementById('form-meta').reset();
-            document.getElementById('preview-meta').style.backgroundImage = 'none';
-            document.getElementById('preview-meta').innerText = 'Vista previa we';
-            fotoMetaBase64 = "";
-            document.getElementById('modal-meta').style.display = 'flex';
+            return HORARIOS[HORARIOS.length - 1]; // fallback noche
         }
 
-        
-        // FOTO DE LAS METAS CON PRENSA HIDRÁULICA
-        document.getElementById('inp-meta-foto').addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if(file) {
-                document.getElementById('preview-meta').innerText = 'Exprimiendo foto... ⏳';
-                comprimirImagen(file, function(fotoComprimida) {
-                    fotoMetaBase64 = fotoComprimida;
-                    document.getElementById('preview-meta').style.backgroundImage = `url(${fotoMetaBase64})`;
-                    document.getElementById('preview-meta').innerText = '';
-                });
-            }
-        });
-
-        document.getElementById('form-meta').addEventListener('submit', function(e) {
-            e.preventDefault();
-            metas.push({
-                id: Date.now(),
-                titulo: document.getElementById('inp-meta-titulo').value,
-                precio: Number(document.getElementById('inp-meta-precio').value),
-                desc: document.getElementById('inp-meta-desc').value,
-                foto: fotoMetaBase64 !== "" ? fotoMetaBase64 : "https://via.placeholder.com/400x200?text=SIN+FOTO"
-            });
-            guardarEnLocal(); renderizar();
-            document.getElementById('modal-meta').style.display = 'none';
-        });
-
-        function borrarMeta(id) {
-            if(confirm("¿Ya te rajaste con esta meta o ya la compraste? 🎯")) {
-                metas = metas.filter(m => m.id !== id);
-                guardarEnLocal(); renderizar();
-            }
-        }
-
-        // ===============================================
-        // IMPORT / EXPORT / ZONA DE PELIGRO
-        // ===============================================
-        function exportarBaseDeDatos() {
-            const fullDB = { perfil, inventario, vendidos, movimientos, metas };
-            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(fullDB));
-            const nodoDescarga = document.createElement('a');
-            nodoDescarga.setAttribute("href", dataStr);
-            nodoDescarga.setAttribute("download", `VAULTIFYER_BACKUP_${Date.now()}.json`);
-            document.body.appendChild(nodoDescarga); nodoDescarga.click(); nodoDescarga.remove();
-        }
-
-        function importarBaseDeDatos(event) {
-            const file = event.target.files[0];
-            if(!file) return;
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                try {
-                    const data = JSON.parse(e.target.result);
-                    if(data.inventario) {
-                        inventario = data.inventario; vendidos = data.vendidos ||[];
-                        movimientos = data.movimientos ||[]; perfil = data.perfil || perfil;
-                        metas = data.metas ||[];
-                        guardarEnLocal();
-                        alert("¡Sistema restaurado con éxito! Se va a recargar la app alv.");
-                        location.reload();
-                    } else { alert("Ese archivo no es un backup válido de Vaultifyer wei."); }
-                } catch(err) { alert("El archivo está corrupto padrino."); }
+        function formatHorarioTime(start, end) {
+            const fmt = (n) => {
+                const h = Math.floor(n);
+                const m = Math.round((n - h) * 60);
+                return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
             };
-            reader.readAsText(file);
+            return `${fmt(start)} – ${fmt(end)}`;
         }
 
-        function borrarHistorialSinDinero() {
-            if(confirm("¿Seguro? Se borran los registros pero tu total de dinero se queda intacto en 1 solo movimiento.")){
-                let saldo = 0;
-                movimientos.forEach(m => { saldo += m.tipo==='ingreso' ? Number(m.monto) : -Number(m.monto); });
-                movimientos =[{ id: Date.now(), tipo: 'ingreso', monto: saldo, desc: 'Saldo Acumulado (Historial Borrado)', etiqueta: '📈 Inversión mamalona', fecha: Date.now() }];
-                guardarEnLocal(); renderizar(); alert("Historial borrado, lana intacta.");
-            }
-        }
+        // =============================================
+        // RELOJ
+        // =============================================
+        function updateClock() {
+            const now = new Date();
+            const h   = String(now.getHours()).padStart(2, '0');
+            const m   = String(now.getMinutes()).padStart(2, '0');
+            const s   = String(now.getSeconds()).padStart(2, '0');
+            document.getElementById('clock-display').textContent = `${h}:${m}:${s}`;
 
-        function borrarDinero() {
-            if(confirm("¿Te gastaste todo o qué pedo? Esto vacía la billetera a $0.")){
-                movimientos =[]; guardarEnLocal(); renderizar();
-            }
-        }
+            const horario = getCurrentHorario();
+            const badge   = document.getElementById('time-badge');
 
-        function borrarInventario() {
-            if(confirm("¿Borrar todas las chácharas actuales?")){
-                inventario =[]; guardarEnLocal(); renderizar();
-            }
-        }
+            badge.className  = `time-badge ${horario.badgeClass}`;
+            badge.textContent = horario.label;
 
-        function factoryReset() {
-            if(confirm("⚠️ ALTO AHÍ ⚠️\n¿ESTÁS 100% SEGURO DE QUE QUIERES MANDAR TODO A LA VERGA? SE BORRARÁ TODO TU IMPERIO.")){
-                localStorage.clear(); alert("Fue un honor. Adiós."); location.reload();
-            }
-        }
+            // actualizar el indicator en el form de sesion
+            const prev = document.getElementById('session-badge-preview');
+            if (prev) prev.textContent = horario.label;
 
-        // ===============================================
-        // RENDERIZADO MAESTRO
-        // ===============================================
-        function renderizar() {
-            // 1. FINANZAS
-            saldoRealGlobal = 0;
-            const cajaMovimientos = document.getElementById('lista-movimientos');
-            cajaMovimientos.innerHTML = '';
-
-            movimientos.forEach(mov => {
-                const esIngreso = mov.tipo === 'ingreso';
-                saldoRealGlobal += esIngreso ? Number(mov.monto) : -Number(mov.monto);
-                const fecha = new Date(mov.fecha).toLocaleDateString();
-                const claseMonto = esIngreso ? 'ingreso' : 'gasto';
-                const tagVisual = mov.etiqueta ? `<span class="etiqueta-mov ${esIngreso ? 'etiqueta-ingreso' : 'etiqueta-gasto'}">${mov.etiqueta}</span>` : '';
-                cajaMovimientos.innerHTML += `
-                    <div class="movimiento-item">
-                        <div style="flex:1;">
-                            <strong style="color: var(--amarillo-toxico);">${mov.desc}</strong>${tagVisual}<br>
-                            <small style="color: #888;">${fecha}</small>
-                        </div>
-                        <div class="${claseMonto}">${esIngreso?'+':'-'}$${mov.monto}</div>
-                    </div>`;
-            });
-            if(movimientos.length === 0) cajaMovimientos.innerHTML = '<div style="color: #666; text-align: center;">Tas pobre ahorita we.</div>';
-            document.getElementById('saldo-actual').innerText = `$${saldoRealGlobal}`;
-
-            // 2. METAS (WISHLIST)
-            const contMetas = document.getElementById('contenedor-metas');
-            contMetas.innerHTML = '';
-            metas.forEach(m => {
-                let porcentaje = (saldoRealGlobal / m.precio) * 100;
-                if(porcentaje > 100) porcentaje = 100;
-                if(porcentaje < 0) porcentaje = 0;
-                
-                const textoAlcanzado = porcentaje === 100 ? `<div style="color: var(--verde-dolar); font-weight: bold; margin-top: 10px;">¡YA TE ALCANZA PATRÓN! 🎉</div>` : '';
-
-                contMetas.innerHTML += `
-                    <div class="tarjeta-meta">
-                        <div class="meta-foto" style="background-image: url('${m.foto}');"></div>
-                        <div style="padding: 15px; display: flex; flex-direction: column; flex-grow: 1;">
-                            <h3 style="color: var(--amarillo-toxico);">${m.titulo}</h3>
-                            <div style="font-size: 1.5rem; font-family: 'Montserrat';">$${m.precio}</div>
-                            <p style="font-size: 0.8rem; color: #ccc;">${m.desc}</p>
-                            
-                            <div class="barra-progreso-bg">
-                                <div class="barra-progreso-fill" style="width: ${porcentaje}%;"></div>
-                                <div class="porcentaje-meta">${porcentaje.toFixed(1)}%</div>
-                            </div>
-                            ${textoAlcanzado}
-                            
-                            <button class="btn-secundario" style="margin-top: auto; border-color: var(--rojo-sangre); color: var(--rojo-sangre);" onclick="borrarMeta(${m.id})">Borrar Meta 🗑️</button>
-                        </div>
-                    </div>`;
-            });
-
-            // 3. INVENTARIO Y STATS
-            const contItems = document.getElementById('contenedor-items');
-            contItems.innerHTML = '';
-            let totalInvertido = 0; let totalVenta = 0; let vendidoHoy = 0;
-            const hoyStr = new Date().toDateString();
-
-            vendidos.forEach(item => { if(new Date(item.fechaVenta).toDateString() === hoyStr) vendidoHoy += Number(item.precioVentaFinal); });
-
-            inventario.forEach(item => {
-                totalInvertido += Number(item.precioCompra); totalVenta += Number(item.precioVenta);
-                let extrasHTML = '';
-                if(item.extras) item.extras.forEach(ext => extrasHTML += `<span class="detalle-badge">${ext.clave}: ${ext.valor}</span>`);
-                const badgeDueno = item.dueno === 'tio' ? `<div class="badge-propietario" style="background: var(--rojo-sangre); color: white;">DEL TÍO 👴</div>` : `<div class="badge-propietario" style="background: var(--azul-electric); color: black;">MÍO 😎</div>`;
-                
-                // NUEVO PEDO: Leemos cuántos atarrayasos lleva, si no tiene, es 0
-                const atarrayasosNum = item.atarrayasos || 0;
-
-                contItems.innerHTML += `
-                    <div class="tarjeta-item">
-                        <div class="tarjeta-foto" style="background-image: url('${item.foto}');"></div>
-                        <div class="tarjeta-info">
-                            <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-                                ${badgeDueno}
-                                <div class="badge-propietario" style="background: var(--amarillo-toxico); color: var(--negro-abismo); border-color: var(--negro-abismo);">🎣 LANCES: ${atarrayasosNum}</div>
-                            </div>
-                            <div class="titulo-bodrio">${item.titulo}</div>
-                            <div class="detalles-extras">${extrasHTML}</div>
-                            <div class="copy-fb" onclick="copiarAlPortapapeles(this, \`${item.copy}\`)">${item.copy}</div>
-                            <div style="font-size: 0.8rem; color: #888;">Inv: $${item.precioCompra} | Ganancia Esperada: <span style="color: var(--verde-dolar); font-weight: bold;">$${item.precioVenta - item.precioCompra}</span></div>
-                            <div class="precio-tag">$${item.precioVenta}</div>
-                            <div class="acciones-tarjeta">
-                                <button class="btn-accion btn-boost" title="Misiones de Boost" onclick="abrirBoost(${item.id})" style="flex: 1;">⭕</button>
-                                <button class="btn-accion" title="Atarrayaso (+1 a grupos)" onclick="tirarAtarrayaso(${item.id})" style="border-color: var(--amarillo-toxico); flex: 1;">🎣</button>
-                                <button class="btn-accion" title="Abrir Bitácora" onclick="abrirBitacora(${item.id})" style="border-color: var(--blanco-puro); flex: 1;">📖</button>
-                                <button class="btn-accion btn-sell" title="Vender" onclick="abrirVender(${item.id})" style="flex: 1;">💲</button>
-                                <button class="btn-accion btn-edit" title="Editar" onclick="editarItem(${item.id})" style="flex: 1;">✏️</button>
-                                <button class="btn-accion btn-delete" title="Borrar" onclick="borrarItem(${item.id})" style="flex: 1;">🗑️</button>                               
-                            </div>
-                        </div>
-                    </div>`;
-            });
-            document.getElementById('stat-inversion').innerText = `$${totalInvertido}`;
-            document.getElementById('stat-venta').innerText = `$${totalVenta}`;
-            document.getElementById('stat-vendido-hoy').innerText = `$${vendidoHoy}`;
-            document.getElementById('stat-pares').innerText = inventario.length;
-        }
-
-        // ===============================================
-        // MÉTODOS DE CAJÓN (AGREGAR, EDITAR, FOTO, DINÁMICOS)
-        // ===============================================
-        function abrirModal() {
-            idEditando = null; document.querySelector('#modal-agregar .modal-header').innerText = "NUEVA CHÁCHARA";
-            document.getElementById('modal-agregar').style.display = 'flex'; document.getElementById('form-item').reset();
-            document.getElementById('inp-dueno').value = 'mio'; document.getElementById('preview-caja').style.backgroundImage = 'none';
-            document.getElementById('preview-caja').innerText = 'Vista previa we'; document.getElementById('contenedor-dinamico').innerHTML = '<label>Detalles Extra</label>';
-            fotoBase64 = "https://via.placeholder.com/400x300?text=SIN+FOTO+ALV"; 
-        }
-        function cerrarModal() { document.getElementById('modal-agregar').style.display = 'none'; }
-
-        // FOTO DE LAS CHÁCHARAS CON PRENSA HIDRÁULICA
-        document.getElementById('inp-foto').addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if(file) {
-                document.getElementById('preview-caja').innerText = 'Exprimiendo foto... ⏳';
-                comprimirImagen(file, function(fotoComprimida) {
-                    fotoBase64 = fotoComprimida;
-                    document.getElementById('preview-caja').style.backgroundImage = `url(${fotoBase64})`;
-                    document.getElementById('preview-caja').innerText = '';
-                });
-            }
-        });
-        
-        function agregarCampoDinamico(c = "", v = "") {
-            const d = document.createElement('div'); d.className = 'fila-dinamica';
-            d.innerHTML = `<input type="text" class="input-mamador din-clave" placeholder="Ej: Talla" value="${c}" style="flex:1;"><input type="text" class="input-mamador din-valor" placeholder="Ej: 27 MX" value="${v}" style="flex:2;"><button type="button" class="btn-secundario" onclick="this.parentElement.remove()" style="color:red; border-color: red;">X</button>`;
-            document.getElementById('contenedor-dinamico').appendChild(d);
-        }
-
-        document.getElementById('form-item').addEventListener('submit', function(e) {
-            e.preventDefault(); let extrasArray =[];
-            const claves = document.querySelectorAll('.din-clave'); const valores = document.querySelectorAll('.din-valor');
-            for(let i=0; i<claves.length; i++) { if(claves[i].value.trim() !== "" && valores[i].value.trim() !== "") extrasArray.push({ clave: claves[i].value, valor: valores[i].value }); }
-            const duenoVal = document.getElementById('inp-dueno').value;
-            if(idEditando !== null) {
-                let item = inventario.find(x => x.id === idEditando);
-                item.titulo = document.getElementById('inp-titulo').value; item.precioCompra = Number(document.getElementById('inp-compra').value);
-                item.precioVenta = Number(document.getElementById('inp-venta').value); item.copy = document.getElementById('inp-copy').value;
-                item.dueno = duenoVal; item.extras = extrasArray;
-                if(fotoBase64 !== "https://via.placeholder.com/400x300?text=SIN+FOTO+ALV" && fotoBase64 !== "") item.foto = fotoBase64;
-            } else {
-                inventario.unshift({ id: Date.now(), titulo: document.getElementById('inp-titulo').value, precioCompra: Number(document.getElementById('inp-compra').value), precioVenta: Number(document.getElementById('inp-venta').value), foto: fotoBase64, copy: document.getElementById('inp-copy').value, dueno: duenoVal, extras: extrasArray });
-            }
-            guardarEnLocal(); renderizar(); cerrarModal();
-        });
-
-        function editarItem(id) {
-            const item = inventario.find(x => x.id === id); idEditando = id;
-            document.querySelector('#modal-agregar .modal-header').innerText = "EDITANDO CHÁCHARA ✏️";
-            document.getElementById('inp-titulo').value = item.titulo; document.getElementById('inp-compra').value = item.precioCompra;
-            document.getElementById('inp-venta').value = item.precioVenta; document.getElementById('inp-copy').value = item.copy;
-            document.getElementById('inp-dueno').value = item.dueno || 'mio'; fotoBase64 = item.foto;
-            document.getElementById('preview-caja').style.backgroundImage = `url(${fotoBase64})`; document.getElementById('preview-caja').innerText = '';
-            document.getElementById('contenedor-dinamico').innerHTML = '<label>Detalles Extra</label>';
-            if(item.extras) item.extras.forEach(ext => agregarCampoDinamico(ext.clave, ext.valor));
-            document.getElementById('modal-agregar').style.display = 'flex';
-        }
-
-        function borrarItem(id) { if(confirm("¿Seguro que quieres borrar esta cháchara padrino? 🗑️")) { inventario = inventario.filter(i => i.id !== id); guardarEnLocal(); renderizar(); } }
-
-        // ===============================================
-        // MÉTODOS DE VENTA FINANCIERA (CONFETI)
-        // ===============================================
-        function abrirVender(id) {
-            idVendiendo = id; const item = inventario.find(x => x.id === id);
-            document.getElementById('inp-precio-final').value = item.precioVenta;
-            if(item.dueno === 'tio') { document.getElementById('caja-comision-tio').style.display = 'block'; document.getElementById('inp-comision').value = 0; } 
-            else { document.getElementById('caja-comision-tio').style.display = 'none'; }
-            document.getElementById('modal-vender').style.display = 'flex';
-        }
-
-        document.getElementById('form-vender').addEventListener('submit', function(e) {
-            e.preventDefault(); const pFinal = Number(document.getElementById('inp-precio-final').value);
-            const idx = inventario.findIndex(x => x.id === idVendiendo); const item = inventario[idx];
-            const audio = document.getElementById('sonido-caja'); audio.currentTime = 0; audio.play().catch(e=>{});
-            confetti({ particleCount: 200, spread: 90, origin: { y: 0.6 }, zIndex: 9999 });
-
-            let dineroMio = item.dueno === 'tio' ? Number(document.getElementById('inp-comision').value) : pFinal;
-            if(dineroMio > 0) movimientos.unshift({ id: Date.now(), tipo: 'ingreso', monto: dineroMio, desc: item.dueno === 'tio' ? `Comisión Tío: ${item.titulo}` : `Venta: ${item.titulo}`, etiqueta: '🤑 Venta chingona', fecha: Date.now() });
-
-            const dias = Math.floor((Date.now() - item.id) / 86400000);
-            item.precioVentaFinal = pFinal; item.fechaVenta = Date.now();
-            vendidos.unshift(item); inventario.splice(idx, 1); guardarEnLocal();
-
-            document.getElementById('resumen-ganancia').innerText = `+$${dineroMio}`;
-            document.getElementById('resumen-tiempo').innerText = dias < 1 ? "Hoy mismo alvrga!!! 🔥" : `${dias} días`;
-            
-            let vHoy = 0; const hoyS = new Date().toDateString();
-            vendidos.forEach(v => { if(new Date(v.fechaVenta).toDateString() === hoyS) vHoy += Number(v.precioVentaFinal); });
-            document.getElementById('resumen-hoy').innerText = `$${vHoy}`;
-
-            document.getElementById('modal-vender').style.display = 'none'; document.getElementById('modal-resumen').style.display = 'flex'; renderizar();
-        });
-
-        // ===============================================
-        // GASTOS, INGRESOS Y EXPORTAR TICKETS
-        // ===============================================
-        function checkCustomTag(t) {
-            const s = document.getElementById(`sel-${t}-tag`); const i = document.getElementById(`inp-${t}-custom-tag`);
-            if(s.value === 'otro') { i.style.display = 'block'; i.required = true; } else { i.style.display = 'none'; i.required = false; }
-        }
-        function abrirGasto() { document.getElementById('form-gasto').reset(); document.getElementById('inp-gasto-custom-tag').style.display = 'none'; document.getElementById('modal-gasto').style.display = 'flex'; }
-        function abrirIngreso() { document.getElementById('form-ingreso').reset(); document.getElementById('inp-ingreso-custom-tag').style.display = 'none'; document.getElementById('modal-ingreso').style.display = 'flex'; }
-
-        document.getElementById('form-gasto').addEventListener('submit', function(e) {
-            e.preventDefault(); let t = document.getElementById('sel-gasto-tag').value; if(t==='otro') t = document.getElementById('inp-gasto-custom-tag').value;
-            movimientos.unshift({ id: Date.now(), tipo: 'gasto', monto: Number(document.getElementById('inp-gasto-monto').value), desc: document.getElementById('inp-gasto-desc').value, etiqueta: t, fecha: Date.now() });
-            guardarEnLocal(); renderizar(); document.getElementById('modal-gasto').style.display = 'none';
-        });
-
-        document.getElementById('form-ingreso').addEventListener('submit', function(e) {
-            e.preventDefault(); let t = document.getElementById('sel-ingreso-tag').value; if(t==='otro') t = document.getElementById('inp-ingreso-custom-tag').value;
-            movimientos.unshift({ id: Date.now(), tipo: 'ingreso', monto: Number(document.getElementById('inp-ingreso-monto').value), desc: document.getElementById('inp-ingreso-desc').value, etiqueta: t, fecha: Date.now() });
-            const au = document.getElementById('sonido-caja'); au.currentTime = 0; au.play().catch(e=>{});
-            guardarEnLocal(); renderizar(); document.getElementById('modal-ingreso').style.display = 'none';
-        });
-
-        function exportarTicket() {
-            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify({ fecha: new Date().toLocaleString(), movimientos }, null, 4));
-            const a = document.createElement('a'); a.setAttribute("href", dataStr); a.setAttribute("download", `TICKET_FINANZAS_${Date.now()}.json`);
-            document.body.appendChild(a); a.click(); a.remove(); alert("Ticket de gastos descargado padrino! 📥");
-        }
-
-        function copiarAlPortapapeles(el, txt) {
-            navigator.clipboard.writeText(txt).then(() => {
-                const o = el.innerHTML; el.innerHTML = "<strong style='color: var(--rojo-sangre); font-size: 1.2rem;'>COPIADO ñejejjej!!! 😎</strong>"; el.style.backgroundColor = "var(--amarillo-toxico)";
-                setTimeout(() => { el.innerHTML = o; el.style.backgroundColor = ""; }, 1000); 
-            });
-        }        
-        
-        // ===============================================
-        // ATARRAYASOS Y BITÁCORA (EL CHISME)
-        // ===============================================
-        
-        function tirarAtarrayaso(id) {
-            const item = inventario.find(x => x.id === id);
-            item.atarrayasos = (item.atarrayasos || 0) + 1;
-            guardarEnLocal(); 
-            renderizar();
-            // un detallazo visual en la consola pa los hackers
-            console.log("🎣 ¡ATARRAYASO TIRADO PA: " + item.titulo + "!");
-        }
-
-        let idBitacoraAbierta = null;
-
-        function abrirBitacora(id) {
-            idBitacoraAbierta = id;
-            const item = inventario.find(x => x.id === id);
-            document.getElementById('header-bitacora').innerText = `BITÁCORA: ${item.titulo}`;
-            renderizarListaBitacora();
-            document.getElementById('modal-bitacora').style.display = 'flex';
-        }
-
-        function renderizarListaBitacora() {
-            const item = inventario.find(x => x.id === idBitacoraAbierta);
-            const contenedor = document.getElementById('lista-bitacora');
-            contenedor.innerHTML = '';
-            
-            const logs = item.bitacora ||[];
-            
-            if(logs.length === 0) {
-                contenedor.innerHTML = '<div style="color: #666; text-align: center; margin-top: 20px; font-family: Space Mono;">No hay chisme anotado todavía we. Tas limpio.</div>';
-                return;
-            }
-
-            logs.forEach(log => {
-                let colorBorder, icon;
-                // La magia de los callouts estilo Obsidian
-                switch(log.tipo) {
-                    case 'peligro': colorBorder = 'var(--rojo-sangre)'; icon = '💀'; break;
-                    case 'aviso': colorBorder = 'var(--amarillo-toxico)'; icon = '⚠️'; break;
-                    case 'recordatorio': colorBorder = 'var(--azul-electric)'; icon = '📌'; break;
-                    case 'vendido': colorBorder = 'var(--verde-dolar)'; icon = '🤑'; break;
-                    case 'perdida': colorBorder = '#555555'; icon = '📉'; break;
-                    case 'cita': colorBorder = '#AAAAAA'; icon = '💬'; break;
-                    default: colorBorder = 'var(--blanco-puro)'; icon = '📝';
+            // highlight horario activo en la tabla
+            document.querySelectorAll('.horario-row').forEach((row, idx) => {
+                row.classList.remove('active-now');
+                if (Number(row.dataset.idx) === HORARIOS.indexOf(horario)) {
+                    row.classList.add('active-now');
                 }
-
-                const fecha = new Date(log.fecha).toLocaleString();
-
-                contenedor.innerHTML += `
-                    <div class="callout" style="border-left-color: ${colorBorder};">
-                        <button class="cerrar-modal" style="position: absolute; font-size: 1.2rem; top: 10px; right: 10px; color: #555;" onclick="borrarLog(${log.id})" title="Borrar este chisme">X</button>
-                        <div class="callout-titulo" style="color: ${colorBorder};">
-                            ${icon} ${log.titulo}
-                        </div>
-                        <div class="callout-texto">${log.texto}</div>
-                        <div style="font-size: 0.7rem; color: #888; margin-top: 10px; text-align: right; border-top: 1px dashed #444; padding-top: 5px;">${fecha}</div>
-                    </div>
-                `;
             });
         }
 
-        document.getElementById('form-bitacora').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const item = inventario.find(x => x.id === idBitacoraAbierta);
-            
-            // LA MAGIA NEGRA PA ENGAÑAR AL SISTEMA 🥷
-            // partimos la palabra a la mitad pa que el filtro no la lea jajajaj
-            const propiedad = 'bita' + 'cora';
-            
-            // si no existe, le creamos su arreglo de la forma mas cavernicola posible
-            if (typeof item[propiedad] === 'undefined') {
-                item[propiedad] = new Array();
+        // =============================================
+        // CALENDAR / QUINCENA
+        // =============================================
+        function buildCalendar() {
+            const today    = new Date();
+            const day      = today.getDate();
+            const month    = today.getMonth();
+            const year     = today.getFullYear();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            const monthName = today.toLocaleDateString('es-MX', { month: 'long', year: 'numeric' });
+
+            document.getElementById('today-display').textContent  = day;
+            document.getElementById('month-display').textContent   = monthName.charAt(0).toUpperCase() + monthName.slice(1);
+
+            const strip = document.getElementById('calendar-strip');
+            strip.innerHTML = '';
+
+            const isQuincena = (d) => d === 15 || d === daysInMonth;
+
+            for (let d = 1; d <= daysInMonth; d++) {
+                const el = document.createElement('div');
+                el.className = 'cal-day';
+                el.textContent = d;
+                if (d === day)       el.classList.add('today');
+                if (isQuincena(d))   el.classList.add('quincena');
+                strip.appendChild(el);
             }
-            
-            // armamos el paquete de chisme
-            const nuevoChisme = {
-                id: Date.now(),
-                tipo: document.getElementById('inp-bitacora-tipo').value,
-                titulo: document.getElementById('inp-bitacora-titulo').value,
-                texto: document.getElementById('inp-bitacora-texto').value,
-                fecha: Date.now()
-            };
-            
-            // lo aventamos adentro
-            item[propiedad].push(nuevoChisme);
-            
-            // guardamos y recargamos todo
-            guardarEnLocal();
-            renderizarListaBitacora();
-            document.getElementById('form-bitacora').reset();
+
+            if (isQuincena(day)) {
+                document.getElementById('quincena-alert').classList.add('visible');
+            }
+        }
+
+        // =============================================
+        // HORARIOS TABLE
+        // =============================================
+        function buildHorariosTable() {
+            const grid = document.getElementById('horarios-grid');
+            grid.innerHTML = '';
+            const current = getCurrentHorario();
+
+            HORARIOS.forEach((h, idx) => {
+                const row = document.createElement('div');
+                row.className = `horario-row ${h.css}`;
+                row.dataset.idx = idx;
+                if (h === current) row.classList.add('active-now');
+                row.innerHTML = `
+                    <div class="horario-time">${formatHorarioTime(h.start, h.end)}</div>
+                    <div class="horario-label">${h.label}</div>
+                `;
+                grid.appendChild(row);
+            });
+        }
+
+        // =============================================
+        // ITEMS CRUD
+        // =============================================
+        function addItem() {
+            const name = document.getElementById('inp-item-name').value.trim();
+            const priority = document.getElementById('inp-item-priority').value;
+            if (!name) {
+                showToast('❌', 'Escribe el nombre del producto we.');
+                return;
+            }
+            items.push({ id: Date.now(), name, priority });
+            document.getElementById('inp-item-name').value = '';
+            saveData();
+            renderItems();
+            showToast('✅', `"${name}" agregado.`);
+        }
+
+        document.getElementById('inp-item-name').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') addItem();
         });
 
-        function borrarLog(idLog) {
-            if(confirm("¿Seguro que quieres borrar esta pendejada de la libreta? 🗑️")) {
-                const item = inventario.find(x => x.id === idBitacoraAbierta);
-                const propiedad = 'bita' + 'cora';
-                
-                // filtramos el arreglo pa quitar el chisme que ya no quieres
-                item[propiedad] = item[propiedad].filter(chisme => chisme.id !== idLog);
-                
-                guardarEnLocal();
-                renderizarListaBitacora();
-            }
-        }
-        
-        // ===============================================
-        // SISTEMA DE BOOSTEO (HACKEANDO A MARK ZUCKERBERG)
-        // ===============================================
-        let idBoostAbierto = null;
-
-        function abrirBoost(id) {
-            idBoostAbierto = id;
-            const item = inventario.find(x => x.id === id);
-            document.getElementById('header-boost').innerText = `BOOST: ${item.titulo} ⭕`;
-            renderizarListaBoost();
-            document.getElementById('modal-boost').style.display = 'flex';
+        function deleteItem(id) {
+            items = items.filter(i => i.id !== id);
+            saveData();
+            renderItems();
+            showToast('🗑', 'Item eliminado.');
         }
 
-        function renderizarListaBoost() {
-            const item = inventario.find(x => x.id === idBoostAbierto);
-            const contenedor = document.getElementById('lista-boosts');
-            contenedor.innerHTML = '';
-            
-            const misiones = item.misionesBoost ||[];
-            
-            if(misiones.length === 0) {
-                contenedor.innerHTML = '<div style="color: #666; text-align: center; margin-top: 20px; font-family: Space Mono;">No hay links guardados. Tira las publicaciones primero y tráete los links pa acá.</div>';
+        function renderItems() {
+            const list = document.getElementById('items-list');
+            list.innerHTML = '';
+
+            if (items.length === 0) {
+                list.innerHTML = `<div class="empty-state" id="items-empty">
+                    <span class="empty-icon">👟</span>
+                    Agrega los tenis que quieres publicar hoy we.
+                </div>`;
                 return;
             }
 
-            misiones.forEach(mision => {
-                const fecha = new Date(mision.fecha).toLocaleString();
-                const estadoClase = mision.hecho ? 'hecho' : '';
-                const textoBtnHecho = mision.hecho ? 'Deshacer (Me equivoqué)' : '✅ MARCAR CHAMBA HECHA';
-                const colorBtnHecho = mision.hecho ? '#555' : 'var(--verde-dolar)';
+            const priorityOrder = { high: 0, medium: 1, low: 2 };
+            const sorted = [...items].sort((a, b) => priorityOrder[a.priority] - priorityOrder[b.priority]);
 
-                contenedor.innerHTML += `
-                    <div class="boost-item ${estadoClase}">
-                        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-                            <strong style="color: var(--amarillo-toxico); font-size: 1.1rem; text-transform: uppercase;">👥 ${mision.grupo}</strong>
-                            <button class="cerrar-modal" style="position: static; font-size: 1rem; color: var(--rojo-sangre);" onclick="borrarBoost(${mision.id})" title="Borrar este link">🗑️</button>
-                        </div>
-                        <div style="font-size: 0.75rem; color: #888;">Agregado: ${fecha}</div>
-                        
-                        <div class="boost-acciones">
-                            <button class="btn-secundario" style="flex: 1; border-color: var(--azul-electric); color: var(--azul-electric);" onclick="abrirFBLite('${mision.url}')">📱 ABRIR EN FB LITE</button>
-                            <button class="btn-secundario" style="flex: 1; border-color: ${colorBtnHecho}; color: ${colorBtnHecho};" onclick="toggleBoostHecho(${mision.id})">${textoBtnHecho}</button>
-                        </div>
+            sorted.forEach(item => {
+                const row = document.createElement('div');
+                row.className = 'item-row';
+
+                const tagMap = {
+                    high:   ['priority-high',   '🔴 Alta'],
+                    medium: ['priority-medium',  '🟡 Media'],
+                    low:    ['priority-low',     '⚫ Baja'],
+                };
+                const [tagClass, tagLabel] = tagMap[item.priority];
+
+                row.innerHTML = `
+                    <div class="item-name">${item.name}</div>
+                    <div class="item-row-right">
+                        <span class="priority-tag ${tagClass}">${tagLabel}</span>
+                        <button class="btn btn-icon btn-red" onclick="deleteItem(${item.id})" title="Borrar">✕</button>
                     </div>
                 `;
+                list.appendChild(row);
             });
         }
 
-        document.getElementById('form-boost').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const item = inventario.find(x => x.id === idBoostAbierto);
-            
-            // le damos la vuelta al error escribiendo la variable diferente we
-            let arregloMisiones = item.misionesBoost;
-            
-            if (!arregloMisiones) {
-                arregloMisiones = new Array();
-                item.misionesBoost = arregloMisiones;
+        // =============================================
+        // ALGORITHM - GENERATE SESSION
+        // =============================================
+        function generateSession() {
+            if (items.length === 0) {
+                showToast('⚠️', 'Agrega items primero we.');
+                return;
             }
 
-            // armamos la nueva mision
-            const nuevoBoost = {
-                id: Date.now(),
-                grupo: document.getElementById('inp-boost-grupo').value,
-                url: document.getElementById('inp-boost-url').value,
-                fecha: Date.now(),
-                hecho: false
+            const numPosts   = Math.max(1, parseInt(document.getElementById('inp-num-posts').value) || 5);
+            const horario    = getCurrentHorario();
+            const isPeak     = horario.type === 'peak';
+            const isGood     = horario.type === 'good';
+            const isMeh      = horario.type === 'meh';
+
+            // Ordenar items por prioridad: high > medium > low
+            const priorityScore = { high: 3, medium: 2, low: 1 };
+            const sortedItems   = [...items].sort((a, b) => priorityScore[b.priority] - priorityScore[a.priority]);
+
+            // Decidir cuántos posts por tier según el horario
+            let tierAShare, tierBShare, tierCShare;
+            if (isPeak) {
+                tierAShare = 0.60;
+                tierBShare = 0.35;
+                tierCShare = 0.05;
+            } else if (isGood) {
+                tierAShare = 0.50;
+                tierBShare = 0.40;
+                tierCShare = 0.10;
+            } else if (isMeh) {
+                tierAShare = 0.45;
+                tierBShare = 0.40;
+                tierCShare = 0.15;
+            } else { // dead / food → menos publicaciones pero seguimos
+                tierAShare = 0.55;
+                tierBShare = 0.35;
+                tierCShare = 0.10;
+            }
+
+            const postsA = Math.max(1, Math.round(numPosts * tierAShare));
+            const postsB = Math.max(1, Math.round(numPosts * tierBShare));
+            const postsC = Math.max(0, numPosts - postsA - postsB);
+
+            // Generar asignaciones de grupos de manera rotatoria
+            const pickGroups = (pool, count) => {
+                const result = [];
+                for (let i = 0; i < count; i++) {
+                    result.push(pool[i % pool.length]);
+                }
+                return result;
             };
-            
-            // la metemos a la lista
-            arregloMisiones.unshift(nuevoBoost);
-            
-            // guardamos y recargamos
-            guardarEnLocal();
-            renderizarListaBoost();
-            document.getElementById('form-boost').reset();
+
+            const groupAssignments = [
+                ...pickGroups(GROUPS.tierA, postsA),
+                ...pickGroups(GROUPS.tierB, postsB),
+                ...pickGroups(GROUPS.tierC, postsC),
+            ];
+
+            // Distribuir items rotando (con peso a los de mayor prioridad)
+            const tasks = [];
+
+            // Para cada publicación, elegimos el item con peso
+            // Los HIGH aparecen hasta 3 veces más que LOW
+            const weightedItems = [];
+            sortedItems.forEach(item => {
+                const times = priorityScore[item.priority];
+                for (let t = 0; t < times; t++) weightedItems.push(item);
+            });
+
+            groupAssignments.forEach((group, idx) => {
+                const item = weightedItems[idx % weightedItems.length];
+                const taskId = Date.now() + idx;
+                tasks.push({
+                    id: taskId,
+                    groupId: group.id,
+                    groupName: group.name,
+                    groupTier: group.tier,
+                    itemId: item.id,
+                    itemName: item.name,
+                    itemPriority: item.priority,
+                    steps: [
+                        { id: taskId + 1, type: 'publish', label: `Publica [${item.name}] en "${group.name}"`,  done: false },
+                        { id: taskId + 2, type: 'boost',   label: `Boostea la publicación con la cuenta secundaria`, done: false },
+                    ]
+                });
+            });
+
+            session = {
+                tasks,
+                generatedAt: Date.now(),
+                horarioType: horario.type,
+                horarioLabel: horario.label,
+            };
+
+            saveData();
+            renderChecklist();
+            showToast('🎯', `Sesión generada: ${tasks.length} publicaciones.`);
+
+            // scroll hacia el checklist
+            setTimeout(() => {
+                document.getElementById('checklist-card').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 200);
+        }
+
+        // =============================================
+        // RENDER CHECKLIST
+        // =============================================
+        function renderChecklist() {
+            const card = document.getElementById('checklist-card');
+
+            if (!session || session.tasks.length === 0) {
+                card.style.display = 'none';
+                return;
+            }
+
+            card.style.display = 'block';
+
+            // Progress
+            let totalSteps = 0, doneSteps = 0;
+            session.tasks.forEach(task => {
+                task.steps.forEach(step => {
+                    totalSteps++;
+                    if (step.done) doneSteps++;
+                });
+            });
+
+            const pct = totalSteps > 0 ? Math.round((doneSteps / totalSteps) * 100) : 0;
+            document.getElementById('progress-text').textContent = `${doneSteps} / ${totalSteps} pasos completados`;
+            document.getElementById('progress-pct').textContent  = `${pct}%`;
+            document.getElementById('progress-bar').style.width  = `${pct}%`;
+
+            // Stats
+            const tierCount = { A: 0, B: 0, C: 0 };
+            session.tasks.forEach(t => tierCount[t.groupTier]++);
+            document.getElementById('session-stats').innerHTML = `
+                <div class="stat-chip"><strong style="color:var(--green)">${tierCount.A}</strong><span>Tier A</span></div>
+                <div class="stat-chip"><strong style="color:var(--yellow)">${tierCount.B}</strong><span>Tier B</span></div>
+                <div class="stat-chip"><strong style="color:var(--gray)">${tierCount.C}</strong><span>Tier C</span></div>
+                <div class="stat-chip"><strong>${session.tasks.length}</strong><span>Total posts</span></div>
+                <div class="stat-chip"><strong style="font-size:0.75rem;">${session.horarioLabel}</strong><span>Horario generado</span></div>
+            `;
+
+            // All done banner
+            const allDone = doneSteps === totalSteps && totalSteps > 0;
+            document.getElementById('all-done-banner').classList.toggle('visible', allDone);
+
+            // Tasks
+            const container = document.getElementById('checklist-container');
+            container.innerHTML = '';
+
+            session.tasks.forEach((task, taskIdx) => {
+                const allTaskDone = task.steps.every(s => s.done);
+                const group = document.createElement('div');
+                group.className = `checklist-group${allTaskDone ? ' completed' : ''}`;
+
+                const tierColors = { A: 'var(--green)', B: 'var(--yellow)', C: 'var(--gray)' };
+                const tierColor  = tierColors[task.groupTier] || 'var(--text-muted)';
+
+                const priorityInfo = {
+                    high:   ['priority-high', '🔴 ALTA'],
+                    medium: ['priority-medium','🟡 MEDIA'],
+                    low:    ['priority-low',  '⚫ BAJA'],
+                };
+                const [pClass, pLabel] = priorityInfo[task.itemPriority] || ['', ''];
+
+                group.innerHTML = `
+                    <div class="checklist-group-header">
+                        <div class="post-number">${taskIdx + 1}</div>
+                        <div class="post-info">
+                            <div class="post-item-name">${task.itemName}
+                                <span class="priority-tag ${pClass}" style="margin-left:6px;">${pLabel}</span>
+                            </div>
+                            <div class="post-group-name">
+                                <span style="color:${tierColor}; font-weight:700;">Tier ${task.groupTier}</span>
+                                · ${task.groupName}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="checklist-steps">
+                        ${task.steps.map(step => `
+                            <div class="checklist-step${step.done ? ' done' : ''}"
+                                 onclick="toggleStep(${task.id}, ${step.id})">
+                                <div class="step-checkbox">
+                                    <span class="step-checkmark">✓</span>
+                                </div>
+                                <span class="step-label">${step.label}</span>
+                                <span class="step-type-badge type-${step.type}">${step.type === 'publish' ? 'Publicar' : 'Boost'}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+                container.appendChild(group);
+            });
+        }
+
+        function toggleStep(taskId, stepId) {
+            if (!session) return;
+            const task = session.tasks.find(t => t.id === taskId);
+            if (!task) return;
+            const step = task.steps.find(s => s.id === stepId);
+            if (!step) return;
+            step.done = !step.done;
+            saveData();
+            renderChecklist();
+        }
+
+        function clearSession() {
+            session = null;
+            saveData();
+            renderChecklist();
+            showToast('🧹', 'Sesión limpiada.');
+        }
+
+        // =============================================
+        // CONFIRM MODAL
+        // =============================================
+        let confirmCallback = null;
+
+        function confirmClearItems() {
+            showConfirm(
+                '¿Borrar todos los items?',
+                'Se van a ir al caño todos los tenis de tu lista. La sesión activa se mantiene.',
+                () => {
+                    items = [];
+                    saveData();
+                    renderItems();
+                    showToast('🗑', 'Lista limpiada.');
+                }
+            );
+        }
+
+        function confirmClearAll() {
+            showConfirm(
+                '¿Borrar TODO?',
+                'Se borran items y sesión activa. Sin vuelta atrás we.',
+                () => {
+                    items   = [];
+                    session = null;
+                    saveData();
+                    renderItems();
+                    renderChecklist();
+                    showToast('💀', 'Todo borrado.');
+                }
+            );
+        }
+
+        function showConfirm(title, msg, cb) {
+            document.getElementById('confirm-title').textContent = title;
+            document.getElementById('confirm-msg').textContent   = msg;
+            confirmCallback = cb;
+            document.getElementById('confirm-modal').classList.add('open');
+            document.getElementById('confirm-ok-btn').onclick = () => {
+                cb();
+                closeConfirm();
+            };
+        }
+
+        function closeConfirm() {
+            document.getElementById('confirm-modal').classList.remove('open');
+            confirmCallback = null;
+        }
+
+        // =============================================
+        // TOAST
+        // =============================================
+        let toastTimer = null;
+        function showToast(icon, text) {
+            const t = document.getElementById('toast');
+            document.getElementById('toast-icon').textContent = icon;
+            document.getElementById('toast-text').textContent = text;
+            t.classList.add('show');
+            if (toastTimer) clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => t.classList.remove('show'), 2800);
+        }
+
+        // =============================================
+        // PERSISTENCE
+        // =============================================
+        function saveData() {
+            localStorage.setItem(STORAGE_ITEMS,   JSON.stringify(items));
+            localStorage.setItem(STORAGE_SESSION, JSON.stringify(session));
+        }
+
+        function loadData() {
+            const rawItems   = localStorage.getItem(STORAGE_ITEMS);
+            const rawSession = localStorage.getItem(STORAGE_SESSION);
+            if (rawItems)   items   = JSON.parse(rawItems);
+            if (rawSession) session = JSON.parse(rawSession);
+        }
+
+        // =============================================
+        // INIT
+        // =============================================
+        window.addEventListener('DOMContentLoaded', () => {
+            loadData();
+            buildCalendar();
+            buildHorariosTable();
+            renderItems();
+            renderChecklist();
+            updateClock();
+            setInterval(updateClock, 1000);
         });
 
-        // FUNCION PA TACHAR LA MISION (YA LA HICE ALV)
-        function toggleBoostHecho(idMision) {
-            const item = inventario.find(x => x.id === idBoostAbierto);
-            const mision = item.misionesBoost.find(m => m.id === idMision);
-            if(mision) {
-                mision.hecho = !mision.hecho; // si era false la hace true y viceversa
-                guardarEnLocal();
-                renderizarListaBoost();
-            }
-        }
-
-        // FUNCION PA BORRAR EL LINK SI LA CAGASTE
-        function borrarBoost(idMision) {
-            if(confirm("¿Seguro que quieres borrar este link padrino? 🗑️")) {
-                const item = inventario.find(x => x.id === idBoostAbierto);
-                item.misionesBoost = item.misionesBoost.filter(m => m.id !== idMision);
-                guardarEnLocal();
-                renderizarListaBoost();
-            }
-        }
-
-      // MAGIA NEGRA DESACTIVADA: A LA CHINGADA, UN LINK NORMAL Y YA 📱🔥
-        function abrirFBLite(urlNormal) {
-            // nomas abrimos el link y que tu celular decida con que app abrirlo alv
-            window.open(urlNormal, '_blank');
-        }
-            
-        // === FIN DE TODO EL CÓDIGO JS ALV ===
-    </script>
-    
-    <!-- EL MOTOR PA INSTALAR LA APP (SERVICE WORKER) -->
-    <script>
+        // =============================================
+        // SERVICE WORKER
+        // =============================================
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('sw.js')
-                    .then(reg => console.log("El motor de la app jalando al 100 🗣️🔥", reg.scope))
-                    .catch(err => console.log("Valió verga la instalación del motor: ", err));
+                    .then(reg => console.log('POSTER SW registrado 🔥', reg.scope))
+                    .catch(err => console.error('SW falló:', err));
             });
         }
     </script>
-    
 </body>
 </html>
