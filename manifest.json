@@ -1,0 +1,17 @@
+{
+  "name": "VAULTIFYER OS",
+  "short_name": "Vaultifyer",
+  "description": "hecho por Jokercillo ©2026",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#D4FF00",
+  "theme_color": "#111111",
+  "icons":[
+    {
+      "src": "https://i.postimg.cc/zfW7YqVf/haz-el-logo-de-una-image.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
