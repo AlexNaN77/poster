@@ -31,6 +31,7 @@
             --orange: #FF6B35;
             --orange-dim: rgba(255, 107, 53, 0.15);
             --purple: #B36AFF;
+            --purple-dim: rgba(179, 106, 255, 0.15);
             --gray: #555;
             --gray-dim: rgba(85, 85, 85, 0.2);
 
@@ -41,6 +42,7 @@
             --shadow-green: 4px 4px 0px var(--green);
             --shadow-yellow: 4px 4px 0px var(--yellow);
             --shadow-red: 4px 4px 0px var(--red);
+            --shadow-blue: 4px 4px 0px var(--blue);
         }
 
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -61,20 +63,17 @@
             letter-spacing: -1px;
         }
 
-        /* =============================================
-           SCROLLBAR PERRA
-        ============================================= */
-        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar { width: 4px; height: 4px; }
         ::-webkit-scrollbar-track { background: var(--surface); }
         ::-webkit-scrollbar-thumb { background: var(--green); border-radius: 2px; }
 
         /* =============================================
-           HEADER / NAVBAR
+           HEADER
         ============================================= */
         .header {
             background: var(--surface);
             border-bottom: 2px solid var(--border);
-            padding: 16px 24px;
+            padding: 14px 20px;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -100,9 +99,6 @@
             gap: 12px;
         }
 
-        /* =============================================
-           RELOJ Y BADGE DE HORARIO
-        ============================================= */
         .clock-block {
             display: flex;
             flex-direction: column;
@@ -112,7 +108,7 @@
 
         .clock-time {
             font-family: 'Montserrat', sans-serif;
-            font-size: 1.4rem;
+            font-size: 1.3rem;
             font-weight: 900;
             letter-spacing: -1px;
             color: var(--text);
@@ -145,56 +141,95 @@
             color: var(--orange);
             animation: badgePulse 1s ease-in-out infinite, peakGlow 2s ease-in-out infinite;
         }
-
         @keyframes peakGlow {
             0%, 100% { box-shadow: 0 0 8px rgba(255, 107, 53, 0.3); }
             50% { box-shadow: 0 0 20px rgba(255, 107, 53, 0.6); }
         }
-
-        .badge-good {
-            background: var(--green-dim);
-            border-color: var(--green);
-            color: var(--green);
-        }
-
-        .badge-dead {
-            background: var(--gray-dim);
-            border-color: var(--gray);
-            color: var(--gray);
-        }
-
-        .badge-food {
-            background: var(--yellow-dim);
-            border-color: var(--yellow);
-            color: var(--yellow);
-        }
-
-        .badge-meh {
-            background: var(--blue-dim);
-            border-color: var(--blue);
-            color: var(--blue);
-        }
+        .badge-good { background: var(--green-dim); border-color: var(--green); color: var(--green); }
+        .badge-dead { background: var(--gray-dim); border-color: var(--gray); color: var(--gray); }
+        .badge-food { background: var(--yellow-dim); border-color: var(--yellow); color: var(--yellow); }
+        .badge-meh  { background: var(--blue-dim);  border-color: var(--blue);  color: var(--blue); }
 
         /* =============================================
-           LAYOUT PRINCIPAL
+           TABS NAV
+        ============================================= */
+        .tabs-nav {
+            background: var(--surface);
+            border-bottom: 2px solid var(--border);
+            display: flex;
+            overflow-x: auto;
+            overflow-y: hidden;
+            position: sticky;
+            top: 68px;
+            z-index: 99;
+            backdrop-filter: blur(12px);
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .tab-btn {
+            flex-shrink: 0;
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 800;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 14px 18px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border-bottom: 3px solid transparent;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .tab-btn:hover { color: var(--text); }
+        .tab-btn.active {
+            color: var(--green);
+            border-bottom-color: var(--green);
+        }
+
+        .tab-btn .count-pill {
+            background: var(--surface3);
+            color: var(--text);
+            font-size: 0.65rem;
+            padding: 1px 6px;
+            border-radius: 10px;
+            font-weight: 700;
+        }
+        .tab-btn.active .count-pill { background: var(--green); color: #000; }
+
+        /* =============================================
+           LAYOUT
         ============================================= */
         .app-container {
             max-width: 900px;
             margin: 0 auto;
-            padding: 24px 16px;
+            padding: 20px 16px 80px;
             display: flex;
             flex-direction: column;
-            gap: 28px;
+            gap: 24px;
+        }
+
+        .tab-panel { display: none; animation: fadeIn 0.3s ease; }
+        .tab-panel.active { display: flex; flex-direction: column; gap: 24px; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         /* =============================================
-           CARDS / SECCIONES
+           CARDS
         ============================================= */
         .card {
             background: var(--surface);
             border: 2px solid var(--border);
             border-radius: 16px;
-            padding: 24px;
+            padding: 22px;
             position: relative;
             transition: border-color 0.2s;
         }
@@ -224,11 +259,11 @@
             text-transform: uppercase;
             letter-spacing: 2px;
             color: var(--text-muted);
-            margin-bottom: 16px;
+            margin-bottom: 14px;
         }
 
         /* =============================================
-           QUINCENA CALENDAR
+           QUINCENA
         ============================================= */
         .quincenal-banner {
             background: linear-gradient(135deg, #1a1200 0%, #1F1F1F 100%);
@@ -243,7 +278,6 @@
             position: relative;
             overflow: hidden;
         }
-
         .quincenal-banner::before {
             content: '💰';
             position: absolute;
@@ -282,14 +316,9 @@
             align-items: center;
             gap: 6px;
         }
-
         .quincenal-alert.visible { display: inline-flex; }
 
-        .calendar-strip {
-            display: flex;
-            gap: 6px;
-            flex-wrap: wrap;
-        }
+        .calendar-strip { display: flex; gap: 6px; flex-wrap: wrap; }
 
         .cal-day {
             width: 32px;
@@ -303,30 +332,14 @@
             background: var(--surface3);
             color: var(--text-muted);
             border: 1.5px solid transparent;
-            transition: all 0.2s;
         }
-
-        .cal-day.today {
-            border-color: var(--text);
-            color: var(--text);
-            background: var(--surface2);
-        }
-
-        .cal-day.quincena {
-            background: var(--yellow-dim);
-            border-color: var(--yellow);
-            color: var(--yellow);
-            font-weight: 800;
-        }
-
+        .cal-day.today { border-color: var(--text); color: var(--text); background: var(--surface2); }
+        .cal-day.quincena { background: var(--yellow-dim); border-color: var(--yellow); color: var(--yellow); font-weight: 800; }
         .cal-day.today.quincena {
-            background: var(--yellow);
-            color: #000;
-            border-color: var(--yellow);
+            background: var(--yellow); color: #000; border-color: var(--yellow);
             box-shadow: 0 0 16px rgba(245, 197, 24, 0.5);
             animation: quincenaPulse 1.5s ease-in-out infinite;
         }
-
         @keyframes quincenaPulse {
             0%, 100% { transform: scale(1); box-shadow: 0 0 16px rgba(245, 197, 24, 0.5); }
             50% { transform: scale(1.1); box-shadow: 0 0 24px rgba(245, 197, 24, 0.8); }
@@ -376,8 +389,9 @@
             border-color: var(--green);
             box-shadow: 0 0 0 3px rgba(29, 185, 84, 0.15);
         }
-
         .inp::placeholder { color: var(--text-dim); }
+
+        textarea.inp { resize: vertical; min-height: 70px; font-family: inherit; }
 
         select.inp {
             cursor: pointer;
@@ -397,7 +411,7 @@
             font-size: 0.8rem;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            padding: 11px 20px;
+            padding: 11px 18px;
             border: 2px solid transparent;
             border-radius: 10px;
             cursor: pointer;
@@ -410,46 +424,27 @@
 
         .btn:active { transform: translate(2px, 2px); }
 
-        .btn-primary {
-            background: var(--green);
-            color: #000;
-            border-color: var(--green);
-            box-shadow: var(--shadow-green);
-        }
+        .btn-primary { background: var(--green); color: #000; border-color: var(--green); box-shadow: var(--shadow-green); }
         .btn-primary:hover { background: #17a349; box-shadow: 6px 6px 0px var(--green); }
         .btn-primary:active { box-shadow: 1px 1px 0px var(--green); }
 
-        .btn-yellow {
-            background: var(--yellow);
-            color: #000;
-            border-color: var(--yellow);
-            box-shadow: var(--shadow-yellow);
-        }
+        .btn-yellow { background: var(--yellow); color: #000; border-color: var(--yellow); box-shadow: var(--shadow-yellow); }
         .btn-yellow:hover { box-shadow: 6px 6px 0px var(--yellow); }
         .btn-yellow:active { box-shadow: 1px 1px 0px var(--yellow); }
 
-        .btn-red {
-            background: transparent;
-            color: var(--red);
-            border-color: var(--red);
-            box-shadow: none;
-            padding: 8px 12px;
-            font-size: 0.75rem;
-        }
+        .btn-blue { background: var(--blue); color: #000; border-color: var(--blue); box-shadow: var(--shadow-blue); }
+        .btn-blue:hover { box-shadow: 6px 6px 0px var(--blue); }
+        .btn-blue:active { box-shadow: 1px 1px 0px var(--blue); }
+
+        .btn-red { background: transparent; color: var(--red); border-color: var(--red); box-shadow: none; padding: 8px 12px; font-size: 0.75rem; }
         .btn-red:hover { background: var(--red-dim); box-shadow: 3px 3px 0px var(--red); }
 
-        .btn-ghost {
-            background: transparent;
-            color: var(--text-muted);
-            border-color: var(--border);
-        }
+        .btn-ghost { background: transparent; color: var(--text-muted); border-color: var(--border); }
         .btn-ghost:hover { border-color: var(--text-muted); color: var(--text); }
 
-        .btn-icon {
-            padding: 8px;
-            min-width: 36px;
-            justify-content: center;
-        }
+        .btn-icon { padding: 8px; min-width: 36px; justify-content: center; }
+
+        .btn-full { width: 100%; justify-content: center; }
 
         /* =============================================
            PRIORITY TAGS
@@ -467,18 +462,194 @@
             border: 1.5px solid;
         }
 
-        .priority-high { background: var(--red-dim); border-color: var(--red); color: var(--red); }
+        .priority-high   { background: var(--red-dim);    border-color: var(--red);    color: var(--red); }
         .priority-medium { background: var(--yellow-dim); border-color: var(--yellow); color: var(--yellow); }
-        .priority-low { background: var(--gray-dim); border-color: var(--gray); color: var(--gray); }
+        .priority-low    { background: var(--gray-dim);   border-color: var(--gray);   color: var(--gray); }
+
+        /* STATUS TAGS (para inventario) */
+        .status-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.65rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border: 1.5px solid;
+        }
+        .status-available { background: var(--green-dim);  border-color: var(--green);  color: var(--green); }
+        .status-reserved  { background: var(--yellow-dim); border-color: var(--yellow); color: var(--yellow); }
+        .status-sold      { background: var(--purple-dim); border-color: var(--purple); color: var(--purple); }
+        .status-returned  { background: var(--red-dim);    border-color: var(--red);    color: var(--red); }
 
         /* =============================================
-           ITEMS LIST
+           INVENTORY GRID
         ============================================= */
-        .items-list {
+        .inventory-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 14px;
+        }
+
+        .inv-card {
+            background: var(--surface2);
+            border: 1.5px solid var(--border);
+            border-radius: 14px;
+            overflow: hidden;
+            transition: all 0.2s;
             display: flex;
             flex-direction: column;
+            animation: slideIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+        .inv-card:hover { border-color: var(--surface3); transform: translateY(-2px); }
+
+        .inv-card.is-sold     { opacity: 0.65; }
+        .inv-card.is-reserved { border-color: var(--yellow); }
+
+        .inv-photo {
+            width: 100%;
+            aspect-ratio: 4/3;
+            background: var(--surface3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+            cursor: pointer;
+        }
+        .inv-photo img { width: 100%; height: 100%; object-fit: cover; }
+        .inv-photo-placeholder { color: var(--text-dim); font-size: 2.5rem; }
+
+        .inv-photo-overlay {
+            position: absolute;
+            bottom: 8px;
+            right: 8px;
+            display: flex;
+            gap: 6px;
+        }
+
+        .inv-body { padding: 14px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
+
+        .inv-top-row {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
             gap: 8px;
         }
+
+        .inv-name {
+            font-weight: 700;
+            font-size: 1rem;
+            line-height: 1.2;
+            flex: 1;
+        }
+
+        .inv-meta {
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .inv-meta span { display: inline-flex; align-items: center; gap: 3px; }
+
+        .inv-prices {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6px;
+            padding: 8px;
+            background: var(--bg);
+            border-radius: 8px;
+            margin-top: 4px;
+        }
+        .inv-price-item { display: flex; flex-direction: column; gap: 1px; }
+        .inv-price-label { font-size: 0.6rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; font-weight: 700; }
+        .inv-price-val { font-family: 'Montserrat', sans-serif; font-weight: 800; font-size: 0.95rem; }
+        .inv-price-val.cost   { color: var(--red); }
+        .inv-price-val.profit { color: var(--green); }
+        .inv-price-val.min    { color: var(--yellow); font-size: 0.85rem; }
+
+        .inv-margin-chip {
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 6px;
+            background: var(--green-dim);
+            color: var(--green);
+            align-self: flex-start;
+        }
+
+        .inv-actions {
+            display: flex;
+            gap: 6px;
+            margin-top: auto;
+            padding-top: 8px;
+            border-top: 1px solid var(--border);
+            flex-wrap: wrap;
+        }
+
+        .inv-actions .btn {
+            padding: 7px 10px;
+            font-size: 0.68rem;
+            flex: 1;
+            justify-content: center;
+        }
+
+        /* =============================================
+           FILTERS BAR
+        ============================================= */
+        .filters-bar {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+
+        .filter-chip {
+            background: var(--surface2);
+            border: 1.5px solid var(--border);
+            color: var(--text-muted);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .filter-chip:hover { color: var(--text); border-color: var(--surface3); }
+        .filter-chip.active {
+            background: var(--green-dim);
+            border-color: var(--green);
+            color: var(--green);
+        }
+
+        /* =============================================
+           PHOTO VIEWER MODAL
+        ============================================= */
+        .photo-viewer {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.95);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            padding: 20px;
+            cursor: pointer;
+        }
+        .photo-viewer.open { display: flex; }
+        .photo-viewer img { max-width: 100%; max-height: 100%; border-radius: 12px; }
+
+        /* =============================================
+           ITEMS LIST (checklist del día - sistema antiguo integrado con inventario)
+        ============================================= */
+        .items-list { display: flex; flex-direction: column; gap: 8px; }
 
         .item-row {
             display: flex;
@@ -487,8 +658,8 @@
             background: var(--surface2);
             border: 1.5px solid var(--border);
             border-radius: 10px;
-            padding: 12px 16px;
-            gap: 12px;
+            padding: 10px 14px;
+            gap: 10px;
             transition: all 0.2s;
             animation: slideIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
         }
@@ -498,22 +669,28 @@
             to { opacity: 1; transform: translateY(0) scale(1); }
         }
 
-        .item-row:hover {
-            border-color: var(--surface3);
+        .item-row:hover { border-color: var(--surface3); background: var(--surface3); }
+
+        .item-thumb {
+            width: 44px;
+            height: 44px;
+            border-radius: 8px;
             background: var(--surface3);
-        }
-
-        .item-name {
-            font-weight: 600;
-            font-size: 0.95rem;
-            flex: 1;
-        }
-
-        .item-row-right {
+            flex-shrink: 0;
+            overflow: hidden;
             display: flex;
             align-items: center;
-            gap: 10px;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: var(--text-dim);
         }
+        .item-thumb img { width: 100%; height: 100%; object-fit: cover; }
+
+        .item-info { flex: 1; min-width: 0; }
+        .item-name { font-weight: 600; font-size: 0.9rem; }
+        .item-sub { font-size: 0.7rem; color: var(--text-muted); margin-top: 2px; }
+
+        .item-row-right { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
 
         .empty-state {
             text-align: center;
@@ -529,11 +706,11 @@
         }
 
         /* =============================================
-           GRUPOS (TIER SYSTEM)
+           GRUPOS
         ============================================= */
         .groups-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
             gap: 10px;
         }
 
@@ -547,7 +724,6 @@
             padding: 12px;
             transition: all 0.2s;
         }
-
         .group-chip:hover { border-color: var(--surface3); }
 
         .tier-dot {
@@ -558,22 +734,29 @@
             margin-top: 5px;
         }
 
-        .tier-a .tier-dot { background: var(--green); box-shadow: 0 0 6px var(--green); }
+        .tier-a .tier-dot { background: var(--green);  box-shadow: 0 0 6px var(--green); }
         .tier-b .tier-dot { background: var(--yellow); box-shadow: 0 0 6px var(--yellow); }
         .tier-c .tier-dot { background: var(--gray); }
 
-        .group-name {
-            font-size: 0.8rem;
-            font-weight: 600;
-            line-height: 1.3;
-        }
+        .group-chip-body { flex: 1; min-width: 0; }
+        .group-name { font-size: 0.85rem; font-weight: 600; line-height: 1.3; }
+        .group-desc { font-size: 0.7rem; color: var(--text-muted); margin-top: 2px; line-height: 1.4; }
 
-        .group-desc {
-            font-size: 0.7rem;
-            color: var(--text-muted);
-            margin-top: 2px;
-            line-height: 1.4;
+        .group-stats {
+            display: flex;
+            gap: 8px;
+            margin-top: 6px;
+            font-size: 0.65rem;
+            flex-wrap: wrap;
         }
+        .group-stat {
+            background: var(--bg);
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+        .group-stat strong { color: var(--text); }
 
         .tier-label {
             font-size: 0.65rem;
@@ -585,41 +768,35 @@
             margin-bottom: 8px;
             display: inline-block;
         }
-
-        .tier-label-a { background: rgba(29,185,84,0.15); color: var(--green); }
+        .tier-label-a { background: rgba(29,185,84,0.15);  color: var(--green); }
         .tier-label-b { background: rgba(245,197,24,0.15); color: var(--yellow); }
-        .tier-label-c { background: rgba(85,85,85,0.15); color: var(--gray); }
+        .tier-label-c { background: rgba(85,85,85,0.15);   color: var(--gray); }
+
+        .group-url-link {
+            font-size: 0.65rem;
+            color: var(--blue);
+            margin-top: 4px;
+            display: inline-block;
+            text-decoration: none;
+            opacity: 0.75;
+        }
+        .group-url-link:hover { opacity: 1; text-decoration: underline; }
 
         /* =============================================
-           SESSION GENERATOR
+           SESSION GEN
         ============================================= */
-        .session-config {
-            display: flex;
-            gap: 12px;
-            align-items: flex-end;
-            flex-wrap: wrap;
-        }
-
+        .session-config { display: flex; gap: 12px; align-items: flex-end; flex-wrap: wrap; }
         .time-indicator {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            background: var(--surface2);
-            border: 1.5px solid var(--border);
-            border-radius: 10px;
-            padding: 10px 14px;
-            font-size: 0.8rem;
-            color: var(--text-muted);
+            display: flex; align-items: center; gap: 8px;
+            background: var(--surface2); border: 1.5px solid var(--border);
+            border-radius: 10px; padding: 10px 14px;
+            font-size: 0.8rem; color: var(--text-muted);
         }
 
         /* =============================================
            CHECKLIST
         ============================================= */
-        .checklist-container {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
+        .checklist-container { display: flex; flex-direction: column; gap: 12px; }
 
         .checklist-group {
             background: var(--surface2);
@@ -629,14 +806,10 @@
             transition: all 0.3s;
             animation: slideIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
         }
-
-        .checklist-group.completed {
-            opacity: 0.5;
-            border-color: var(--green);
-        }
+        .checklist-group.completed { opacity: 0.5; border-color: var(--green); }
 
         .checklist-group-header {
-            padding: 14px 18px;
+            padding: 12px 16px;
             display: flex;
             align-items: center;
             gap: 10px;
@@ -645,44 +818,39 @@
         }
 
         .post-number {
-            width: 28px;
-            height: 28px;
-            background: var(--green);
-            color: #000;
+            width: 28px; height: 28px;
+            background: var(--green); color: #000;
             border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            display: flex; align-items: center; justify-content: center;
             font-family: 'Montserrat', sans-serif;
-            font-weight: 900;
-            font-size: 0.8rem;
+            font-weight: 900; font-size: 0.8rem;
             flex-shrink: 0;
         }
+        .checklist-group.completed .post-number { background: var(--surface3); color: var(--text-muted); }
 
-        .checklist-group.completed .post-number {
-            background: var(--surface3);
-            color: var(--text-muted);
+        .post-info { flex: 1; min-width: 0; }
+        .post-item-name { font-weight: 700; font-size: 0.9rem; line-height: 1.2; }
+        .post-group-name { font-size: 0.72rem; color: var(--text-muted); margin-top: 2px; }
+
+        .quick-post-btn {
+            background: var(--blue); color: #000;
+            border: 2px solid var(--blue);
+            box-shadow: 3px 3px 0px var(--blue);
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-weight: 800; font-size: 0.7rem;
+            font-family: 'Montserrat', sans-serif;
+            text-transform: uppercase;
+            cursor: pointer;
+            flex-shrink: 0;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
         }
+        .quick-post-btn:hover { box-shadow: 5px 5px 0px var(--blue); }
+        .quick-post-btn:active { transform: translate(2px,2px); box-shadow: 1px 1px 0px var(--blue); }
 
-        .post-info { flex: 1; }
-
-        .post-item-name {
-            font-weight: 700;
-            font-size: 0.95rem;
-        }
-
-        .post-group-name {
-            font-size: 0.75rem;
-            color: var(--text-muted);
-            margin-top: 1px;
-        }
-
-        .checklist-steps {
-            padding: 12px 18px;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
+        .checklist-steps { padding: 10px 16px; display: flex; flex-direction: column; gap: 6px; }
 
         .checklist-step {
             display: flex;
@@ -693,26 +861,18 @@
             padding: 8px 0;
             border-bottom: 1px solid var(--border);
         }
-
         .checklist-step:last-child { border-bottom: none; }
 
         .step-checkbox {
-            width: 20px;
-            height: 20px;
+            width: 20px; height: 20px;
             border: 2px solid var(--border);
             border-radius: 6px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            display: flex; align-items: center; justify-content: center;
             flex-shrink: 0;
             transition: all 0.2s;
             background: transparent;
         }
-
-        .checklist-step.done .step-checkbox {
-            background: var(--green);
-            border-color: var(--green);
-        }
+        .checklist-step.done .step-checkbox { background: var(--green); border-color: var(--green); }
 
         .step-checkmark {
             opacity: 0;
@@ -721,41 +881,31 @@
             font-weight: 900;
             transition: opacity 0.15s;
         }
-
         .checklist-step.done .step-checkmark { opacity: 1; }
 
         .step-label {
-            font-size: 0.85rem;
+            font-size: 0.82rem;
             font-weight: 500;
             color: var(--text);
-            transition: all 0.2s;
             flex: 1;
         }
-
-        .checklist-step.done .step-label {
-            text-decoration: line-through;
-            color: var(--text-dim);
-        }
+        .checklist-step.done .step-label { text-decoration: line-through; color: var(--text-dim); }
 
         .step-type-badge {
-            font-size: 0.65rem;
+            font-size: 0.63rem;
             padding: 2px 7px;
             border-radius: 4px;
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
-
-        .type-publish { background: rgba(0,180,216,0.15); color: var(--blue); }
-        .type-boost { background: rgba(179,106,255,0.15); color: var(--purple); }
+        .type-publish { background: rgba(0,180,216,0.15);  color: var(--blue); }
+        .type-boost   { background: rgba(179,106,255,0.15); color: var(--purple); }
 
         /* =============================================
-           PROGRESS BAR
+           PROGRESS
         ============================================= */
-        .progress-container {
-            margin-bottom: 16px;
-        }
-
+        .progress-container { margin-bottom: 16px; }
         .progress-info {
             display: flex;
             justify-content: space-between;
@@ -763,31 +913,13 @@
             font-size: 0.8rem;
             color: var(--text-muted);
         }
-
-        .progress-bar-bg {
-            height: 6px;
-            background: var(--surface3);
-            border-radius: 3px;
-            overflow: hidden;
-        }
-
-        .progress-bar-fill {
-            height: 100%;
-            background: var(--green);
-            border-radius: 3px;
-            transition: width 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
+        .progress-bar-bg { height: 6px; background: var(--surface3); border-radius: 3px; overflow: hidden; }
+        .progress-bar-fill { height: 100%; background: var(--green); border-radius: 3px; transition: width 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); }
 
         /* =============================================
-           STATS BAR (SESION)
+           STATS
         ============================================= */
-        .session-stats {
-            display: flex;
-            gap: 16px;
-            flex-wrap: wrap;
-            margin-bottom: 16px;
-        }
-
+        .session-stats { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 16px; }
         .stat-chip {
             background: var(--surface2);
             border: 1.5px solid var(--border);
@@ -795,7 +927,6 @@
             padding: 8px 14px;
             font-size: 0.75rem;
         }
-
         .stat-chip strong {
             display: block;
             font-family: 'Montserrat', sans-serif;
@@ -804,17 +935,52 @@
             line-height: 1;
             margin-bottom: 2px;
         }
+        .stat-chip span { color: var(--text-muted); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px; }
 
-        .stat-chip span { color: var(--text-muted); }
+        /* BIG STATS CARDS */
+        .big-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 12px;
+            margin-bottom: 20px;
+        }
 
-        /* =============================================
-           HORARIOS TABLE
-        ============================================= */
-        .horarios-grid {
+        .big-stat-card {
+            background: var(--surface2);
+            border: 2px solid var(--border);
+            border-radius: 14px;
+            padding: 16px;
             display: flex;
             flex-direction: column;
-            gap: 6px;
+            gap: 4px;
         }
+
+        .big-stat-label {
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--text-muted);
+            font-weight: 700;
+        }
+        .big-stat-value {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 900;
+            font-size: 1.6rem;
+            line-height: 1;
+            letter-spacing: -1px;
+        }
+        .big-stat-sub { font-size: 0.7rem; color: var(--text-dim); margin-top: 2px; }
+
+        .big-stat-card.green  .big-stat-value { color: var(--green); }
+        .big-stat-card.yellow .big-stat-value { color: var(--yellow); }
+        .big-stat-card.red    .big-stat-value { color: var(--red); }
+        .big-stat-card.blue   .big-stat-value { color: var(--blue); }
+        .big-stat-card.purple .big-stat-value { color: var(--purple); }
+
+        /* =============================================
+           HORARIOS
+        ============================================= */
+        .horarios-grid { display: flex; flex-direction: column; gap: 6px; }
 
         .horario-row {
             display: flex;
@@ -827,11 +993,7 @@
             font-size: 0.8rem;
             transition: all 0.3s;
         }
-
-        .horario-row.active-now {
-            border-color: var(--orange) !important;
-            background: var(--orange-dim) !important;
-        }
+        .horario-row.active-now { border-color: var(--orange) !important; background: var(--orange-dim) !important; }
 
         .horario-time {
             font-family: 'Montserrat', sans-serif;
@@ -840,19 +1002,127 @@
             min-width: 90px;
             color: var(--text-muted);
         }
-
         .horario-row.active-now .horario-time { color: var(--orange); }
-
         .horario-label { flex: 1; font-weight: 500; }
+        .horario-stat  { font-size: 0.65rem; color: var(--text-muted); font-weight: 700; }
 
-        /* =============================================
-           HORARIO COLORS
-        ============================================= */
         .hr-peak { border-color: rgba(255,107,53,0.3); }
         .hr-good { border-color: rgba(29,185,84,0.2); }
         .hr-dead { border-color: rgba(85,85,85,0.2); }
         .hr-food { border-color: rgba(245,197,24,0.2); }
-        .hr-meh { border-color: rgba(0,180,216,0.2); }
+        .hr-meh  { border-color: rgba(0,180,216,0.2); }
+
+        /* =============================================
+           CONTACTS
+        ============================================= */
+        .contacts-list { display: flex; flex-direction: column; gap: 10px; }
+
+        .contact-card {
+            background: var(--surface2);
+            border: 1.5px solid var(--border);
+            border-radius: 12px;
+            padding: 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            animation: slideIn 0.3s ease forwards;
+        }
+        .contact-card.status-cold      { opacity: 0.65; }
+        .contact-card.status-converted { border-color: var(--green); }
+        .contact-card.status-lost      { opacity: 0.45; border-color: var(--red); }
+
+        .contact-top {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .contact-name {
+            font-weight: 700;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .contact-meta { font-size: 0.72rem; color: var(--text-muted); margin-top: 2px; display: flex; gap: 10px; flex-wrap: wrap; }
+
+        .contact-interested {
+            font-size: 0.78rem;
+            background: var(--bg);
+            padding: 8px 10px;
+            border-radius: 8px;
+            color: var(--text-muted);
+        }
+        .contact-interested strong { color: var(--text); }
+
+        .contact-notes {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            font-style: italic;
+            background: var(--bg);
+            padding: 8px 10px;
+            border-radius: 8px;
+        }
+
+        .contact-actions {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+        .contact-actions .btn { padding: 7px 10px; font-size: 0.68rem; }
+
+        .status-cold-tag      { background: var(--blue-dim);   border-color: var(--blue);   color: var(--blue); }
+        .status-converted-tag { background: var(--green-dim);  border-color: var(--green);  color: var(--green); }
+        .status-lost-tag      { background: var(--red-dim);    border-color: var(--red);    color: var(--red); }
+        .status-active-tag    { background: var(--yellow-dim); border-color: var(--yellow); color: var(--yellow); }
+
+        /* =============================================
+           SALES LOG
+        ============================================= */
+        .sales-list { display: flex; flex-direction: column; gap: 10px; }
+
+        .sale-card {
+            background: var(--surface2);
+            border: 1.5px solid var(--border);
+            border-radius: 12px;
+            padding: 14px;
+            display: flex;
+            gap: 12px;
+            animation: slideIn 0.3s ease forwards;
+        }
+        .sale-thumb {
+            width: 56px; height: 56px;
+            border-radius: 10px;
+            background: var(--surface3);
+            flex-shrink: 0;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .sale-thumb img { width: 100%; height: 100%; object-fit: cover; }
+
+        .sale-body { flex: 1; min-width: 0; }
+        .sale-name { font-weight: 700; font-size: 0.95rem; }
+        .sale-meta { font-size: 0.72rem; color: var(--text-muted); margin-top: 2px; }
+
+        .sale-numbers {
+            display: flex;
+            gap: 10px;
+            margin-top: 8px;
+            flex-wrap: wrap;
+        }
+        .sale-number-chip {
+            background: var(--bg);
+            padding: 4px 9px;
+            border-radius: 6px;
+            font-size: 0.72rem;
+            font-weight: 700;
+        }
+        .sale-profit { color: var(--green); }
+        .sale-loss   { color: var(--red); }
 
         /* =============================================
            MODAL
@@ -867,6 +1137,7 @@
             justify-content: center;
             z-index: 500;
             padding: 20px;
+            overflow-y: auto;
         }
 
         .modal-overlay.open { display: flex; }
@@ -874,12 +1145,16 @@
         .modal {
             background: var(--surface);
             border: 2px solid var(--border);
-            border-radius: 20px;
-            padding: 28px;
-            max-width: 420px;
+            border-radius: 18px;
+            padding: 24px;
+            max-width: 500px;
             width: 100%;
+            max-height: calc(100vh - 40px);
+            overflow-y: auto;
             animation: modalIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
         }
+
+        .modal.big { max-width: 640px; }
 
         @keyframes modalIn {
             from { transform: scale(0.9) translateY(20px); opacity: 0; }
@@ -888,7 +1163,7 @@
 
         .modal-title {
             font-size: 1.2rem;
-            margin-bottom: 20px;
+            margin-bottom: 16px;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -904,7 +1179,6 @@
             line-height: 1;
             transition: color 0.2s;
         }
-
         .modal-close:hover { color: var(--red); }
 
         .modal-actions {
@@ -915,14 +1189,26 @@
             flex-wrap: wrap;
         }
 
+        .modal-form {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .modal-form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
         /* =============================================
-           TOAST NOTIFICATION
+           TOAST
         ============================================= */
         .toast {
             position: fixed;
             bottom: 24px;
             left: 50%;
-            transform: translateX(-50%) translateY(100px);
+            transform: translateX(-50%) translateY(120px);
             background: var(--surface);
             border: 2px solid var(--green);
             color: var(--text);
@@ -933,26 +1219,19 @@
             z-index: 9999;
             transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
             box-shadow: 0 8px 32px rgba(0,0,0,0.5);
-            white-space: nowrap;
             display: flex;
             align-items: center;
             gap: 8px;
+            max-width: calc(100vw - 40px);
+            text-align: center;
         }
-
         .toast.show { transform: translateX(-50%) translateY(0); }
 
         /* =============================================
            DIVIDER
         ============================================= */
-        .divider {
-            height: 1px;
-            background: var(--border);
-            margin: 16px 0;
-        }
+        .divider { height: 1px; background: var(--border); margin: 16px 0; }
 
-        /* =============================================
-           RESET / DANGER ZONE
-        ============================================= */
         .danger-zone {
             border: 1.5px dashed var(--red);
             border-radius: 12px;
@@ -969,26 +1248,26 @@
             margin-bottom: 12px;
         }
 
-        .btn-row {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
+        .info-zone {
+            border: 1.5px dashed var(--blue);
+            border-radius: 12px;
+            padding: 16px;
+            background: rgba(0,180,216,0.03);
+            margin-bottom: 14px;
+        }
+        .info-zone-title {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--blue);
+            font-weight: 700;
+            margin-bottom: 10px;
         }
 
-        /* =============================================
-           RESPONSIVE
-        ============================================= */
-        @media (max-width: 600px) {
-            .header { padding: 12px 16px; }
-            .logo { font-size: 1.4rem; }
-            .clock-time { font-size: 1.1rem; }
-            .app-container { padding: 16px 12px; }
-            .card { padding: 18px; }
-            .groups-grid { grid-template-columns: 1fr 1fr; }
-        }
+        .btn-row { display: flex; gap: 8px; flex-wrap: wrap; }
 
         /* =============================================
-           ALL DONE ANIMATION
+           ALL DONE
         ============================================= */
         .all-done-banner {
             background: linear-gradient(135deg, rgba(29,185,84,0.2), rgba(29,185,84,0.05));
@@ -999,25 +1278,30 @@
             display: none;
             animation: slideIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
         }
-
         .all-done-banner.visible { display: block; }
+        .all-done-banner .done-icon { font-size: 3rem; display: block; margin-bottom: 8px; }
+        .all-done-banner h3 { color: var(--green); font-size: 1.4rem; margin-bottom: 4px; }
+        .all-done-banner p { color: var(--text-muted); font-size: 0.85rem; }
 
-        .all-done-banner .done-icon {
-            font-size: 3rem;
-            display: block;
-            margin-bottom: 8px;
+        /* =============================================
+           RESPONSIVE
+        ============================================= */
+        @media (max-width: 600px) {
+            .header { padding: 12px 16px; }
+            .logo { font-size: 1.4rem; }
+            .clock-time { font-size: 1.1rem; }
+            .tabs-nav { top: 62px; }
+            .tab-btn { padding: 12px 14px; font-size: 0.7rem; }
+            .app-container { padding: 16px 12px 80px; }
+            .card { padding: 18px; }
+            .inventory-grid { grid-template-columns: 1fr; }
+            .groups-grid { grid-template-columns: 1fr; }
+            .modal-form-row { grid-template-columns: 1fr; }
+            .big-stats-grid { grid-template-columns: 1fr 1fr; }
         }
 
-        .all-done-banner h3 {
-            color: var(--green);
-            font-size: 1.4rem;
-            margin-bottom: 4px;
-        }
-
-        .all-done-banner p {
-            color: var(--text-muted);
-            font-size: 0.85rem;
-        }
+        /* Hide image picker input */
+        .hidden-input { display: none; }
     </style>
 </head>
 <body>
@@ -1033,215 +1317,543 @@
         </div>
     </header>
 
+    <!-- TABS -->
+    <nav class="tabs-nav">
+        <button class="tab-btn active" data-tab="hoy">🔥 Hoy</button>
+        <button class="tab-btn" data-tab="inventario">👟 Inventario <span class="count-pill" id="count-inventory">0</span></button>
+        <button class="tab-btn" data-tab="ventas">💰 Ventas</button>
+        <button class="tab-btn" data-tab="contactos">💬 Contactos <span class="count-pill" id="count-contacts">0</span></button>
+        <button class="tab-btn" data-tab="grupos">👥 Grupos</button>
+        <button class="tab-btn" data-tab="stats">📊 Stats</button>
+        <button class="tab-btn" data-tab="datos">⚙️ Datos</button>
+    </nav>
+
     <div class="app-container">
 
-        <!-- QUINCENA CALENDAR -->
-        <div class="quincenal-banner" id="quincena-section">
-            <div>
-                <div class="quincenal-today-label">Hoy es</div>
-                <div class="quincenal-today-num" id="today-display">—</div>
-                <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 2px;" id="month-display">—</div>
+        <!-- ================ TAB HOY ================ -->
+        <div class="tab-panel active" id="panel-hoy">
+
+            <!-- QUINCENA -->
+            <div class="quincenal-banner" id="quincena-section">
+                <div>
+                    <div class="quincenal-today-label">Hoy es</div>
+                    <div class="quincenal-today-num" id="today-display">—</div>
+                    <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 2px;" id="month-display">—</div>
+                </div>
+                <div id="quincena-alert" class="quincenal-alert">
+                    💰 ¡QUINCENA! Satura los grupos grandes.
+                </div>
+                <div>
+                    <div class="section-label" style="margin-bottom: 10px;">Este mes</div>
+                    <div class="calendar-strip" id="calendar-strip"></div>
+                </div>
             </div>
-            <div id="quincena-alert" class="quincenal-alert">
-                💰 ¡DÍA DE QUINCENA! Satura los grupos grandes ahorita.
+
+            <!-- ITEMS A PUBLICAR HOY -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">🛒 Pa' publicar hoy</div>
+                    <button class="btn btn-ghost" onclick="switchTab('inventario')">+ Desde inventario</button>
+                </div>
+
+                <div class="items-list" id="items-list">
+                    <div class="empty-state" id="items-empty">
+                        <span class="empty-icon">👟</span>
+                        Ve al tab <strong>Inventario</strong> y marca los tenis que quieres publicar hoy.
+                    </div>
+                </div>
             </div>
-            <div>
-                <div class="section-label" style="margin-bottom: 10px;">Este mes</div>
-                <div class="calendar-strip" id="calendar-strip"></div>
+
+            <!-- GENERAR SESION -->
+            <div class="card" id="session-card">
+                <div class="card-header">
+                    <div class="card-title">⚡ Generar sesión</div>
+                </div>
+
+                <div class="session-config">
+                    <div class="form-group" style="min-width: 140px; max-width: 180px;">
+                        <label>¿Cuántos posts?</label>
+                        <input type="number" id="inp-num-posts" class="inp" value="5" min="1" max="30">
+                    </div>
+                    <div class="time-indicator" id="session-time-indicator">
+                        <span id="session-badge-preview">🟢 Buen horario</span>
+                    </div>
+                    <button class="btn btn-yellow" onclick="generateSession()" style="flex-shrink:0; align-self:flex-end;">
+                        🎯 Generar
+                    </button>
+                </div>
+                <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 12px;">
+                    El algoritmo distribuye según prioridad, horario y los <strong style="color:var(--green)">tiers dinámicos</strong> calculados con tus ventas reales.
+                </p>
             </div>
+
+            <!-- CHECKLIST -->
+            <div class="card" id="checklist-card" style="display: none;">
+                <div class="card-header">
+                    <div class="card-title">📋 Sesión activa</div>
+                    <button class="btn btn-ghost" onclick="clearSession()">Limpiar</button>
+                </div>
+
+                <div class="progress-container">
+                    <div class="progress-info">
+                        <span id="progress-text">0 / 0 pasos completados</span>
+                        <span id="progress-pct" style="color: var(--green); font-weight: 700;">0%</span>
+                    </div>
+                    <div class="progress-bar-bg">
+                        <div class="progress-bar-fill" id="progress-bar" style="width: 0%;"></div>
+                    </div>
+                </div>
+
+                <div class="session-stats" id="session-stats"></div>
+
+                <div class="all-done-banner" id="all-done-banner">
+                    <span class="done-icon">🏆</span>
+                    <h3>¡SESIÓN COMPLETADA!</h3>
+                    <p>Chingón we, ya tiraste todo. Espera la siguiente hora peak.</p>
+                </div>
+
+                <div class="checklist-container" id="checklist-container"></div>
+            </div>
+
+            <!-- HORARIOS -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">⏰ Horarios <span style="font-size:0.7rem;color:var(--text-muted);font-weight:500;text-transform:none;letter-spacing:0;">(con tus datos)</span></div>
+                </div>
+                <div class="horarios-grid" id="horarios-grid"></div>
+            </div>
+
         </div>
 
-        <!-- MIS ITEMS A PUBLICAR -->
-        <div class="card">
-            <div class="card-header">
-                <div class="card-title">🛒 Mis items pa' publicar</div>
+        <!-- ================ TAB INVENTARIO ================ -->
+        <div class="tab-panel" id="panel-inventario">
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">👟 Inventario</div>
+                    <button class="btn btn-primary" onclick="openInventoryModal()">+ Agregar par</button>
+                </div>
+
+                <div class="filters-bar">
+                    <div class="filter-chip active" data-filter="all" onclick="setInventoryFilter('all')">Todos <span id="f-count-all">0</span></div>
+                    <div class="filter-chip" data-filter="available" onclick="setInventoryFilter('available')">🟢 Disponibles <span id="f-count-available">0</span></div>
+                    <div class="filter-chip" data-filter="reserved" onclick="setInventoryFilter('reserved')">🟡 Apartados <span id="f-count-reserved">0</span></div>
+                    <div class="filter-chip" data-filter="sold" onclick="setInventoryFilter('sold')">💜 Vendidos <span id="f-count-sold">0</span></div>
+                    <div class="filter-chip" data-filter="returned" onclick="setInventoryFilter('returned')">🔴 Devueltos <span id="f-count-returned">0</span></div>
+                </div>
+
+                <div class="inventory-grid" id="inventory-grid"></div>
+                <div class="empty-state" id="inventory-empty">
+                    <span class="empty-icon">📦</span>
+                    Sin pares en el inventario aún. Dale al botón <strong>+ Agregar par</strong>.
+                </div>
             </div>
 
-            <div class="form-row" style="margin-bottom: 16px;">
-                <div class="form-group" style="flex: 2; min-width: 180px;">
-                    <label>Nombre del producto</label>
-                    <input type="text" id="inp-item-name" class="inp" placeholder="Ej: Jordan 4 Retro negro...">
-                </div>
-                <div class="form-group" style="min-width: 130px;">
-                    <label>Prioridad de venta</label>
-                    <select id="inp-item-priority" class="inp">
-                        <option value="high">🔴 ALTA</option>
-                        <option value="medium" selected>🟡 MEDIA</option>
-                        <option value="low">⚫ BAJA</option>
-                    </select>
-                </div>
-                <button class="btn btn-primary" onclick="addItem()" style="flex-shrink:0; align-self:flex-end;">
-                    + Agregar
-                </button>
-            </div>
-
-            <div class="items-list" id="items-list">
-                <div class="empty-state" id="items-empty">
-                    <span class="empty-icon">👟</span>
-                    Agrega los tenis que quieres publicar hoy we.
-                </div>
-            </div>
         </div>
 
-        <!-- GENERAR SESION -->
-        <div class="card" id="session-card">
-            <div class="card-header">
-                <div class="card-title">⚡ Generar sesión de publicaciones</div>
+        <!-- ================ TAB VENTAS ================ -->
+        <div class="tab-panel" id="panel-ventas">
+
+            <div class="card">
+                <div class="card-title" style="margin-bottom:16px;">💰 Resumen financiero</div>
+
+                <div class="big-stats-grid">
+                    <div class="big-stat-card green">
+                        <div class="big-stat-label">Ganancia total</div>
+                        <div class="big-stat-value" id="stat-total-profit">$0</div>
+                        <div class="big-stat-sub" id="stat-total-sales-count">0 ventas</div>
+                    </div>
+                    <div class="big-stat-card blue">
+                        <div class="big-stat-label">ROI promedio</div>
+                        <div class="big-stat-value" id="stat-avg-roi">0%</div>
+                        <div class="big-stat-sub">Por par vendido</div>
+                    </div>
+                    <div class="big-stat-card yellow">
+                        <div class="big-stat-label">Este mes</div>
+                        <div class="big-stat-value" id="stat-month-profit">$0</div>
+                        <div class="big-stat-sub" id="stat-month-sales">0 ventas</div>
+                    </div>
+                    <div class="big-stat-card purple">
+                        <div class="big-stat-label">Días promedio</div>
+                        <div class="big-stat-value" id="stat-avg-days">0</div>
+                        <div class="big-stat-sub">Para venderse</div>
+                    </div>
+                </div>
+
+                <div class="card-header" style="margin-top: 10px;">
+                    <div class="card-title" style="font-size:0.95rem;">📝 Historial de ventas</div>
+                </div>
+
+                <div class="sales-list" id="sales-list"></div>
+                <div class="empty-state" id="sales-empty">
+                    <span class="empty-icon">📭</span>
+                    Ninguna venta registrada todavía. Cuando marques un par como <strong>Vendido</strong> desde el inventario, aparecerá aquí.
+                </div>
             </div>
 
-            <div class="session-config">
-                <div class="form-group" style="min-width: 160px; max-width: 200px;">
-                    <label>¿Cuántas publicaciones?</label>
-                    <input type="number" id="inp-num-posts" class="inp" value="5" min="1" max="30">
-                </div>
-                <div class="time-indicator" id="session-time-indicator">
-                    <span id="session-badge-preview">🟢 Buen horario</span>
-                </div>
-                <button class="btn btn-yellow" onclick="generateSession()" style="flex-shrink:0; align-self:flex-end;">
-                    🎯 Generar checklist
-                </button>
-            </div>
-            <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 12px;">
-                El algoritmo distribuye tus publicaciones según la prioridad de cada ítem y el horario actual. En hora peak satura los grupos Tier A.
-            </p>
         </div>
 
-        <!-- CHECKLIST ACTIVO -->
-        <div class="card" id="checklist-card" style="display: none;">
-            <div class="card-header">
-                <div class="card-title">📋 Sesión activa</div>
-                <button class="btn btn-ghost" onclick="clearSession()">Limpiar</button>
-            </div>
+        <!-- ================ TAB CONTACTOS ================ -->
+        <div class="tab-panel" id="panel-contactos">
 
-            <div class="progress-container">
-                <div class="progress-info">
-                    <span id="progress-text">0 / 0 pasos completados</span>
-                    <span id="progress-pct" style="color: var(--green); font-weight: 700;">0%</span>
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">💬 Pipeline de contactos</div>
+                    <button class="btn btn-primary" onclick="openContactModal()">+ Nuevo contacto</button>
                 </div>
-                <div class="progress-bar-bg">
-                    <div class="progress-bar-fill" id="progress-bar" style="width: 0%;"></div>
+
+                <p style="font-size:0.8rem;color:var(--text-muted);margin-bottom:16px;line-height:1.5;">
+                    Cada vez que alguien te mande mensaje, regístralo aquí. Nunca más se te va a olvidar hacer follow-up ni ofrecerle otros pares que le puedan interesar.
+                </p>
+
+                <div class="filters-bar">
+                    <div class="filter-chip active" data-cfilter="all" onclick="setContactFilter('all')">Todos</div>
+                    <div class="filter-chip" data-cfilter="active" onclick="setContactFilter('active')">🟡 Activos</div>
+                    <div class="filter-chip" data-cfilter="cold" onclick="setContactFilter('cold')">🥶 Fríos (+3 días)</div>
+                    <div class="filter-chip" data-cfilter="converted" onclick="setContactFilter('converted')">✅ Convertidos</div>
+                    <div class="filter-chip" data-cfilter="lost" onclick="setContactFilter('lost')">❌ Perdidos</div>
+                </div>
+
+                <div class="contacts-list" id="contacts-list"></div>
+                <div class="empty-state" id="contacts-empty">
+                    <span class="empty-icon">💬</span>
+                    Sin contactos registrados. Agrega uno cuando alguien te escriba interesado en un par.
                 </div>
             </div>
 
-            <div class="session-stats" id="session-stats"></div>
-
-            <div class="all-done-banner" id="all-done-banner">
-                <span class="done-icon">🏆</span>
-                <h3>¡SESIÓN COMPLETADA!</h3>
-                <p>Chingón we, ya tiraste todo. Espera la hora pico de las 8pm y vuelve a darle.</p>
-            </div>
-
-            <div class="checklist-container" id="checklist-container"></div>
         </div>
 
-        <!-- HORARIOS -->
-        <div class="card">
-            <div class="card-header">
-                <div class="card-title">⏰ Horarios de publicación</div>
+        <!-- ================ TAB GRUPOS ================ -->
+        <div class="tab-panel" id="panel-grupos">
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">👥 Grupos de Facebook</div>
+                    <button class="btn btn-ghost" onclick="recalculateTiers()">🔄 Recalcular tiers</button>
+                </div>
+
+                <div class="info-zone">
+                    <div class="info-zone-title">⚡ Tier dinámico</div>
+                    <p style="font-size:0.78rem;color:var(--text-muted);line-height:1.5;">
+                        Los tiers se recalculan automáticamente cada vez que registras una venta o un contacto. Así ya no adivinas qué grupo es mejor, <strong>te lo dicen los datos</strong>.
+                        Agrega la <strong>URL del grupo</strong> (pegando el link de Facebook) para que el botón <strong>"Publicación rápida"</strong> abra directo en Facebook normal (no Lite).
+                    </p>
+                </div>
+
+                <div id="groups-render-area"></div>
+
+                <div class="divider"></div>
+
+                <button class="btn btn-primary btn-full" onclick="openGroupModal()">+ Agregar grupo</button>
             </div>
-            <div class="horarios-grid" id="horarios-grid">
-                <!-- se renderizan con JS -->
-            </div>
+
         </div>
 
-        <!-- GRUPOS -->
-        <div class="card">
-            <div class="card-header">
-                <div class="card-title">👥 Grupos de Facebook</div>
+        <!-- ================ TAB STATS ================ -->
+        <div class="tab-panel" id="panel-stats">
+
+            <div class="card">
+                <div class="card-title" style="margin-bottom:16px;">📊 Tu hora peak REAL</div>
+                <p style="font-size:0.8rem;color:var(--text-muted);margin-bottom:16px;line-height:1.5;">
+                    Calculado con los horarios en que te contactaron / vendiste. Mientras más ventas registres, más preciso.
+                </p>
+                <div id="real-hours-chart" style="display:flex;flex-direction:column;gap:6px;"></div>
             </div>
 
-            <div style="margin-bottom: 14px;">
-                <span class="tier-label tier-label-a">Tier A — Top tier</span>
-            </div>
-            <div class="groups-grid" style="margin-bottom: 18px;">
-                <div class="group-chip tier-a">
-                    <div class="tier-dot"></div>
-                    <div>
-                        <div class="group-name">Bazar Zapotlán Ciudad Guzmán 1</div>
-                        <div class="group-desc">Top tier, mucha actividad.</div>
-                    </div>
-                </div>
-                <div class="group-chip tier-a">
-                    <div class="tier-dot"></div>
-                    <div>
-                        <div class="group-name">Bazar Zapotlán de Todo</div>
-                        <div class="group-desc">Top tier, bastante actividad por regla general.</div>
-                    </div>
-                </div>
-                <div class="group-chip tier-a">
-                    <div class="tier-dot"></div>
-                    <div>
-                        <div class="group-name">Bazar Zapotlán Ciudad Guzmán</div>
-                        <div class="group-desc">Tier A sólido.</div>
-                    </div>
-                </div>
+            <div class="card">
+                <div class="card-title" style="margin-bottom:16px;">🏆 Top grupos (ranking real)</div>
+                <div id="top-groups-ranking"></div>
             </div>
 
-            <div style="margin-bottom: 14px;">
-                <span class="tier-label tier-label-b">Tier B — Buenos pero con detalles</span>
-            </div>
-            <div class="groups-grid" style="margin-bottom: 18px;">
-                <div class="group-chip tier-b">
-                    <div class="tier-dot"></div>
-                    <div>
-                        <div class="group-name">Bazar Ciudad Guzmán y Alrededores</div>
-                        <div class="group-desc">Mucha actividad pero también mucho post basura.</div>
-                    </div>
-                </div>
-                <div class="group-chip tier-b">
-                    <div class="tier-dot"></div>
-                    <div>
-                        <div class="group-name">Bazar Zapotlán Cd. Guzmán</div>
-                        <div class="group-desc">Tiene administración, poca actividad real.</div>
-                    </div>
-                </div>
-                <div class="group-chip tier-b">
-                    <div class="tier-dot"></div>
-                    <div>
-                        <div class="group-name">La Pulguita Zapotlán</div>
-                        <div class="group-desc">Actividad casi exclusiva de compradores.</div>
-                    </div>
-                </div>
-                <div class="group-chip tier-b">
-                    <div class="tier-dot"></div>
-                    <div>
-                        <div class="group-name">Zapotlán Bazar</div>
-                        <div class="group-desc">Buen grupo, poca actividad.</div>
-                    </div>
-                </div>
+            <div class="card">
+                <div class="card-title" style="margin-bottom:16px;">📅 Ventas por día de la semana</div>
+                <div id="weekday-chart" style="display:flex;flex-direction:column;gap:6px;"></div>
             </div>
 
-            <div style="margin-bottom: 14px;">
-                <span class="tier-label tier-label-c">Tier C — Grupos pequeños</span>
-            </div>
-            <div class="groups-grid">
-                <div class="group-chip tier-c" style="opacity: 0.5;">
-                    <div class="tier-dot"></div>
-                    <div>
-                        <div class="group-name">Grupos pequeños</div>
-                        <div class="group-desc">Poca gente, poco tráfico. Usar sólo si hay tiempo de sobra.</div>
-                    </div>
-                </div>
-            </div>
         </div>
 
-        <!-- DATOS -->
-        <div class="card">
-            <div class="card-header">
-                <div class="card-title">⚙️ Datos</div>
-            </div>
-            <div class="danger-zone">
-                <div class="danger-zone-title">⚠️ Zona de peligro</div>
+        <!-- ================ TAB DATOS ================ -->
+        <div class="tab-panel" id="panel-datos">
+
+            <div class="card">
+                <div class="card-title" style="margin-bottom:16px;">📤 Respaldo de datos</div>
+                <p style="font-size:0.8rem;color:var(--text-muted);margin-bottom:16px;line-height:1.5;">
+                    Exporta todo tu negocio (inventario, ventas, contactos, grupos) en un archivo JSON. Guárdalo en tu Drive o donde quieras. Si se te borra el localStorage, lo importas y tienes todo de vuelta.
+                </p>
                 <div class="btn-row">
-                    <button class="btn btn-red" onclick="confirmClearItems()">🗑 Borrar todos los items</button>
-                    <button class="btn btn-red" onclick="confirmClearAll()">💀 Borrar TODO</button>
+                    <button class="btn btn-primary" onclick="exportData()">⬇️ Exportar JSON</button>
+                    <button class="btn btn-blue" onclick="document.getElementById('import-file').click()">⬆️ Importar JSON</button>
+                    <input type="file" id="import-file" accept=".json,application/json" class="hidden-input" onchange="importData(event)">
+                </div>
+                <p style="font-size:0.7rem;color:var(--text-dim);margin-top:12px;">
+                    💡 Tip: expórtalo cada semana. 10 segundos de trabajo que te pueden salvar.
+                </p>
+            </div>
+
+            <div class="card">
+                <div class="card-title" style="margin-bottom:16px;">💾 Almacenamiento</div>
+                <div id="storage-info" style="font-size:0.85rem;color:var(--text-muted);"></div>
+            </div>
+
+            <div class="card">
+                <div class="card-title" style="margin-bottom:16px;">⚠️ Zona de peligro</div>
+                <div class="danger-zone">
+                    <div class="danger-zone-title">⚠️ Acciones irreversibles</div>
+                    <div class="btn-row">
+                        <button class="btn btn-red" onclick="confirmClearItems()">🗑 Borrar inventario</button>
+                        <button class="btn btn-red" onclick="confirmClearAll()">💀 Borrar TODO</button>
+                    </div>
                 </div>
             </div>
+
         </div>
 
     </div><!-- end app-container -->
 
-    <!-- CONFIRM MODAL -->
+
+    <!-- =========================================
+         MODAL: INVENTORY ITEM
+    ========================================= -->
+    <div class="modal-overlay" id="inventory-modal">
+        <div class="modal big">
+            <div class="modal-title">
+                <span id="inventory-modal-title">➕ Agregar par</span>
+                <button class="modal-close" onclick="closeInventoryModal()">✕</button>
+            </div>
+            <form class="modal-form" onsubmit="event.preventDefault(); saveInventoryItem();">
+                <div>
+                    <label style="font-size:0.7rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--text-muted);font-weight:600;display:block;margin-bottom:6px;">Foto (opcional)</label>
+                    <div id="photo-preview-area"
+                         style="width:100%;aspect-ratio:4/3;max-height:200px;background:var(--surface2);border:2px dashed var(--border);border-radius:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;overflow:hidden;"
+                         onclick="document.getElementById('photo-input').click()">
+                        <span style="color:var(--text-dim);font-size:0.85rem;">📷 Toca para agregar foto</span>
+                    </div>
+                    <input type="file" id="photo-input" accept="image/*" capture="environment" class="hidden-input" onchange="handlePhotoSelect(event)">
+                    <button type="button" class="btn btn-ghost" id="btn-remove-photo" onclick="removePhoto()" style="margin-top:8px;display:none;">🗑 Quitar foto</button>
+                </div>
+
+                <div class="form-group">
+                    <label>Nombre del par *</label>
+                    <input type="text" id="inv-name" class="inp" placeholder="Jordan 4 Retro negro" required>
+                </div>
+
+                <div class="modal-form-row">
+                    <div class="form-group">
+                        <label>Marca</label>
+                        <input type="text" id="inv-brand" class="inp" placeholder="Nike, Adidas...">
+                    </div>
+                    <div class="form-group">
+                        <label>Modelo</label>
+                        <input type="text" id="inv-model" class="inp" placeholder="Air Max 90">
+                    </div>
+                </div>
+
+                <div class="modal-form-row">
+                    <div class="form-group">
+                        <label>Talla</label>
+                        <input type="text" id="inv-size" class="inp" placeholder="26, 27, 28...">
+                    </div>
+                    <div class="form-group">
+                        <label>Prioridad</label>
+                        <select id="inv-priority" class="inp">
+                            <option value="high">🔴 ALTA</option>
+                            <option value="medium" selected>🟡 MEDIA</option>
+                            <option value="low">⚫ BAJA</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div style="background:var(--surface2);border-radius:10px;padding:14px;display:flex;flex-direction:column;gap:12px;">
+                    <div style="font-size:0.7rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--text-muted);font-weight:700;">💰 Costos y precios</div>
+                    <div class="modal-form-row">
+                        <div class="form-group">
+                            <label>Costo compra ($)</label>
+                            <input type="number" id="inv-cost-buy" class="inp" min="0" step="1" placeholder="150">
+                        </div>
+                        <div class="form-group">
+                            <label>Costo restaurar ($)</label>
+                            <input type="number" id="inv-cost-restore" class="inp" min="0" step="1" placeholder="30" value="0">
+                        </div>
+                    </div>
+                    <div class="modal-form-row">
+                        <div class="form-group">
+                            <label>Precio pedido ($)</label>
+                            <input type="number" id="inv-price-ask" class="inp" min="0" step="1" placeholder="650">
+                        </div>
+                        <div class="form-group">
+                            <label>Precio mínimo ($)</label>
+                            <input type="number" id="inv-price-min" class="inp" min="0" step="1" placeholder="500">
+                        </div>
+                    </div>
+                    <div id="inv-margin-preview" style="font-size:0.8rem;color:var(--text-muted);text-align:center;"></div>
+                </div>
+
+                <div class="form-group">
+                    <label>Estado</label>
+                    <select id="inv-status" class="inp">
+                        <option value="available">🟢 Disponible</option>
+                        <option value="reserved">🟡 Apartado</option>
+                        <option value="sold">💜 Vendido</option>
+                        <option value="returned">🔴 Devuelto</option>
+                    </select>
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-ghost" onclick="closeInventoryModal()">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">💾 Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- =========================================
+         MODAL: SELL ITEM
+    ========================================= -->
+    <div class="modal-overlay" id="sell-modal">
+        <div class="modal">
+            <div class="modal-title">
+                <span>💰 Registrar venta</span>
+                <button class="modal-close" onclick="closeSellModal()">✕</button>
+            </div>
+            <form class="modal-form" onsubmit="event.preventDefault(); confirmSale();">
+                <div id="sell-item-info" style="background:var(--surface2);padding:12px;border-radius:10px;font-size:0.9rem;"></div>
+
+                <div class="form-group">
+                    <label>Precio final ($) *</label>
+                    <input type="number" id="sell-price" class="inp" min="0" step="1" required>
+                </div>
+
+                <div class="form-group">
+                    <label>¿De qué grupo te contactaron? *</label>
+                    <select id="sell-group" class="inp" required></select>
+                </div>
+
+                <div class="form-group">
+                    <label>Fecha de venta</label>
+                    <input type="datetime-local" id="sell-date" class="inp">
+                </div>
+
+                <div class="form-group">
+                    <label>¿Qué contacto compró? (opcional)</label>
+                    <select id="sell-contact" class="inp">
+                        <option value="">-- Ninguno / nuevo --</option>
+                    </select>
+                </div>
+
+                <div id="sell-preview" style="font-size:0.85rem;color:var(--text-muted);text-align:center;padding:10px;background:var(--bg);border-radius:8px;"></div>
+
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-ghost" onclick="closeSellModal()">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">💰 Confirmar venta</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- =========================================
+         MODAL: CONTACT
+    ========================================= -->
+    <div class="modal-overlay" id="contact-modal">
+        <div class="modal">
+            <div class="modal-title">
+                <span id="contact-modal-title">➕ Nuevo contacto</span>
+                <button class="modal-close" onclick="closeContactModal()">✕</button>
+            </div>
+            <form class="modal-form" onsubmit="event.preventDefault(); saveContact();">
+                <div class="form-group">
+                    <label>Nombre *</label>
+                    <input type="text" id="ct-name" class="inp" placeholder="Juan Pérez" required>
+                </div>
+
+                <div class="form-group">
+                    <label>WhatsApp / teléfono</label>
+                    <input type="tel" id="ct-phone" class="inp" placeholder="341 123 4567">
+                </div>
+
+                <div class="form-group">
+                    <label>¿De qué grupo vino?</label>
+                    <select id="ct-source" class="inp"></select>
+                </div>
+
+                <div class="form-group">
+                    <label>¿Qué par(es) le interesaron?</label>
+                    <select id="ct-item" class="inp">
+                        <option value="">-- Ninguno específico --</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Estado</label>
+                    <select id="ct-status" class="inp">
+                        <option value="active">🟡 Activo (platicando)</option>
+                        <option value="cold">🥶 Frío (no responde)</option>
+                        <option value="converted">✅ Convertido (compró)</option>
+                        <option value="lost">❌ Perdido (rechazó)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Notas</label>
+                    <textarea id="ct-notes" class="inp" placeholder="Quería talla 27, le ofrecí el Nike rojo..."></textarea>
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-ghost" onclick="closeContactModal()">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">💾 Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- =========================================
+         MODAL: GROUP
+    ========================================= -->
+    <div class="modal-overlay" id="group-modal">
+        <div class="modal">
+            <div class="modal-title">
+                <span id="group-modal-title">➕ Agregar grupo</span>
+                <button class="modal-close" onclick="closeGroupModal()">✕</button>
+            </div>
+            <form class="modal-form" onsubmit="event.preventDefault(); saveGroup();">
+                <div class="form-group">
+                    <label>Nombre del grupo *</label>
+                    <input type="text" id="gr-name" class="inp" placeholder="Bazar Zapotlán Ciudad Guzmán" required>
+                </div>
+
+                <div class="form-group">
+                    <label>URL del grupo (pégala desde FB)</label>
+                    <input type="url" id="gr-url" class="inp" placeholder="https://www.facebook.com/groups/123456789">
+                    <p style="font-size:0.68rem;color:var(--text-dim);margin-top:4px;">
+                        Con la URL activada, el botón "Publicación rápida" te abre directo en Facebook normal (no Lite).
+                    </p>
+                </div>
+
+                <div class="form-group">
+                    <label>Descripción / notas</label>
+                    <input type="text" id="gr-desc" class="inp" placeholder="Mucha actividad por las mañanas">
+                </div>
+
+                <div class="form-group">
+                    <label>Tier inicial (se recalcula solo con el tiempo)</label>
+                    <select id="gr-tier" class="inp">
+                        <option value="A">🟢 Tier A</option>
+                        <option value="B" selected>🟡 Tier B</option>
+                        <option value="C">⚫ Tier C</option>
+                    </select>
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-red" id="gr-delete-btn" onclick="deleteGroup()" style="display:none;">🗑 Eliminar</button>
+                    <button type="button" class="btn btn-ghost" onclick="closeGroupModal()">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">💾 Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- =========================================
+         MODAL: CONFIRM
+    ========================================= -->
     <div class="modal-overlay" id="confirm-modal">
         <div class="modal">
             <div class="modal-title">
@@ -1251,9 +1863,14 @@
             <p id="confirm-msg" style="color: var(--text-muted); font-size: 0.9rem;"></p>
             <div class="modal-actions">
                 <button class="btn btn-ghost" onclick="closeConfirm()">Cancelar</button>
-                <button class="btn btn-red" id="confirm-ok-btn">Borrar</button>
+                <button class="btn btn-red" id="confirm-ok-btn">Confirmar</button>
             </div>
         </div>
+    </div>
+
+    <!-- PHOTO VIEWER -->
+    <div class="photo-viewer" id="photo-viewer" onclick="this.classList.remove('open')">
+        <img id="photo-viewer-img" src="">
     </div>
 
     <!-- TOAST -->
@@ -1263,47 +1880,46 @@
     </div>
 
     <script>
-        // =============================================
-        // STORAGE KEYS
-        // =============================================
-        const STORAGE_ITEMS    = 'poster_items_v1';
-        const STORAGE_SESSION  = 'poster_session_v1';
+        /* ============================================================
+           CONSTANTES Y STATE
+        ============================================================ */
+        const STORAGE_KEY = 'poster_v2_data';
 
-        // =============================================
-        // STATE
-        // =============================================
-        let items   = [];
-        let session = null; // { tasks: [], generatedAt: timestamp }
-
-        // =============================================
-        // GRUPOS DEFINIDOS
-        // =============================================
-        const GROUPS = {
-            tierA: [
-                { id: 'a1', name: 'Bazar Zapotlán Ciudad Guzmán 1', tier: 'A' },
-                { id: 'a2', name: 'Bazar Zapotlán de Todo',           tier: 'A' },
-                { id: 'a3', name: 'Bazar Zapotlán Ciudad Guzmán',     tier: 'A' },
-            ],
-            tierB: [
-                { id: 'b1', name: 'Bazar Ciudad Guzmán y Alrededores', tier: 'B' },
-                { id: 'b2', name: 'Bazar Zapotlán Cd. Guzmán',          tier: 'B' },
-                { id: 'b3', name: 'La Pulguita Zapotlán',               tier: 'B' },
-                { id: 'b4', name: 'Zapotlán Bazar',                     tier: 'B' },
-            ],
-            tierC: [
-                { id: 'c1', name: 'Grupo pequeño Zapotlán', tier: 'C' },
-            ]
-        };
-
-        const ALL_GROUPS = [
-            ...GROUPS.tierA,
-            ...GROUPS.tierB,
-            ...GROUPS.tierC,
+        const defaultGroups = [
+            { id: 'a1', name: 'Bazar Zapotlán Ciudad Guzmán 1', desc: 'Top tier, mucha actividad.',   tier: 'A', url: '' },
+            { id: 'a2', name: 'Bazar Zapotlán de Todo',          desc: 'Top tier, bastante actividad.', tier: 'A', url: '' },
+            { id: 'a3', name: 'Bazar Zapotlán Ciudad Guzmán',    desc: 'Tier A sólido.',                tier: 'A', url: '' },
+            { id: 'b1', name: 'Bazar Ciudad Guzmán y Alrededores', desc: 'Actividad pero mucho post basura.', tier: 'B', url: '' },
+            { id: 'b2', name: 'Bazar Zapotlán Cd. Guzmán',          desc: 'Tiene administración, poca actividad.', tier: 'B', url: '' },
+            { id: 'b3', name: 'La Pulguita Zapotlán',               desc: 'Casi exclusivo de compradores.',        tier: 'B', url: '' },
+            { id: 'b4', name: 'Zapotlán Bazar',                     desc: 'Buen grupo, poca actividad.',           tier: 'B', url: '' },
+            { id: 'c1', name: 'Grupo pequeño Zapotlán',             desc: 'Poca gente, poco tráfico.',             tier: 'C', url: '' },
         ];
 
-        // =============================================
-        // HORARIOS
-        // =============================================
+        let data = {
+            inventory: [],      // items
+            sales: [],          // ventas registradas
+            contacts: [],       // contactos / pipeline
+            groups: [...defaultGroups],
+            session: null,      // sesión activa
+            selectedForToday: [], // ids de items seleccionados para el checklist de hoy
+            // Métricas calculadas (se regeneran)
+            groupMetrics: {},
+            hourMetrics: {},
+            weekdayMetrics: {},
+        };
+
+        let inventoryFilter = 'all';
+        let contactFilter   = 'all';
+        let editingItemId   = null;
+        let editingGroupId  = null;
+        let editingContactId= null;
+        let sellingItemId   = null;
+        let pendingPhoto    = null;
+
+        /* ============================================================
+           HORARIOS
+        ============================================================ */
         const HORARIOS = [
             { start: 8,    end: 8.5,  type: 'peak', label: '🏔 HORARIO PEAK',          css: 'hr-peak',  badgeClass: 'badge-peak' },
             { start: 8.5,  end: 9,    type: 'good', label: '🟢 Horario Bueno',          css: 'hr-good',  badgeClass: 'badge-good' },
@@ -1326,7 +1942,7 @@
             for (const h of HORARIOS) {
                 if (hDec >= h.start && hDec < h.end) return h;
             }
-            return HORARIOS[HORARIOS.length - 1]; // fallback noche
+            return HORARIOS[HORARIOS.length - 1];
         }
 
         function formatHorarioTime(start, end) {
@@ -1338,9 +1954,81 @@
             return `${fmt(start)} – ${fmt(end)}`;
         }
 
-        // =============================================
-        // RELOJ
-        // =============================================
+        /* ============================================================
+           PERSISTENCE
+        ============================================================ */
+        function saveData() {
+            try {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+                updateStorageInfo();
+            } catch (e) {
+                if (e.name === 'QuotaExceededError') {
+                    showToast('⚠️', 'Storage lleno we. Exporta y limpia fotos viejas.');
+                } else {
+                    console.error(e);
+                }
+            }
+        }
+
+        function loadData() {
+            const raw = localStorage.getItem(STORAGE_KEY);
+            if (!raw) return;
+            try {
+                const loaded = JSON.parse(raw);
+                data = { ...data, ...loaded };
+                // Asegurar campos nuevos si vienen de versión vieja
+                if (!data.groups || data.groups.length === 0) data.groups = [...defaultGroups];
+                if (!data.groupMetrics)   data.groupMetrics = {};
+                if (!data.hourMetrics)    data.hourMetrics  = {};
+                if (!data.weekdayMetrics) data.weekdayMetrics = {};
+                if (!data.selectedForToday) data.selectedForToday = [];
+                if (!data.sales)    data.sales = [];
+                if (!data.contacts) data.contacts = [];
+                if (!data.inventory) data.inventory = [];
+            } catch (e) {
+                console.error('Error cargando data:', e);
+            }
+        }
+
+        function updateStorageInfo() {
+            const el = document.getElementById('storage-info');
+            if (!el) return;
+            try {
+                const raw = localStorage.getItem(STORAGE_KEY) || '';
+                const bytes = new Blob([raw]).size;
+                const kb = (bytes / 1024).toFixed(1);
+                const mb = (bytes / 1024 / 1024).toFixed(2);
+                const pctOf5MB = ((bytes / (5 * 1024 * 1024)) * 100).toFixed(1);
+                el.innerHTML = `
+                    Usado: <strong style="color:var(--text);">${kb} KB</strong> (${mb} MB)<br>
+                    Aprox <strong style="color:${pctOf5MB > 80 ? 'var(--red)' : 'var(--green)'};">${pctOf5MB}%</strong> del límite típico de 5 MB.
+                    <br><br>
+                    Items: <strong>${data.inventory.length}</strong> · Ventas: <strong>${data.sales.length}</strong> · Contactos: <strong>${data.contacts.length}</strong>
+                `;
+            } catch (e) {}
+        }
+
+        /* ============================================================
+           TABS
+        ============================================================ */
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === tabName));
+            document.querySelectorAll('.tab-panel').forEach(p => p.classList.toggle('active', p.id === `panel-${tabName}`));
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            if (tabName === 'stats') renderStats();
+            if (tabName === 'ventas') renderSales();
+            if (tabName === 'contactos') renderContacts();
+            if (tabName === 'grupos') renderGroups();
+            if (tabName === 'datos') updateStorageInfo();
+        }
+
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', () => switchTab(btn.dataset.tab));
+        });
+
+        /* ============================================================
+           CLOCK
+        ============================================================ */
         function updateClock() {
             const now = new Date();
             const h   = String(now.getHours()).padStart(2, '0');
@@ -1350,16 +2038,13 @@
 
             const horario = getCurrentHorario();
             const badge   = document.getElementById('time-badge');
-
             badge.className  = `time-badge ${horario.badgeClass}`;
             badge.textContent = horario.label;
 
-            // actualizar el indicator en el form de sesion
             const prev = document.getElementById('session-badge-preview');
             if (prev) prev.textContent = horario.label;
 
-            // highlight horario activo en la tabla
-            document.querySelectorAll('.horario-row').forEach((row, idx) => {
+            document.querySelectorAll('.horario-row').forEach(row => {
                 row.classList.remove('active-now');
                 if (Number(row.dataset.idx) === HORARIOS.indexOf(horario)) {
                     row.classList.add('active-now');
@@ -1367,9 +2052,9 @@
             });
         }
 
-        // =============================================
-        // CALENDAR / QUINCENA
-        // =============================================
+        /* ============================================================
+           CALENDAR
+        ============================================================ */
         function buildCalendar() {
             const today    = new Date();
             const day      = today.getDate();
@@ -1390,8 +2075,8 @@
                 const el = document.createElement('div');
                 el.className = 'cal-day';
                 el.textContent = d;
-                if (d === day)       el.classList.add('today');
-                if (isQuincena(d))   el.classList.add('quincena');
+                if (d === day)     el.classList.add('today');
+                if (isQuincena(d)) el.classList.add('quincena');
                 strip.appendChild(el);
             }
 
@@ -1400,15 +2085,21 @@
             }
         }
 
-        // =============================================
-        // HORARIOS TABLE
-        // =============================================
+        /* ============================================================
+           HORARIOS TABLE (con datos reales)
+        ============================================================ */
         function buildHorariosTable() {
             const grid = document.getElementById('horarios-grid');
             grid.innerHTML = '';
             const current = getCurrentHorario();
 
             HORARIOS.forEach((h, idx) => {
+                // contar ventas + contactos reales en este rango
+                let count = 0;
+                for (let hour = Math.floor(h.start); hour < Math.ceil(h.end); hour++) {
+                    count += (data.hourMetrics[hour] || 0);
+                }
+
                 const row = document.createElement('div');
                 row.className = `horario-row ${h.css}`;
                 row.dataset.idx = idx;
@@ -1416,167 +2107,1053 @@
                 row.innerHTML = `
                     <div class="horario-time">${formatHorarioTime(h.start, h.end)}</div>
                     <div class="horario-label">${h.label}</div>
+                    ${count > 0 ? `<div class="horario-stat">📊 ${count} eventos</div>` : ''}
                 `;
                 grid.appendChild(row);
             });
         }
 
-        // =============================================
-        // ITEMS CRUD
-        // =============================================
-        function addItem() {
-            const name = document.getElementById('inp-item-name').value.trim();
-            const priority = document.getElementById('inp-item-priority').value;
-            if (!name) {
-                showToast('❌', 'Escribe el nombre del producto we.');
-                return;
-            }
-            items.push({ id: Date.now(), name, priority });
-            document.getElementById('inp-item-name').value = '';
-            saveData();
-            renderItems();
-            showToast('✅', `"${name}" agregado.`);
-        }
-
-        document.getElementById('inp-item-name').addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') addItem();
-        });
-
-        function deleteItem(id) {
-            items = items.filter(i => i.id !== id);
-            saveData();
-            renderItems();
-            showToast('🗑', 'Item eliminado.');
-        }
-
-        function renderItems() {
-            const list = document.getElementById('items-list');
-            list.innerHTML = '';
-
-            if (items.length === 0) {
-                list.innerHTML = `<div class="empty-state" id="items-empty">
-                    <span class="empty-icon">👟</span>
-                    Agrega los tenis que quieres publicar hoy we.
-                </div>`;
-                return;
-            }
-
-            const priorityOrder = { high: 0, medium: 1, low: 2 };
-            const sorted = [...items].sort((a, b) => priorityOrder[a.priority] - priorityOrder[b.priority]);
-
-            sorted.forEach(item => {
-                const row = document.createElement('div');
-                row.className = 'item-row';
-
-                const tagMap = {
-                    high:   ['priority-high',   '🔴 Alta'],
-                    medium: ['priority-medium',  '🟡 Media'],
-                    low:    ['priority-low',     '⚫ Baja'],
+        /* ============================================================
+           PHOTO COMPRESSION
+        ============================================================ */
+        function compressImage(file, maxSize = 600, quality = 0.7) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onerror = reject;
+                reader.onload = (e) => {
+                    const img = new Image();
+                    img.onerror = reject;
+                    img.onload = () => {
+                        let { width, height } = img;
+                        if (width > height && width > maxSize) {
+                            height = Math.round((height * maxSize) / width);
+                            width  = maxSize;
+                        } else if (height > maxSize) {
+                            width  = Math.round((width * maxSize) / height);
+                            height = maxSize;
+                        }
+                        const canvas = document.createElement('canvas');
+                        canvas.width  = width;
+                        canvas.height = height;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, width, height);
+                        resolve(canvas.toDataURL('image/jpeg', quality));
+                    };
+                    img.src = e.target.result;
                 };
-                const [tagClass, tagLabel] = tagMap[item.priority];
-
-                row.innerHTML = `
-                    <div class="item-name">${item.name}</div>
-                    <div class="item-row-right">
-                        <span class="priority-tag ${tagClass}">${tagLabel}</span>
-                        <button class="btn btn-icon btn-red" onclick="deleteItem(${item.id})" title="Borrar">✕</button>
-                    </div>
-                `;
-                list.appendChild(row);
+                reader.readAsDataURL(file);
             });
         }
 
-        // =============================================
-        // ALGORITHM - GENERATE SESSION
-        // =============================================
-        function generateSession() {
-            if (items.length === 0) {
-                showToast('⚠️', 'Agrega items primero we.');
+        async function handlePhotoSelect(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            showToast('⏳', 'Comprimiendo foto...');
+            try {
+                const compressed = await compressImage(file, 600, 0.7);
+                pendingPhoto = compressed;
+                renderPhotoPreview();
+            } catch (e) {
+                showToast('❌', 'Error procesando imagen.');
+            }
+        }
+
+        function renderPhotoPreview() {
+            const area = document.getElementById('photo-preview-area');
+            const btn  = document.getElementById('btn-remove-photo');
+            if (pendingPhoto) {
+                area.innerHTML = `<img src="${pendingPhoto}" style="width:100%;height:100%;object-fit:cover;">`;
+                btn.style.display = 'inline-flex';
+            } else {
+                area.innerHTML = '<span style="color:var(--text-dim);font-size:0.85rem;">📷 Toca para agregar foto</span>';
+                btn.style.display = 'none';
+            }
+        }
+
+        function removePhoto() {
+            pendingPhoto = null;
+            document.getElementById('photo-input').value = '';
+            renderPhotoPreview();
+        }
+
+        /* ============================================================
+           INVENTORY CRUD
+        ============================================================ */
+        function openInventoryModal(itemId = null) {
+            editingItemId = itemId;
+            pendingPhoto  = null;
+
+            const modal = document.getElementById('inventory-modal');
+            const title = document.getElementById('inventory-modal-title');
+
+            if (itemId) {
+                const item = data.inventory.find(i => i.id === itemId);
+                if (!item) return;
+                title.textContent = '✏️ Editar par';
+                document.getElementById('inv-name').value         = item.name || '';
+                document.getElementById('inv-brand').value        = item.brand || '';
+                document.getElementById('inv-model').value        = item.model || '';
+                document.getElementById('inv-size').value         = item.size || '';
+                document.getElementById('inv-priority').value     = item.priority || 'medium';
+                document.getElementById('inv-cost-buy').value     = item.costBuy || '';
+                document.getElementById('inv-cost-restore').value = item.costRestore || 0;
+                document.getElementById('inv-price-ask').value    = item.priceAsk || '';
+                document.getElementById('inv-price-min').value    = item.priceMin || '';
+                document.getElementById('inv-status').value       = item.status || 'available';
+                pendingPhoto = item.photo || null;
+            } else {
+                title.textContent = '➕ Agregar par';
+                document.querySelector('#inventory-modal form').reset();
+                document.getElementById('inv-cost-restore').value = 0;
+                document.getElementById('inv-priority').value     = 'medium';
+                document.getElementById('inv-status').value       = 'available';
+            }
+            renderPhotoPreview();
+            updateMarginPreview();
+            modal.classList.add('open');
+        }
+
+        function closeInventoryModal() {
+            document.getElementById('inventory-modal').classList.remove('open');
+            editingItemId = null;
+            pendingPhoto  = null;
+        }
+
+        function saveInventoryItem() {
+            const name = document.getElementById('inv-name').value.trim();
+            if (!name) {
+                showToast('❌', 'Falta el nombre.');
                 return;
             }
 
-            const numPosts   = Math.max(1, parseInt(document.getElementById('inp-num-posts').value) || 5);
-            const horario    = getCurrentHorario();
-            const isPeak     = horario.type === 'peak';
-            const isGood     = horario.type === 'good';
-            const isMeh      = horario.type === 'meh';
+            const itemData = {
+                name,
+                brand:       document.getElementById('inv-brand').value.trim(),
+                model:       document.getElementById('inv-model').value.trim(),
+                size:        document.getElementById('inv-size').value.trim(),
+                priority:    document.getElementById('inv-priority').value,
+                costBuy:     parseFloat(document.getElementById('inv-cost-buy').value)     || 0,
+                costRestore: parseFloat(document.getElementById('inv-cost-restore').value) || 0,
+                priceAsk:    parseFloat(document.getElementById('inv-price-ask').value)    || 0,
+                priceMin:    parseFloat(document.getElementById('inv-price-min').value)    || 0,
+                status:      document.getElementById('inv-status').value,
+                photo:       pendingPhoto,
+            };
 
-            // Ordenar items por prioridad: high > medium > low
-            const priorityScore = { high: 3, medium: 2, low: 1 };
-            const sortedItems   = [...items].sort((a, b) => priorityScore[b.priority] - priorityScore[a.priority]);
-
-            // Decidir cuántos posts por tier según el horario
-            let tierAShare, tierBShare, tierCShare;
-            if (isPeak) {
-                tierAShare = 0.60;
-                tierBShare = 0.35;
-                tierCShare = 0.05;
-            } else if (isGood) {
-                tierAShare = 0.50;
-                tierBShare = 0.40;
-                tierCShare = 0.10;
-            } else if (isMeh) {
-                tierAShare = 0.45;
-                tierBShare = 0.40;
-                tierCShare = 0.15;
-            } else { // dead / food → menos publicaciones pero seguimos
-                tierAShare = 0.55;
-                tierBShare = 0.35;
-                tierCShare = 0.10;
+            if (editingItemId) {
+                const idx = data.inventory.findIndex(i => i.id === editingItemId);
+                if (idx >= 0) {
+                    data.inventory[idx] = { ...data.inventory[idx], ...itemData };
+                    showToast('✅', 'Par actualizado.');
+                }
+            } else {
+                data.inventory.push({
+                    id: 'i_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
+                    ...itemData,
+                    dateAdded: Date.now(),
+                });
+                showToast('✅', `"${name}" agregado.`);
             }
 
-            const postsA = Math.max(1, Math.round(numPosts * tierAShare));
-            const postsB = Math.max(1, Math.round(numPosts * tierBShare));
+            saveData();
+            renderInventory();
+            renderTodayItems();
+            closeInventoryModal();
+        }
+
+        function updateMarginPreview() {
+            const cb = parseFloat(document.getElementById('inv-cost-buy').value)     || 0;
+            const cr = parseFloat(document.getElementById('inv-cost-restore').value) || 0;
+            const pa = parseFloat(document.getElementById('inv-price-ask').value)    || 0;
+            const totalCost = cb + cr;
+            const profit    = pa - totalCost;
+            const margin    = totalCost > 0 ? ((profit / totalCost) * 100) : 0;
+            const el = document.getElementById('inv-margin-preview');
+            if (totalCost > 0 && pa > 0) {
+                const color = profit > 0 ? 'var(--green)' : 'var(--red)';
+                el.innerHTML = `💡 Ganancia estimada: <strong style="color:${color}">$${profit}</strong> (${margin.toFixed(0)}% ROI)`;
+            } else {
+                el.innerHTML = '';
+            }
+        }
+
+        ['inv-cost-buy','inv-cost-restore','inv-price-ask'].forEach(id => {
+            document.addEventListener('DOMContentLoaded', () => {
+                const el = document.getElementById(id);
+                if (el) el.addEventListener('input', updateMarginPreview);
+            });
+        });
+
+        function deleteInventoryItem(itemId) {
+            const item = data.inventory.find(i => i.id === itemId);
+            if (!item) return;
+            showConfirm(
+                `¿Borrar "${item.name}"?`,
+                'Se borra del inventario. Si ya tiene ventas registradas, esas se mantienen en el historial.',
+                () => {
+                    data.inventory = data.inventory.filter(i => i.id !== itemId);
+                    data.selectedForToday = data.selectedForToday.filter(id => id !== itemId);
+                    saveData();
+                    renderInventory();
+                    renderTodayItems();
+                    showToast('🗑', 'Par eliminado.');
+                }
+            );
+        }
+
+        function toggleSelectedForToday(itemId) {
+            const idx = data.selectedForToday.indexOf(itemId);
+            if (idx >= 0) {
+                data.selectedForToday.splice(idx, 1);
+            } else {
+                data.selectedForToday.push(itemId);
+            }
+            saveData();
+            renderInventory();
+            renderTodayItems();
+        }
+
+        function setInventoryFilter(f) {
+            inventoryFilter = f;
+            document.querySelectorAll('[data-filter]').forEach(c => c.classList.toggle('active', c.dataset.filter === f));
+            renderInventory();
+        }
+
+        function renderInventory() {
+            const grid  = document.getElementById('inventory-grid');
+            const empty = document.getElementById('inventory-empty');
+
+            // Counts
+            const counts = { all: data.inventory.length, available: 0, reserved: 0, sold: 0, returned: 0 };
+            data.inventory.forEach(i => { if (counts[i.status] !== undefined) counts[i.status]++; });
+            ['all','available','reserved','sold','returned'].forEach(k => {
+                const el = document.getElementById(`f-count-${k}`);
+                if (el) el.textContent = counts[k];
+            });
+            document.getElementById('count-inventory').textContent = data.inventory.length;
+
+            // Filter
+            let list = data.inventory;
+            if (inventoryFilter !== 'all') {
+                list = list.filter(i => i.status === inventoryFilter);
+            }
+
+            if (list.length === 0) {
+                grid.innerHTML = '';
+                empty.style.display = 'block';
+                empty.innerHTML = data.inventory.length === 0
+                    ? '<span class="empty-icon">📦</span>Sin pares en el inventario. Dale al botón <strong>+ Agregar par</strong>.'
+                    : '<span class="empty-icon">🔍</span>No hay pares en este filtro.';
+                return;
+            }
+            empty.style.display = 'none';
+
+            // sort: selected first, then by status (available > reserved > sold), then by priority
+            const statusOrder   = { available: 0, reserved: 1, returned: 2, sold: 3 };
+            const priorityOrder = { high: 0, medium: 1, low: 2 };
+            const sorted = [...list].sort((a, b) => {
+                const aSel = data.selectedForToday.includes(a.id) ? 0 : 1;
+                const bSel = data.selectedForToday.includes(b.id) ? 0 : 1;
+                if (aSel !== bSel) return aSel - bSel;
+                const sDiff = (statusOrder[a.status] ?? 9) - (statusOrder[b.status] ?? 9);
+                if (sDiff !== 0) return sDiff;
+                return (priorityOrder[a.priority] ?? 9) - (priorityOrder[b.priority] ?? 9);
+            });
+
+            const statusLabels = {
+                available: ['status-available', '🟢 Disponible'],
+                reserved:  ['status-reserved',  '🟡 Apartado'],
+                sold:      ['status-sold',      '💜 Vendido'],
+                returned:  ['status-returned',  '🔴 Devuelto'],
+            };
+            const priorityLabels = {
+                high:   ['priority-high',   '🔴'],
+                medium: ['priority-medium', '🟡'],
+                low:    ['priority-low',    '⚫'],
+            };
+
+            grid.innerHTML = sorted.map(item => {
+                const [stClass, stLabel] = statusLabels[item.status] || ['', item.status];
+                const [prClass, prLabel] = priorityLabels[item.priority] || ['', ''];
+                const totalCost = (item.costBuy || 0) + (item.costRestore || 0);
+                const profit    = (item.priceAsk || 0) - totalCost;
+                const margin    = totalCost > 0 ? ((profit / totalCost) * 100).toFixed(0) : '—';
+                const isSelected = data.selectedForToday.includes(item.id);
+                const meta = [
+                    item.brand && `<span>🏷 ${item.brand}</span>`,
+                    item.size  && `<span>📏 T: ${item.size}</span>`,
+                ].filter(Boolean).join('');
+
+                return `
+                    <div class="inv-card is-${item.status}${isSelected ? ' is-selected' : ''}"
+                         style="${isSelected ? 'border-color:var(--blue);box-shadow:0 0 0 3px rgba(0,180,216,0.2);' : ''}">
+                        <div class="inv-photo" onclick="${item.photo ? `openPhotoViewer('${item.id}')` : `openInventoryModal('${item.id}')`}">
+                            ${item.photo
+                                ? `<img src="${item.photo}" alt="${item.name}">`
+                                : `<span class="inv-photo-placeholder">👟</span>`
+                            }
+                            <div class="inv-photo-overlay">
+                                <span class="status-tag ${stClass}">${stLabel}</span>
+                            </div>
+                        </div>
+                        <div class="inv-body">
+                            <div class="inv-top-row">
+                                <div class="inv-name">${escapeHtml(item.name)} <span style="margin-left:4px;">${prLabel}</span></div>
+                            </div>
+                            ${meta ? `<div class="inv-meta">${meta}</div>` : ''}
+                            <div class="inv-prices">
+                                <div class="inv-price-item">
+                                    <span class="inv-price-label">Costo total</span>
+                                    <span class="inv-price-val cost">$${totalCost}</span>
+                                </div>
+                                <div class="inv-price-item">
+                                    <span class="inv-price-label">Pedido</span>
+                                    <span class="inv-price-val profit">$${item.priceAsk || 0}</span>
+                                </div>
+                                <div class="inv-price-item" style="grid-column: span 2;">
+                                    <span class="inv-price-label">Mínimo aceptado</span>
+                                    <span class="inv-price-val min">$${item.priceMin || 0}</span>
+                                </div>
+                            </div>
+                            ${margin !== '—' ? `<div class="inv-margin-chip">📈 ROI: ${margin}%</div>` : ''}
+                            <div class="inv-actions">
+                                ${item.status === 'available' || item.status === 'reserved' ? `
+                                    <button class="btn ${isSelected ? 'btn-blue' : 'btn-ghost'}"
+                                            onclick="toggleSelectedForToday('${item.id}')"
+                                            title="Marcar pa' publicar hoy">
+                                        ${isSelected ? '✓ En hoy' : '+ A hoy'}
+                                    </button>
+                                    <button class="btn btn-yellow" onclick="openSellModal('${item.id}')">💰 Vender</button>
+                                ` : ''}
+                                <button class="btn btn-ghost" onclick="openInventoryModal('${item.id}')">✏️</button>
+                                <button class="btn btn-red btn-icon" onclick="deleteInventoryItem('${item.id}')">✕</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function openPhotoViewer(itemId) {
+            const item = data.inventory.find(i => i.id === itemId);
+            if (!item || !item.photo) return;
+            document.getElementById('photo-viewer-img').src = item.photo;
+            document.getElementById('photo-viewer').classList.add('open');
+        }
+
+        /* ============================================================
+           TODAY ITEMS (checklist fuente)
+        ============================================================ */
+        function renderTodayItems() {
+            const list  = document.getElementById('items-list');
+            const empty = document.getElementById('items-empty');
+
+            const todayItems = data.inventory.filter(i =>
+                data.selectedForToday.includes(i.id) &&
+                (i.status === 'available' || i.status === 'reserved')
+            );
+
+            if (todayItems.length === 0) {
+                list.innerHTML = '';
+                empty.style.display = 'block';
+                return;
+            }
+            empty.style.display = 'none';
+
+            const priorityOrder = { high: 0, medium: 1, low: 2 };
+            const priorityLabels = {
+                high:   ['priority-high',   '🔴 Alta'],
+                medium: ['priority-medium', '🟡 Media'],
+                low:    ['priority-low',    '⚫ Baja'],
+            };
+            const sorted = [...todayItems].sort((a, b) => priorityOrder[a.priority] - priorityOrder[b.priority]);
+
+            list.innerHTML = sorted.map(item => {
+                const [tagClass, tagLabel] = priorityLabels[item.priority] || ['', ''];
+                const sub = [item.brand, item.size && `T: ${item.size}`, item.priceAsk && `$${item.priceAsk}`].filter(Boolean).join(' · ');
+                return `
+                    <div class="item-row">
+                        <div class="item-thumb">
+                            ${item.photo ? `<img src="${item.photo}">` : '👟'}
+                        </div>
+                        <div class="item-info">
+                            <div class="item-name">${escapeHtml(item.name)}</div>
+                            ${sub ? `<div class="item-sub">${escapeHtml(sub)}</div>` : ''}
+                        </div>
+                        <div class="item-row-right">
+                            <span class="priority-tag ${tagClass}">${tagLabel}</span>
+                            <button class="btn btn-icon btn-red" onclick="toggleSelectedForToday('${item.id}')" title="Quitar de hoy">✕</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        /* ============================================================
+           SELL FLOW
+        ============================================================ */
+        function openSellModal(itemId) {
+            sellingItemId = itemId;
+            const item = data.inventory.find(i => i.id === itemId);
+            if (!item) return;
+
+            document.getElementById('sell-item-info').innerHTML = `
+                <strong>${escapeHtml(item.name)}</strong><br>
+                <span style="color:var(--text-muted);font-size:0.8rem;">
+                    Costo: $${(item.costBuy||0) + (item.costRestore||0)} · Pedido: $${item.priceAsk||0} · Mínimo: $${item.priceMin||0}
+                </span>
+            `;
+            document.getElementById('sell-price').value = item.priceAsk || '';
+
+            // fill groups
+            const sel = document.getElementById('sell-group');
+            sel.innerHTML = '<option value="">-- Selecciona grupo --</option>' +
+                data.groups.map(g => `<option value="${g.id}">${escapeHtml(g.name)} (Tier ${g.tier})</option>`).join('');
+
+            // fill contacts
+            const cSel = document.getElementById('sell-contact');
+            cSel.innerHTML = '<option value="">-- Ninguno / nuevo --</option>' +
+                data.contacts
+                    .filter(c => c.status !== 'lost')
+                    .map(c => `<option value="${c.id}">${escapeHtml(c.name)}</option>`)
+                    .join('');
+
+            // date default: now
+            const now = new Date();
+            now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+            document.getElementById('sell-date').value = now.toISOString().slice(0, 16);
+
+            updateSellPreview();
+            ['sell-price'].forEach(id => {
+                const el = document.getElementById(id);
+                if (!el._wired) {
+                    el.addEventListener('input', updateSellPreview);
+                    el._wired = true;
+                }
+            });
+
+            document.getElementById('sell-modal').classList.add('open');
+        }
+
+        function updateSellPreview() {
+            const item = data.inventory.find(i => i.id === sellingItemId);
+            if (!item) return;
+            const price     = parseFloat(document.getElementById('sell-price').value) || 0;
+            const totalCost = (item.costBuy || 0) + (item.costRestore || 0);
+            const profit    = price - totalCost;
+            const roi       = totalCost > 0 ? ((profit / totalCost) * 100).toFixed(0) : 0;
+            const days      = item.dateAdded ? Math.ceil((Date.now() - item.dateAdded) / 86400000) : 0;
+            const color     = profit >= 0 ? 'var(--green)' : 'var(--red)';
+            document.getElementById('sell-preview').innerHTML = `
+                Ganancia: <strong style="color:${color};">$${profit}</strong> · ROI: <strong style="color:${color};">${roi}%</strong>
+                ${days > 0 ? ` · Tardó <strong>${days}d</strong>` : ''}
+            `;
+        }
+
+        function closeSellModal() {
+            document.getElementById('sell-modal').classList.remove('open');
+            sellingItemId = null;
+        }
+
+        function confirmSale() {
+            const item = data.inventory.find(i => i.id === sellingItemId);
+            if (!item) return;
+
+            const priceFinal = parseFloat(document.getElementById('sell-price').value);
+            const groupId    = document.getElementById('sell-group').value;
+            const dateInput  = document.getElementById('sell-date').value;
+            const contactId  = document.getElementById('sell-contact').value || null;
+
+            if (!priceFinal || !groupId) {
+                showToast('❌', 'Falta precio o grupo.');
+                return;
+            }
+
+            const group     = data.groups.find(g => g.id === groupId);
+            const saleDate  = dateInput ? new Date(dateInput).getTime() : Date.now();
+            const totalCost = (item.costBuy || 0) + (item.costRestore || 0);
+            const profit    = priceFinal - totalCost;
+            const roi       = totalCost > 0 ? (profit / totalCost) * 100 : 0;
+            const daysToSell= item.dateAdded ? Math.max(0, Math.round((saleDate - item.dateAdded) / 86400000)) : 0;
+
+            const sale = {
+                id:         's_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
+                itemId:     item.id,
+                itemName:   item.name,
+                itemBrand:  item.brand || '',
+                itemPhoto:  item.photo || null,
+                priceFinal, groupId,
+                groupName:  group ? group.name : 'Desconocido',
+                groupTier:  group ? group.tier : '?',
+                dateSold:   saleDate,
+                hourOfDay:  new Date(saleDate).getHours(),
+                dayOfWeek:  new Date(saleDate).getDay(),
+                costBuy:    item.costBuy || 0,
+                costRestore:item.costRestore || 0,
+                profit, roi, daysToSell,
+                contactId,
+            };
+            data.sales.push(sale);
+
+            // marcar item como vendido
+            const idx = data.inventory.findIndex(i => i.id === item.id);
+            if (idx >= 0) {
+                data.inventory[idx].status       = 'sold';
+                data.inventory[idx].dateSold     = saleDate;
+                data.inventory[idx].soldPrice    = priceFinal;
+                data.inventory[idx].soldGroupId  = groupId;
+            }
+            data.selectedForToday = data.selectedForToday.filter(id => id !== item.id);
+
+            // actualizar contacto a converted si corresponde
+            if (contactId) {
+                const cidx = data.contacts.findIndex(c => c.id === contactId);
+                if (cidx >= 0) data.contacts[cidx].status = 'converted';
+            }
+
+            // actualizar métricas
+            recomputeMetrics();
+            saveData();
+            renderInventory();
+            renderTodayItems();
+            showToast('💰', `¡Venta! +$${profit} ganancia.`);
+            closeSellModal();
+
+            // cambiar a tab ventas para que lo vea
+            setTimeout(() => switchTab('ventas'), 300);
+        }
+
+        /* ============================================================
+           METRICS (tier dinámico + hora peak real + weekday)
+        ============================================================ */
+        function recomputeMetrics() {
+            // Por grupo: contactos, ventas, revenue, score
+            const gm = {};
+            data.groups.forEach(g => { gm[g.id] = { contacts: 0, sales: 0, revenue: 0, profit: 0 }; });
+
+            data.sales.forEach(s => {
+                if (!gm[s.groupId]) gm[s.groupId] = { contacts: 0, sales: 0, revenue: 0, profit: 0 };
+                gm[s.groupId].sales++;
+                gm[s.groupId].revenue += s.priceFinal || 0;
+                gm[s.groupId].profit  += s.profit || 0;
+            });
+
+            data.contacts.forEach(c => {
+                if (!c.sourceGroupId) return;
+                if (!gm[c.sourceGroupId]) gm[c.sourceGroupId] = { contacts: 0, sales: 0, revenue: 0, profit: 0 };
+                gm[c.sourceGroupId].contacts++;
+            });
+
+            data.groupMetrics = gm;
+
+            // Por hora (ventas + contactos)
+            const hm = {};
+            for (let h = 0; h < 24; h++) hm[h] = 0;
+            data.sales.forEach(s => { hm[s.hourOfDay] = (hm[s.hourOfDay] || 0) + 2; }); // peso 2 a ventas
+            data.contacts.forEach(c => {
+                if (c.createdAt) {
+                    const h = new Date(c.createdAt).getHours();
+                    hm[h] = (hm[h] || 0) + 1;
+                }
+            });
+            data.hourMetrics = hm;
+
+            // Por día de la semana
+            const wm = { 0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0 };
+            data.sales.forEach(s => { wm[s.dayOfWeek] = (wm[s.dayOfWeek] || 0) + 1; });
+            data.weekdayMetrics = wm;
+        }
+
+        function recalculateTiers() {
+            recomputeMetrics();
+            // Score por grupo = ventas*3 + contactos*1
+            const scored = data.groups.map(g => {
+                const m = data.groupMetrics[g.id] || { contacts: 0, sales: 0 };
+                const score = m.sales * 3 + m.contacts;
+                return { id: g.id, score };
+            });
+            scored.sort((a, b) => b.score - a.score);
+
+            // Si nadie tiene score (negocio nuevo), dejar tiers manuales
+            const hasAnyScore = scored.some(s => s.score > 0);
+            if (!hasAnyScore) {
+                showToast('⚠️', 'Sin datos suficientes. Registra ventas primero.');
+                return;
+            }
+
+            // Top 30% → A, siguiente 50% → B, resto → C
+            const n    = scored.length;
+            const cutA = Math.max(1, Math.ceil(n * 0.3));
+            const cutB = Math.max(cutA + 1, Math.ceil(n * 0.75));
+            scored.forEach((s, i) => {
+                let tier;
+                if (s.score === 0) tier = 'C';
+                else if (i < cutA)  tier = 'A';
+                else if (i < cutB)  tier = 'B';
+                else                tier = 'C';
+                const idx = data.groups.findIndex(g => g.id === s.id);
+                if (idx >= 0) data.groups[idx].tier = tier;
+            });
+
+            saveData();
+            renderGroups();
+            showToast('🔄', 'Tiers recalculados con tus datos reales.');
+        }
+
+        /* ============================================================
+           CONTACTS
+        ============================================================ */
+        function openContactModal(contactId = null) {
+            editingContactId = contactId;
+            const title = document.getElementById('contact-modal-title');
+
+            // llenar selects
+            const sSel = document.getElementById('ct-source');
+            sSel.innerHTML = '<option value="">-- Desconocido --</option>' +
+                data.groups.map(g => `<option value="${g.id}">${escapeHtml(g.name)}</option>`).join('');
+
+            const iSel = document.getElementById('ct-item');
+            iSel.innerHTML = '<option value="">-- Ninguno específico --</option>' +
+                data.inventory
+                    .filter(i => i.status === 'available' || i.status === 'reserved')
+                    .map(i => `<option value="${i.id}">${escapeHtml(i.name)}</option>`).join('');
+
+            if (contactId) {
+                const c = data.contacts.find(x => x.id === contactId);
+                if (!c) return;
+                title.textContent = '✏️ Editar contacto';
+                document.getElementById('ct-name').value   = c.name || '';
+                document.getElementById('ct-phone').value  = c.phone || '';
+                document.getElementById('ct-source').value = c.sourceGroupId || '';
+                document.getElementById('ct-item').value   = c.itemId || '';
+                document.getElementById('ct-status').value = c.status || 'active';
+                document.getElementById('ct-notes').value  = c.notes || '';
+            } else {
+                title.textContent = '➕ Nuevo contacto';
+                document.querySelector('#contact-modal form').reset();
+                document.getElementById('ct-status').value = 'active';
+            }
+
+            document.getElementById('contact-modal').classList.add('open');
+        }
+
+        function closeContactModal() {
+            document.getElementById('contact-modal').classList.remove('open');
+            editingContactId = null;
+        }
+
+        function saveContact() {
+            const name = document.getElementById('ct-name').value.trim();
+            if (!name) { showToast('❌', 'Falta el nombre.'); return; }
+
+            const payload = {
+                name,
+                phone:         document.getElementById('ct-phone').value.trim(),
+                sourceGroupId: document.getElementById('ct-source').value || null,
+                itemId:        document.getElementById('ct-item').value || null,
+                status:        document.getElementById('ct-status').value,
+                notes:         document.getElementById('ct-notes').value.trim(),
+                lastMessage:   Date.now(),
+            };
+
+            if (editingContactId) {
+                const idx = data.contacts.findIndex(c => c.id === editingContactId);
+                if (idx >= 0) {
+                    data.contacts[idx] = { ...data.contacts[idx], ...payload };
+                    showToast('✅', 'Contacto actualizado.');
+                }
+            } else {
+                data.contacts.push({
+                    id: 'c_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
+                    ...payload,
+                    createdAt: Date.now(),
+                });
+                showToast('✅', 'Contacto guardado.');
+            }
+
+            recomputeMetrics();
+            saveData();
+            renderContacts();
+            closeContactModal();
+        }
+
+        function deleteContact(id) {
+            const c = data.contacts.find(x => x.id === id);
+            if (!c) return;
+            showConfirm(
+                `¿Borrar contacto de ${c.name}?`,
+                'Esta acción no se puede deshacer.',
+                () => {
+                    data.contacts = data.contacts.filter(x => x.id !== id);
+                    recomputeMetrics();
+                    saveData();
+                    renderContacts();
+                    showToast('🗑', 'Contacto eliminado.');
+                }
+            );
+        }
+
+        function setContactFilter(f) {
+            contactFilter = f;
+            document.querySelectorAll('[data-cfilter]').forEach(c => c.classList.toggle('active', c.dataset.cfilter === f));
+            renderContacts();
+        }
+
+        function renderContacts() {
+            const list  = document.getElementById('contacts-list');
+            const empty = document.getElementById('contacts-empty');
+
+            document.getElementById('count-contacts').textContent = data.contacts.length;
+
+            if (data.contacts.length === 0) {
+                list.innerHTML = '';
+                empty.style.display = 'block';
+                return;
+            }
+
+            // Auto-mark cold: no update in 3+ days y sigue active
+            const threeDays = 3 * 86400000;
+            data.contacts.forEach(c => {
+                if (c.status === 'active' && c.lastMessage && (Date.now() - c.lastMessage) > threeDays) {
+                    c.status = 'cold';
+                }
+            });
+
+            let list_ = data.contacts;
+            if (contactFilter !== 'all') {
+                list_ = list_.filter(c => c.status === contactFilter);
+            }
+
+            if (list_.length === 0) {
+                list.innerHTML = '';
+                empty.style.display = 'block';
+                empty.innerHTML = '<span class="empty-icon">🔍</span>No hay contactos en este filtro.';
+                return;
+            }
+            empty.style.display = 'none';
+
+            const statusMap = {
+                active:    ['status-active-tag',    '🟡 Activo'],
+                cold:      ['status-cold-tag',      '🥶 Frío'],
+                converted: ['status-converted-tag', '✅ Convertido'],
+                lost:      ['status-lost-tag',      '❌ Perdido'],
+            };
+
+            const sorted = [...list_].sort((a, b) => (b.lastMessage || b.createdAt || 0) - (a.lastMessage || a.createdAt || 0));
+
+            list.innerHTML = sorted.map(c => {
+                const [stCls, stLbl] = statusMap[c.status] || ['', c.status];
+                const group = c.sourceGroupId ? data.groups.find(g => g.id === c.sourceGroupId) : null;
+                const item  = c.itemId ? data.inventory.find(i => i.id === c.itemId) : null;
+                const daysSince = c.lastMessage ? Math.floor((Date.now() - c.lastMessage) / 86400000) : null;
+
+                const phoneClean = (c.phone || '').replace(/[^0-9+]/g, '');
+                const waLink = phoneClean
+                    ? `https://wa.me/${phoneClean.startsWith('+') ? phoneClean.slice(1) : ('52' + phoneClean)}`
+                    : null;
+
+                return `
+                    <div class="contact-card status-${c.status}">
+                        <div class="contact-top">
+                            <div>
+                                <div class="contact-name">${escapeHtml(c.name)}
+                                    <span class="status-tag ${stCls}" style="font-size:0.6rem;">${stLbl}</span>
+                                </div>
+                                <div class="contact-meta">
+                                    ${c.phone ? `<span>📱 ${escapeHtml(c.phone)}</span>` : ''}
+                                    ${group ? `<span>👥 ${escapeHtml(group.name)}</span>` : ''}
+                                    ${daysSince !== null ? `<span>⏱ ${daysSince === 0 ? 'hoy' : daysSince + 'd'}</span>` : ''}
+                                </div>
+                            </div>
+                        </div>
+                        ${item ? `<div class="contact-interested">👟 Interesado en: <strong>${escapeHtml(item.name)}</strong></div>` : ''}
+                        ${c.notes ? `<div class="contact-notes">💬 ${escapeHtml(c.notes)}</div>` : ''}
+                        <div class="contact-actions">
+                            ${waLink ? `<a class="btn btn-primary" href="${waLink}" target="_blank" rel="noopener">💚 WhatsApp</a>` : ''}
+                            <button class="btn btn-ghost" onclick="touchContact('${c.id}')">📌 Marcar contactado</button>
+                            <button class="btn btn-ghost" onclick="openContactModal('${c.id}')">✏️</button>
+                            <button class="btn btn-red btn-icon" onclick="deleteContact('${c.id}')">✕</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function touchContact(id) {
+            const idx = data.contacts.findIndex(c => c.id === id);
+            if (idx < 0) return;
+            data.contacts[idx].lastMessage = Date.now();
+            if (data.contacts[idx].status === 'cold') data.contacts[idx].status = 'active';
+            saveData();
+            renderContacts();
+            showToast('📌', 'Follow-up registrado.');
+        }
+
+        /* ============================================================
+           SALES RENDER
+        ============================================================ */
+        function renderSales() {
+            const list  = document.getElementById('sales-list');
+            const empty = document.getElementById('sales-empty');
+
+            // KPIs
+            const totalProfit = data.sales.reduce((acc, s) => acc + (s.profit || 0), 0);
+            const totalCost   = data.sales.reduce((acc, s) => acc + (s.costBuy || 0) + (s.costRestore || 0), 0);
+            const avgROI      = totalCost > 0 ? ((totalProfit / totalCost) * 100).toFixed(0) : 0;
+
+            const now = new Date();
+            const monthStart = new Date(now.getFullYear(), now.getMonth(), 1).getTime();
+            const monthSales   = data.sales.filter(s => s.dateSold >= monthStart);
+            const monthProfit  = monthSales.reduce((acc, s) => acc + (s.profit || 0), 0);
+            const avgDays      = data.sales.length > 0
+                ? (data.sales.reduce((acc, s) => acc + (s.daysToSell || 0), 0) / data.sales.length).toFixed(0)
+                : 0;
+
+            document.getElementById('stat-total-profit').textContent     = `$${totalProfit.toLocaleString('es-MX')}`;
+            document.getElementById('stat-total-sales-count').textContent= `${data.sales.length} venta${data.sales.length !== 1 ? 's' : ''}`;
+            document.getElementById('stat-avg-roi').textContent          = `${avgROI}%`;
+            document.getElementById('stat-month-profit').textContent     = `$${monthProfit.toLocaleString('es-MX')}`;
+            document.getElementById('stat-month-sales').textContent      = `${monthSales.length} venta${monthSales.length !== 1 ? 's' : ''}`;
+            document.getElementById('stat-avg-days').textContent         = avgDays;
+
+            if (data.sales.length === 0) {
+                list.innerHTML = '';
+                empty.style.display = 'block';
+                return;
+            }
+            empty.style.display = 'none';
+
+            const sorted = [...data.sales].sort((a, b) => b.dateSold - a.dateSold);
+
+            list.innerHTML = sorted.map(s => {
+                const date = new Date(s.dateSold);
+                const dateStr = date.toLocaleDateString('es-MX', { day: '2-digit', month: 'short', year: 'numeric' });
+                const timeStr = date.toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit' });
+                const profitClass = s.profit >= 0 ? 'sale-profit' : 'sale-loss';
+                return `
+                    <div class="sale-card">
+                        <div class="sale-thumb">${s.itemPhoto ? `<img src="${s.itemPhoto}">` : '👟'}</div>
+                        <div class="sale-body">
+                            <div class="sale-name">${escapeHtml(s.itemName)}</div>
+                            <div class="sale-meta">📅 ${dateStr} ${timeStr} · 👥 ${escapeHtml(s.groupName)} (Tier ${s.groupTier}) · ⏱ ${s.daysToSell}d</div>
+                            <div class="sale-numbers">
+                                <span class="sale-number-chip">Venta: <strong>$${s.priceFinal}</strong></span>
+                                <span class="sale-number-chip">Costo: $${(s.costBuy||0) + (s.costRestore||0)}</span>
+                                <span class="sale-number-chip ${profitClass}">Ganancia: <strong>$${s.profit}</strong></span>
+                                <span class="sale-number-chip ${profitClass}">ROI: <strong>${s.roi.toFixed(0)}%</strong></span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        /* ============================================================
+           GROUPS
+        ============================================================ */
+        function openGroupModal(groupId = null) {
+            editingGroupId = groupId;
+            const title = document.getElementById('group-modal-title');
+            const del   = document.getElementById('gr-delete-btn');
+
+            if (groupId) {
+                const g = data.groups.find(x => x.id === groupId);
+                if (!g) return;
+                title.textContent = '✏️ Editar grupo';
+                document.getElementById('gr-name').value = g.name || '';
+                document.getElementById('gr-url').value  = g.url || '';
+                document.getElementById('gr-desc').value = g.desc || '';
+                document.getElementById('gr-tier').value = g.tier || 'B';
+                del.style.display = 'inline-flex';
+            } else {
+                title.textContent = '➕ Agregar grupo';
+                document.querySelector('#group-modal form').reset();
+                document.getElementById('gr-tier').value = 'B';
+                del.style.display = 'none';
+            }
+            document.getElementById('group-modal').classList.add('open');
+        }
+
+        function closeGroupModal() {
+            document.getElementById('group-modal').classList.remove('open');
+            editingGroupId = null;
+        }
+
+        function saveGroup() {
+            const name = document.getElementById('gr-name').value.trim();
+            if (!name) { showToast('❌', 'Falta el nombre.'); return; }
+
+            const payload = {
+                name,
+                url:  document.getElementById('gr-url').value.trim(),
+                desc: document.getElementById('gr-desc').value.trim(),
+                tier: document.getElementById('gr-tier').value,
+            };
+
+            if (editingGroupId) {
+                const idx = data.groups.findIndex(g => g.id === editingGroupId);
+                if (idx >= 0) {
+                    data.groups[idx] = { ...data.groups[idx], ...payload };
+                    showToast('✅', 'Grupo actualizado.');
+                }
+            } else {
+                data.groups.push({
+                    id: 'g_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
+                    ...payload,
+                });
+                showToast('✅', 'Grupo agregado.');
+            }
+
+            saveData();
+            renderGroups();
+            closeGroupModal();
+        }
+
+        function deleteGroup() {
+            if (!editingGroupId) return;
+            const g = data.groups.find(x => x.id === editingGroupId);
+            if (!g) return;
+            showConfirm(
+                `¿Borrar grupo "${g.name}"?`,
+                'Las ventas/contactos vinculados se mantienen pero quedarán huérfanos.',
+                () => {
+                    data.groups = data.groups.filter(x => x.id !== editingGroupId);
+                    saveData();
+                    renderGroups();
+                    closeGroupModal();
+                    showToast('🗑', 'Grupo eliminado.');
+                }
+            );
+        }
+
+        function renderGroups() {
+            const area = document.getElementById('groups-render-area');
+
+            const byTier = { A: [], B: [], C: [] };
+            data.groups.forEach(g => { byTier[g.tier] = byTier[g.tier] || []; byTier[g.tier].push(g); });
+
+            const tierInfo = {
+                A: { label: 'Tier A — Top tier',            cls: 'tier-label-a' },
+                B: { label: 'Tier B — Buenos',               cls: 'tier-label-b' },
+                C: { label: 'Tier C — Menor actividad',      cls: 'tier-label-c' },
+            };
+
+            let html = '';
+            for (const t of ['A', 'B', 'C']) {
+                const groups = byTier[t] || [];
+                if (groups.length === 0) continue;
+                html += `<div style="margin-bottom:12px;"><span class="tier-label ${tierInfo[t].cls}">${tierInfo[t].label}</span></div>`;
+                html += '<div class="groups-grid" style="margin-bottom:18px;">';
+                groups.forEach(g => {
+                    const m = data.groupMetrics[g.id] || { contacts: 0, sales: 0, revenue: 0 };
+                    html += `
+                        <div class="group-chip tier-${t.toLowerCase()}" onclick="openGroupModal('${g.id}')" style="cursor:pointer;">
+                            <div class="tier-dot"></div>
+                            <div class="group-chip-body">
+                                <div class="group-name">${escapeHtml(g.name)}</div>
+                                ${g.desc ? `<div class="group-desc">${escapeHtml(g.desc)}</div>` : ''}
+                                <div class="group-stats">
+                                    <span class="group-stat">💰 <strong>${m.sales}</strong> ventas</span>
+                                    <span class="group-stat">💬 <strong>${m.contacts}</strong> contactos</span>
+                                    ${m.revenue > 0 ? `<span class="group-stat">💵 $<strong>${m.revenue.toLocaleString('es-MX')}</strong></span>` : ''}
+                                </div>
+                                ${g.url ? `<a class="group-url-link" href="${g.url}" target="_blank" rel="noopener" onclick="event.stopPropagation();">🔗 Abrir grupo</a>` : ''}
+                            </div>
+                        </div>
+                    `;
+                });
+                html += '</div>';
+            }
+
+            area.innerHTML = html || '<div class="empty-state"><span class="empty-icon">👥</span>Sin grupos aún.</div>';
+        }
+
+        /* ============================================================
+           SESSION GENERATOR
+        ============================================================ */
+        function generateSession() {
+            const todayItems = data.inventory.filter(i =>
+                data.selectedForToday.includes(i.id) &&
+                (i.status === 'available' || i.status === 'reserved')
+            );
+
+            if (todayItems.length === 0) {
+                showToast('⚠️', 'Marca items del inventario primero we.');
+                switchTab('inventario');
+                return;
+            }
+
+            const numPosts = Math.max(1, parseInt(document.getElementById('inp-num-posts').value) || 5);
+            const horario  = getCurrentHorario();
+            const isPeak   = horario.type === 'peak';
+            const isGood   = horario.type === 'good';
+            const isMeh    = horario.type === 'meh';
+
+            const priorityScore = { high: 3, medium: 2, low: 1 };
+            const sortedItems = [...todayItems].sort((a, b) => priorityScore[b.priority] - priorityScore[a.priority]);
+
+            let shareA, shareB, shareC;
+            if (isPeak)      { shareA = 0.60; shareB = 0.35; shareC = 0.05; }
+            else if (isGood) { shareA = 0.50; shareB = 0.40; shareC = 0.10; }
+            else if (isMeh)  { shareA = 0.45; shareB = 0.40; shareC = 0.15; }
+            else             { shareA = 0.55; shareB = 0.35; shareC = 0.10; }
+
+            const byTier = { A: [], B: [], C: [] };
+            data.groups.forEach(g => { byTier[g.tier] = byTier[g.tier] || []; byTier[g.tier].push(g); });
+
+            // Fallbacks si alguna tier está vacía
+            if (byTier.A.length === 0) byTier.A = data.groups.slice(0, 1);
+            if (byTier.B.length === 0) byTier.B = byTier.A;
+            if (byTier.C.length === 0) byTier.C = byTier.B;
+
+            const postsA = Math.max(1, Math.round(numPosts * shareA));
+            const postsB = Math.max(1, Math.round(numPosts * shareB));
             const postsC = Math.max(0, numPosts - postsA - postsB);
 
-            // Generar asignaciones de grupos de manera rotatoria
-            const pickGroups = (pool, count) => {
-                const result = [];
-                for (let i = 0; i < count; i++) {
-                    result.push(pool[i % pool.length]);
-                }
-                return result;
+            const pick = (pool, count) => {
+                const r = [];
+                for (let i = 0; i < count; i++) r.push(pool[i % pool.length]);
+                return r;
             };
 
             const groupAssignments = [
-                ...pickGroups(GROUPS.tierA, postsA),
-                ...pickGroups(GROUPS.tierB, postsB),
-                ...pickGroups(GROUPS.tierC, postsC),
+                ...pick(byTier.A, postsA),
+                ...pick(byTier.B, postsB),
+                ...pick(byTier.C, postsC),
             ];
 
-            // Distribuir items rotando (con peso a los de mayor prioridad)
-            const tasks = [];
-
-            // Para cada publicación, elegimos el item con peso
-            // Los HIGH aparecen hasta 3 veces más que LOW
             const weightedItems = [];
             sortedItems.forEach(item => {
                 const times = priorityScore[item.priority];
                 for (let t = 0; t < times; t++) weightedItems.push(item);
             });
 
+            const tasks = [];
             groupAssignments.forEach((group, idx) => {
-                const item = weightedItems[idx % weightedItems.length];
-                const taskId = Date.now() + idx;
+                const item   = weightedItems[idx % weightedItems.length];
+                const taskId = Date.now() + idx * 10;
                 tasks.push({
                     id: taskId,
-                    groupId: group.id,
+                    groupId:   group.id,
                     groupName: group.name,
                     groupTier: group.tier,
-                    itemId: item.id,
-                    itemName: item.name,
+                    groupUrl:  group.url || '',
+                    itemId:    item.id,
+                    itemName:  item.name,
                     itemPriority: item.priority,
+                    itemPhoto: item.photo || null,
+                    itemPrice: item.priceAsk || 0,
                     steps: [
-                        { id: taskId + 1, type: 'publish', label: `Publica [${item.name}] en "${group.name}"`,  done: false },
-                        { id: taskId + 2, type: 'boost',   label: `Boostea la publicación con la cuenta secundaria`, done: false },
+                        { id: taskId + 1, type: 'publish', label: `Publica [${item.name}] en "${group.name}"`,   done: false },
+                        { id: taskId + 2, type: 'boost',   label: `Boostea con cuenta secundaria`,                done: false },
                     ]
                 });
             });
 
-            session = {
+            data.session = {
                 tasks,
-                generatedAt: Date.now(),
-                horarioType: horario.type,
+                generatedAt:  Date.now(),
+                horarioType:  horario.type,
                 horarioLabel: horario.label,
             };
 
@@ -1584,106 +3161,93 @@
             renderChecklist();
             showToast('🎯', `Sesión generada: ${tasks.length} publicaciones.`);
 
-            // scroll hacia el checklist
             setTimeout(() => {
                 document.getElementById('checklist-card').scrollIntoView({ behavior: 'smooth', block: 'start' });
             }, 200);
         }
 
-        // =============================================
-        // RENDER CHECKLIST
-        // =============================================
         function renderChecklist() {
             const card = document.getElementById('checklist-card');
+            const session = data.session;
 
             if (!session || session.tasks.length === 0) {
                 card.style.display = 'none';
                 return;
             }
-
             card.style.display = 'block';
 
-            // Progress
             let totalSteps = 0, doneSteps = 0;
-            session.tasks.forEach(task => {
-                task.steps.forEach(step => {
-                    totalSteps++;
-                    if (step.done) doneSteps++;
-                });
-            });
+            session.tasks.forEach(task => task.steps.forEach(step => {
+                totalSteps++;
+                if (step.done) doneSteps++;
+            }));
 
             const pct = totalSteps > 0 ? Math.round((doneSteps / totalSteps) * 100) : 0;
             document.getElementById('progress-text').textContent = `${doneSteps} / ${totalSteps} pasos completados`;
             document.getElementById('progress-pct').textContent  = `${pct}%`;
             document.getElementById('progress-bar').style.width  = `${pct}%`;
 
-            // Stats
             const tierCount = { A: 0, B: 0, C: 0 };
-            session.tasks.forEach(t => tierCount[t.groupTier]++);
+            session.tasks.forEach(t => tierCount[t.groupTier] = (tierCount[t.groupTier] || 0) + 1);
             document.getElementById('session-stats').innerHTML = `
-                <div class="stat-chip"><strong style="color:var(--green)">${tierCount.A}</strong><span>Tier A</span></div>
-                <div class="stat-chip"><strong style="color:var(--yellow)">${tierCount.B}</strong><span>Tier B</span></div>
-                <div class="stat-chip"><strong style="color:var(--gray)">${tierCount.C}</strong><span>Tier C</span></div>
+                <div class="stat-chip"><strong style="color:var(--green)">${tierCount.A || 0}</strong><span>Tier A</span></div>
+                <div class="stat-chip"><strong style="color:var(--yellow)">${tierCount.B || 0}</strong><span>Tier B</span></div>
+                <div class="stat-chip"><strong style="color:var(--gray)">${tierCount.C || 0}</strong><span>Tier C</span></div>
                 <div class="stat-chip"><strong>${session.tasks.length}</strong><span>Total posts</span></div>
-                <div class="stat-chip"><strong style="font-size:0.75rem;">${session.horarioLabel}</strong><span>Horario generado</span></div>
+                <div class="stat-chip"><strong style="font-size:0.75rem;">${session.horarioLabel}</strong><span>Horario</span></div>
             `;
 
-            // All done banner
             const allDone = doneSteps === totalSteps && totalSteps > 0;
             document.getElementById('all-done-banner').classList.toggle('visible', allDone);
 
-            // Tasks
             const container = document.getElementById('checklist-container');
-            container.innerHTML = '';
+            const tierColors = { A: 'var(--green)', B: 'var(--yellow)', C: 'var(--gray)' };
+            const priorityInfo = {
+                high:   ['priority-high',  '🔴 ALTA'],
+                medium: ['priority-medium','🟡 MEDIA'],
+                low:    ['priority-low',   '⚫ BAJA'],
+            };
 
-            session.tasks.forEach((task, taskIdx) => {
+            container.innerHTML = session.tasks.map((task, idx) => {
                 const allTaskDone = task.steps.every(s => s.done);
-                const group = document.createElement('div');
-                group.className = `checklist-group${allTaskDone ? ' completed' : ''}`;
-
-                const tierColors = { A: 'var(--green)', B: 'var(--yellow)', C: 'var(--gray)' };
-                const tierColor  = tierColors[task.groupTier] || 'var(--text-muted)';
-
-                const priorityInfo = {
-                    high:   ['priority-high', '🔴 ALTA'],
-                    medium: ['priority-medium','🟡 MEDIA'],
-                    low:    ['priority-low',  '⚫ BAJA'],
-                };
+                const tierColor   = tierColors[task.groupTier] || 'var(--text-muted)';
                 const [pClass, pLabel] = priorityInfo[task.itemPriority] || ['', ''];
 
-                group.innerHTML = `
-                    <div class="checklist-group-header">
-                        <div class="post-number">${taskIdx + 1}</div>
-                        <div class="post-info">
-                            <div class="post-item-name">${task.itemName}
-                                <span class="priority-tag ${pClass}" style="margin-left:6px;">${pLabel}</span>
+                return `
+                    <div class="checklist-group${allTaskDone ? ' completed' : ''}">
+                        <div class="checklist-group-header">
+                            <div class="post-number">${idx + 1}</div>
+                            <div class="post-info">
+                                <div class="post-item-name">${escapeHtml(task.itemName)}
+                                    <span class="priority-tag ${pClass}" style="margin-left:6px;font-size:0.58rem;">${pLabel}</span>
+                                </div>
+                                <div class="post-group-name">
+                                    <span style="color:${tierColor}; font-weight:700;">Tier ${task.groupTier}</span>
+                                    · ${escapeHtml(task.groupName)}
+                                </div>
                             </div>
-                            <div class="post-group-name">
-                                <span style="color:${tierColor}; font-weight:700;">Tier ${task.groupTier}</span>
-                                · ${task.groupName}
-                            </div>
+                            <button class="quick-post-btn" onclick="quickPost('${task.id}')" title="Copiar texto y abrir grupo">
+                                🚀 Post
+                            </button>
+                        </div>
+                        <div class="checklist-steps">
+                            ${task.steps.map(step => `
+                                <div class="checklist-step${step.done ? ' done' : ''}"
+                                     onclick="toggleStep(${task.id}, ${step.id})">
+                                    <div class="step-checkbox"><span class="step-checkmark">✓</span></div>
+                                    <span class="step-label">${escapeHtml(step.label)}</span>
+                                    <span class="step-type-badge type-${step.type}">${step.type === 'publish' ? 'Publicar' : 'Boost'}</span>
+                                </div>
+                            `).join('')}
                         </div>
                     </div>
-                    <div class="checklist-steps">
-                        ${task.steps.map(step => `
-                            <div class="checklist-step${step.done ? ' done' : ''}"
-                                 onclick="toggleStep(${task.id}, ${step.id})">
-                                <div class="step-checkbox">
-                                    <span class="step-checkmark">✓</span>
-                                </div>
-                                <span class="step-label">${step.label}</span>
-                                <span class="step-type-badge type-${step.type}">${step.type === 'publish' ? 'Publicar' : 'Boost'}</span>
-                            </div>
-                        `).join('')}
-                    </div>
                 `;
-                container.appendChild(group);
-            });
+            }).join('');
         }
 
         function toggleStep(taskId, stepId) {
-            if (!session) return;
-            const task = session.tasks.find(t => t.id === taskId);
+            if (!data.session) return;
+            const task = data.session.tasks.find(t => t.id === taskId);
             if (!task) return;
             const step = task.steps.find(s => s.id === stepId);
             if (!step) return;
@@ -1693,64 +3257,264 @@
         }
 
         function clearSession() {
-            session = null;
+            data.session = null;
             saveData();
             renderChecklist();
             showToast('🧹', 'Sesión limpiada.');
         }
 
-        // =============================================
-        // CONFIRM MODAL
-        // =============================================
-        let confirmCallback = null;
+        /* ============================================================
+           QUICK POST (con intent a Facebook normal, no Lite)
+        ============================================================ */
+        function quickPost(taskId) {
+            if (!data.session) return;
+            const task = data.session.tasks.find(t => t.id === taskId);
+            if (!task) return;
+
+            const item = data.inventory.find(i => i.id === task.itemId);
+
+            // Generar template de descripción
+            const parts = [];
+            parts.push(`${item?.brand ? item.brand + ' — ' : ''}${task.itemName}`);
+            if (item?.size)     parts.push(`Talla: ${item.size}`);
+            if (task.itemPrice) parts.push(`$${task.itemPrice}`);
+            parts.push('Originales, restaurados como nuevos 🔥');
+            parts.push('Escríbeme al inbox o WhatsApp 🙌');
+            const text = parts.join('\n');
+
+            // Copiar al clipboard
+            copyToClipboard(text).then(() => {
+                showToast('📋', 'Texto copiado al portapapeles.');
+            }).catch(() => {
+                showToast('⚠️', 'No pude copiar. Copia manual.');
+            });
+
+            // Abrir el grupo — con intent para forzar FB normal si está en Android
+            const url = task.groupUrl;
+            if (!url) {
+                showToast('⚠️', 'Agrégale URL al grupo en "Grupos" pa\' abrir directo.');
+                return;
+            }
+
+            setTimeout(() => openInFacebook(url), 400);
+        }
+
+        function openInFacebook(url) {
+            // 1. Limpiar URL
+            let cleanUrl = url.trim();
+            if (!cleanUrl.startsWith('http')) cleanUrl = 'https://' + cleanUrl;
+
+            const isAndroid = /android/i.test(navigator.userAgent);
+
+            if (isAndroid) {
+                // Intent URI que fuerza el paquete com.facebook.katana (FB normal)
+                // Si el usuario no tiene FB normal, cae al fallback (browser)
+                try {
+                    const withoutProtocol = cleanUrl.replace(/^https?:\/\//, '');
+                    const intentUri = `intent://${withoutProtocol}#Intent;scheme=https;package=com.facebook.katana;S.browser_fallback_url=${encodeURIComponent(cleanUrl)};end`;
+                    window.location.href = intentUri;
+                    return;
+                } catch (e) {
+                    console.warn('Intent falló, abriendo normal', e);
+                }
+            }
+            // Fallback general (desktop / iOS / si falla el intent)
+            window.open(cleanUrl, '_blank', 'noopener');
+        }
+
+        async function copyToClipboard(text) {
+            if (navigator.clipboard && window.isSecureContext) {
+                return navigator.clipboard.writeText(text);
+            }
+            // Fallback
+            const ta = document.createElement('textarea');
+            ta.value = text;
+            ta.style.position = 'fixed';
+            ta.style.opacity = '0';
+            document.body.appendChild(ta);
+            ta.select();
+            try { document.execCommand('copy'); } catch (e) { throw e; }
+            document.body.removeChild(ta);
+        }
+
+        /* ============================================================
+           STATS TAB
+        ============================================================ */
+        function renderStats() {
+            recomputeMetrics();
+
+            // Real hours chart
+            const hoursEl = document.getElementById('real-hours-chart');
+            const hm      = data.hourMetrics;
+            const maxH    = Math.max(...Object.values(hm), 1);
+
+            hoursEl.innerHTML = Object.entries(hm).map(([h, v]) => {
+                const pct = (v / maxH) * 100;
+                const hStr = String(h).padStart(2, '0') + ':00';
+                return `
+                    <div style="display:flex;align-items:center;gap:8px;font-size:0.75rem;">
+                        <span style="min-width:48px;font-family:'Montserrat',sans-serif;font-weight:700;color:var(--text-muted);">${hStr}</span>
+                        <div style="flex:1;height:14px;background:var(--surface2);border-radius:4px;overflow:hidden;">
+                            <div style="width:${pct}%;height:100%;background:${v > 0 ? 'var(--green)' : 'var(--surface3)'};"></div>
+                        </div>
+                        <span style="min-width:32px;text-align:right;font-weight:700;">${v || 0}</span>
+                    </div>
+                `;
+            }).join('');
+
+            // Top groups
+            const rankEl = document.getElementById('top-groups-ranking');
+            const scored = data.groups.map(g => {
+                const m = data.groupMetrics[g.id] || { contacts: 0, sales: 0, revenue: 0 };
+                return { ...g, ...m, score: m.sales * 3 + m.contacts };
+            }).sort((a, b) => b.score - a.score);
+
+            if (scored.every(s => s.score === 0)) {
+                rankEl.innerHTML = '<div class="empty-state"><span class="empty-icon">📊</span>Sin datos todavía. Registra ventas y contactos para ver el ranking real.</div>';
+            } else {
+                rankEl.innerHTML = scored.slice(0, 10).map((g, i) => `
+                    <div style="display:flex;align-items:center;gap:12px;padding:10px;background:var(--surface2);border-radius:10px;margin-bottom:6px;border:1.5px solid var(--border);">
+                        <div style="width:28px;height:28px;background:${i === 0 ? 'var(--yellow)' : 'var(--surface3)'};color:${i === 0 ? '#000' : 'var(--text)'};border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Montserrat',sans-serif;font-weight:900;font-size:0.8rem;flex-shrink:0;">${i + 1}</div>
+                        <div style="flex:1;min-width:0;">
+                            <div style="font-weight:700;font-size:0.88rem;">${escapeHtml(g.name)}</div>
+                            <div style="font-size:0.7rem;color:var(--text-muted);">Tier ${g.tier} · ${g.sales} ventas · ${g.contacts} contactos · $${g.revenue.toLocaleString('es-MX')}</div>
+                        </div>
+                        <div style="font-family:'Montserrat',sans-serif;font-weight:900;color:var(--green);">${g.score}</div>
+                    </div>
+                `).join('');
+            }
+
+            // Weekday chart
+            const weekdays = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
+            const wEl = document.getElementById('weekday-chart');
+            const wm = data.weekdayMetrics;
+            const maxW = Math.max(...Object.values(wm), 1);
+
+            wEl.innerHTML = weekdays.map((name, i) => {
+                const v = wm[i] || 0;
+                const pct = (v / maxW) * 100;
+                return `
+                    <div style="display:flex;align-items:center;gap:8px;font-size:0.8rem;">
+                        <span style="min-width:48px;font-family:'Montserrat',sans-serif;font-weight:700;color:var(--text-muted);">${name}</span>
+                        <div style="flex:1;height:16px;background:var(--surface2);border-radius:4px;overflow:hidden;">
+                            <div style="width:${pct}%;height:100%;background:${v > 0 ? 'var(--blue)' : 'var(--surface3)'};"></div>
+                        </div>
+                        <span style="min-width:32px;text-align:right;font-weight:700;">${v}</span>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        /* ============================================================
+           EXPORT / IMPORT
+        ============================================================ */
+        function exportData() {
+            const payload = {
+                version: 2,
+                exportedAt: new Date().toISOString(),
+                data: data,
+            };
+            const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+            const url  = URL.createObjectURL(blob);
+            const a    = document.createElement('a');
+            const date = new Date().toISOString().slice(0, 10);
+            a.href     = url;
+            a.download = `poster-backup-${date}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            showToast('⬇️', 'Respaldo exportado.');
+        }
+
+        function importData(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const parsed = JSON.parse(e.target.result);
+                    const incoming = parsed.data || parsed; // soporta formato con/sin wrapper
+                    if (!incoming || typeof incoming !== 'object') throw new Error('Formato inválido');
+
+                    showConfirm(
+                        '¿Importar datos?',
+                        `Esto REEMPLAZA tu data actual (${data.inventory.length} items, ${data.sales.length} ventas). ¿Seguir?`,
+                        () => {
+                            data = {
+                                inventory:       incoming.inventory       || [],
+                                sales:           incoming.sales           || [],
+                                contacts:        incoming.contacts        || [],
+                                groups:          incoming.groups          || [...defaultGroups],
+                                session:         incoming.session         || null,
+                                selectedForToday:incoming.selectedForToday|| [],
+                                groupMetrics:    incoming.groupMetrics    || {},
+                                hourMetrics:     incoming.hourMetrics     || {},
+                                weekdayMetrics:  incoming.weekdayMetrics  || {},
+                            };
+                            recomputeMetrics();
+                            saveData();
+                            renderAll();
+                            showToast('✅', 'Datos importados.');
+                        }
+                    );
+                } catch (err) {
+                    showToast('❌', 'Archivo inválido.');
+                    console.error(err);
+                }
+                event.target.value = ''; // reset input
+            };
+            reader.readAsText(file);
+        }
+
+        /* ============================================================
+           CONFIRM MODAL
+        ============================================================ */
+        function showConfirm(title, msg, cb) {
+            document.getElementById('confirm-title').textContent = title;
+            document.getElementById('confirm-msg').textContent   = msg;
+            document.getElementById('confirm-modal').classList.add('open');
+            document.getElementById('confirm-ok-btn').onclick = () => { cb(); closeConfirm(); };
+        }
+
+        function closeConfirm() {
+            document.getElementById('confirm-modal').classList.remove('open');
+        }
 
         function confirmClearItems() {
             showConfirm(
-                '¿Borrar todos los items?',
-                'Se van a ir al caño todos los tenis de tu lista. La sesión activa se mantiene.',
+                '¿Borrar TODO el inventario?',
+                'Se van los pares de la lista. Las ventas y contactos se mantienen.',
                 () => {
-                    items = [];
+                    data.inventory = [];
+                    data.selectedForToday = [];
                     saveData();
-                    renderItems();
-                    showToast('🗑', 'Lista limpiada.');
+                    renderAll();
+                    showToast('🗑', 'Inventario limpiado.');
                 }
             );
         }
 
         function confirmClearAll() {
             showConfirm(
-                '¿Borrar TODO?',
-                'Se borran items y sesión activa. Sin vuelta atrás we.',
+                '¿Borrar TODO TODO?',
+                'Items, ventas, contactos, sesión, TODO. Sin vuelta atrás. Te recomiendo exportar antes.',
                 () => {
-                    items   = [];
-                    session = null;
+                    data = {
+                        inventory: [], sales: [], contacts: [],
+                        groups: [...defaultGroups], session: null,
+                        selectedForToday: [], groupMetrics: {}, hourMetrics: {}, weekdayMetrics: {},
+                    };
                     saveData();
-                    renderItems();
-                    renderChecklist();
+                    renderAll();
                     showToast('💀', 'Todo borrado.');
                 }
             );
         }
 
-        function showConfirm(title, msg, cb) {
-            document.getElementById('confirm-title').textContent = title;
-            document.getElementById('confirm-msg').textContent   = msg;
-            confirmCallback = cb;
-            document.getElementById('confirm-modal').classList.add('open');
-            document.getElementById('confirm-ok-btn').onclick = () => {
-                cb();
-                closeConfirm();
-            };
-        }
-
-        function closeConfirm() {
-            document.getElementById('confirm-modal').classList.remove('open');
-            confirmCallback = null;
-        }
-
-        // =============================================
-        // TOAST
-        // =============================================
+        /* ============================================================
+           TOAST
+        ============================================================ */
         let toastTimer = null;
         function showToast(icon, text) {
             const t = document.getElementById('toast');
@@ -1761,42 +3525,59 @@
             toastTimer = setTimeout(() => t.classList.remove('show'), 2800);
         }
 
-        // =============================================
-        // PERSISTENCE
-        // =============================================
-        function saveData() {
-            localStorage.setItem(STORAGE_ITEMS,   JSON.stringify(items));
-            localStorage.setItem(STORAGE_SESSION, JSON.stringify(session));
+        /* ============================================================
+           HELPERS
+        ============================================================ */
+        function escapeHtml(str) {
+            if (str == null) return '';
+            return String(str).replace(/[&<>"']/g, c => ({
+                '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+            }[c]));
         }
 
-        function loadData() {
-            const rawItems   = localStorage.getItem(STORAGE_ITEMS);
-            const rawSession = localStorage.getItem(STORAGE_SESSION);
-            if (rawItems)   items   = JSON.parse(rawItems);
-            if (rawSession) session = JSON.parse(rawSession);
+        function renderAll() {
+            renderInventory();
+            renderTodayItems();
+            renderChecklist();
+            renderGroups();
+            renderContacts();
+            renderSales();
+            buildHorariosTable();
         }
 
-        // =============================================
-        // INIT
-        // =============================================
+        /* ============================================================
+           INIT
+        ============================================================ */
         window.addEventListener('DOMContentLoaded', () => {
             loadData();
+            recomputeMetrics();
             buildCalendar();
             buildHorariosTable();
-            renderItems();
+            renderInventory();
+            renderTodayItems();
             renderChecklist();
+            renderGroups();
+            renderContacts();
+            renderSales();
             updateClock();
+            updateStorageInfo();
             setInterval(updateClock, 1000);
+
+            // Listeners para margen en vivo
+            ['inv-cost-buy','inv-cost-restore','inv-price-ask'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.addEventListener('input', updateMarginPreview);
+            });
         });
 
-        // =============================================
-        // SERVICE WORKER
-        // =============================================
+        /* ============================================================
+           SERVICE WORKER
+        ============================================================ */
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('sw.js')
                     .then(reg => console.log('POSTER SW registrado 🔥', reg.scope))
-                    .catch(err => console.error('SW falló:', err));
+                    .catch(err => console.log('SW no disponible', err));
             });
         }
     </script>
