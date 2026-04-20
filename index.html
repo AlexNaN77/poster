@@ -1628,7 +1628,8 @@
                          onclick="document.getElementById('photo-input').click()">
                         <span style="color:var(--text-dim);font-size:0.85rem;">📷 Toca para agregar foto</span>
                     </div>
-                    <input type="file" id="photo-input" accept="image/*" capture="environment" class="hidden-input" onchange="handlePhotoSelect(event)">
+                    <input type="file" id="photo-input" accept="image/*" class="hidden-input" onchange="handlePhotoSelect(event)">
+                    
                     <button type="button" class="btn btn-ghost" id="btn-remove-photo" onclick="removePhoto()" style="margin-top:8px;display:none;">🗑 Quitar foto</button>
                 </div>
 
