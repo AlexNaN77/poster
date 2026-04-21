@@ -3301,27 +3301,41 @@
         }
 
         function openInFacebook(url) {
-            // 1. Limpiar URL
-            let cleanUrl = url.trim();
-            if (!cleanUrl.startsWith('http')) cleanUrl = 'https://' + cleanUrl;
+    // 1. Limpiar URL
+    let cleanUrl = url.trim();
+    if (!cleanUrl.startsWith('http')) cleanUrl = 'https://' + cleanUrl;
 
-            const isAndroid = /android/i.test(navigator.userAgent);
+    const isAndroid = /android/i.test(navigator.userAgent);
 
-            if (isAndroid) {
-                // Intent URI que fuerza el paquete com.facebook.katana (FB normal)
-                // Si el usuario no tiene FB normal, cae al fallback (browser)
-                try {
-                    const withoutProtocol = cleanUrl.replace(/^https?:\/\//, '');
-                    const intentUri = `intent://${withoutProtocol}#Intent;scheme=https;package=com.facebook.katana;S.browser_fallback_url=${encodeURIComponent(cleanUrl)};end`;
-                    window.location.href = intentUri;
-                    return;
-                } catch (e) {
-                    console.warn('Intent falló, abriendo normal', e);
-                }
-            }
-            // Fallback general (desktop / iOS / si falla el intent)
-            window.open(cleanUrl, '_blank', 'noopener');
+    if (isAndroid) {
+        // Intent SIN package específico → Android muestra el selector nativo
+        // "Abrir con..." donde TÚ eliges FB normal, Lite o navegador.
+        // Truco clave: NO ponemos package=com.facebook.katana para que no se vaya directo.
+        // Y NO ponemos package=com.facebook.lite tampoco obviamente lol
+        try {
+            const withoutProtocol = cleanUrl.replace(/^https?:\/\//, '');
+
+            // Intent genérico con ACTION_VIEW - Android abre el selector de apps
+            // category.BROWSABLE hace que las apps se ofrezcan como opción
+            const intentUri =
+                `intent://${withoutProtocol}` +
+                `#Intent;` +
+                `scheme=https;` +
+                `action=android.intent.action.VIEW;` +
+                `category=android.intent.category.BROWSABLE;` +
+                `S.browser_fallback_url=${encodeURIComponent(cleanUrl)};` +
+                `end`;
+
+            window.location.href = intentUri;
+            return;
+        } catch (e) {
+            console.warn('Intent falló, abriendo normal', e);
         }
+    }
+    // Fallback general (desktop / iOS / si falla el intent)
+    window.open(cleanUrl, '_blank', 'noopener');
+}
+
 
         async function copyToClipboard(text) {
             if (navigator.clipboard && window.isSecureContext) {
