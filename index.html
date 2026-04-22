@@ -1688,6 +1688,17 @@
                     </div>
                     <div id="inv-margin-preview" style="font-size:0.8rem;color:var(--text-muted);text-align:center;"></div>
                 </div>
+                
+                <div class="form-group">
+    <label>Copy para publicación</label>
+    <textarea id="inv-copy" class="inp" placeholder="Ejemplo:
+Jordan 4 Retro
+Talla 27
+$650
+Originales, restaurados como nuevos 🔥
+Inbox o WhatsApp 🙌"></textarea>
+</div>
+
 
                 <div class="form-group">
                     <label>Estado</label>
@@ -2201,13 +2212,17 @@
                 document.getElementById('inv-price-ask').value    = item.priceAsk || '';
                 document.getElementById('inv-price-min').value    = item.priceMin || '';
                 document.getElementById('inv-status').value       = item.status || 'available';
-                pendingPhoto = item.photo || null;
+document.getElementById('inv-copy').value         = item.copyText || '';
+pendingPhoto = item.photo || null;
+
             } else {
                 title.textContent = '➕ Agregar par';
                 document.querySelector('#inventory-modal form').reset();
-                document.getElementById('inv-cost-restore').value = 0;
-                document.getElementById('inv-priority').value     = 'medium';
-                document.getElementById('inv-status').value       = 'available';
+document.getElementById('inv-cost-restore').value = 0;
+document.getElementById('inv-priority').value     = 'medium';
+document.getElementById('inv-status').value       = 'available';
+document.getElementById('inv-copy').value         = '';
+
             }
             renderPhotoPreview();
             updateMarginPreview();
@@ -2238,7 +2253,9 @@
                 priceAsk:    parseFloat(document.getElementById('inv-price-ask').value)    || 0,
                 priceMin:    parseFloat(document.getElementById('inv-price-min').value)    || 0,
                 status:      document.getElementById('inv-status').value,
-                photo:       pendingPhoto,
+copyText:    document.getElementById('inv-copy').value.trim(),
+photo:       pendingPhoto,
+
             };
 
             if (editingItemId) {
@@ -3267,38 +3284,61 @@
         /* ============================================================
            QUICK POST (con intent a Facebook normal, no Lite)
         ============================================================ */
-        function quickPost(taskId) {
-            if (!data.session) return;
-            const task = data.session.tasks.find(t => t.id === taskId);
-            if (!task) return;
+        async function quickPost(taskId) {
+    if (!data.session) return;
 
-            const item = data.inventory.find(i => i.id === task.itemId);
+    const task = data.session.tasks.find(t => String(t.id) === String(taskId));
+    if (!task) return;
 
-            // Generar template de descripción
-            const parts = [];
-            parts.push(`${item?.brand ? item.brand + ' — ' : ''}${task.itemName}`);
-            if (item?.size)     parts.push(`Talla: ${item.size}`);
-            if (task.itemPrice) parts.push(`$${task.itemPrice}`);
-            parts.push('Originales, restaurados como nuevos 🔥');
-            parts.push('Escríbeme al inbox o WhatsApp 🙌');
-            const text = parts.join('\n');
+    const item  = data.inventory.find(i => i.id === task.itemId);
+    const group = data.groups.find(g => g.id === task.groupId);
 
-            // Copiar al clipboard
-            copyToClipboard(text).then(() => {
-                showToast('📋', 'Texto copiado al portapapeles.');
-            }).catch(() => {
-                showToast('⚠️', 'No pude copiar. Copia manual.');
-            });
+    // IMPORTANTE:
+    // usar la URL ACTUAL del grupo, no la congelada cuando se generó la sesión
+    const groupUrl = (group?.url || task.groupUrl || '').trim();
 
-            // Abrir el grupo — con intent para forzar FB normal si está en Android
-            const url = task.groupUrl;
-            if (!url) {
-                showToast('⚠️', 'Agrégale URL al grupo en "Grupos" pa\' abrir directo.');
-                return;
-            }
+    // Si el tenis tiene copy guardado, usar ese.
+    // Si no, generar uno automático.
+    let text = (item?.copyText || '').trim();
 
-            setTimeout(() => openInFacebook(url), 400);
+    if (!text) {
+        const parts = [];
+        parts.push(`${item?.brand ? item.brand + ' — ' : ''}${item?.name || task.itemName}`);
+        if (item?.size) parts.push(`Talla: ${item.size}`);
+        if (item?.priceAsk) parts.push(`$${item.priceAsk}`);
+        else if (task.itemPrice) parts.push(`$${task.itemPrice}`);
+        parts.push('Originales, restaurados como nuevos 🔥');
+        parts.push('Escríbeme al inbox o WhatsApp 🙌');
+        text = parts.join('\n');
+    }
+
+    let copiedOk = false;
+
+    try {
+        await copyToClipboard(text);
+        copiedOk = true;
+    } catch (e) {
+        console.warn('No se pudo copiar el texto', e);
+    }
+
+    if (!groupUrl) {
+        if (copiedOk) {
+            showToast('📋', 'Copy copiado, pero a este grupo le falta URL.');
+        } else {
+            showToast('⚠️', 'A este grupo le falta URL y no pude copiar el copy.');
         }
+        return;
+    }
+
+    showToast(
+        copiedOk ? '🚀' : '⚠️',
+        copiedOk
+            ? 'Copy copiado. Abriendo grupo...'
+            : 'Abriendo grupo... (no pude copiar el copy)'
+    );
+
+    setTimeout(() => openInFacebook(groupUrl), 250);
+}
 
         function openInFacebook(url) {
     // 1. Limpiar URL
