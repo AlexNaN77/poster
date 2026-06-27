@@ -2084,6 +2084,34 @@
   .logo-star { display: none; }
 }
 
+/* Badge de match de tallas (clientes interesados) */
+.inv-match-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    align-self: flex-start;
+    width: fit-content;
+    max-width: 100%;
+    margin-top: 6px;
+    padding: 3px 9px;
+    border-radius: 20px;
+    background: var(--blue-dim);
+    border: 1.5px solid var(--blue);
+    color: var(--blue);
+    font-size: 0.62rem;
+    font-weight: 800;
+    line-height: 1.2;
+    letter-spacing: 0.3px;
+    cursor: pointer;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: all 0.15s;
+}
+.inv-match-badge:hover {
+    background: var(--blue);
+    color: #000;
+}
 
     </style>
 </head>
@@ -2176,11 +2204,18 @@
 
 
             <!-- ITEMS A PUBLICAR HOY -->
-            <div class="card">
+                        <div class="card">
                 <div class="card-header">
                     <div class="card-title">🛒 Pa' publicar hoy</div>
-                    <button class="btn btn-ghost" onclick="switchTab('inventario')">+ Desde inventario</button>
+                    <div style="display:flex;align-items:center;gap:10px;">
+                        <div class="stat-chip" style="margin:0;">
+                            <strong style="color:var(--green)" id="post-counter-num">0</strong>
+                            <span>Posts hoy</span>
+                        </div>
+                        <button class="btn btn-ghost" onclick="switchTab('inventario')">+ Desde inventario</button>
+                    </div>
                 </div>
+                
 
                 <div class="items-list" id="items-list">
                     <div class="empty-state" id="items-empty">
@@ -2204,9 +2239,10 @@
                     <div class="time-indicator" id="session-time-indicator">
                         <span id="session-badge-preview">🟢 Buen horario</span>
                     </div>
-                    <button class="btn btn-yellow" onclick="generateSession()" style="flex-shrink:0; align-self:flex-end;">
+                                        <button class="btn btn-yellow" onclick="openModeModal()" style="flex-shrink:0; align-self:flex-end;">
                         🎯 Generar
                     </button>
+                    
                 </div>
                 <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 12px;">
                     El algoritmo distribuye según prioridad, horario y los <strong style="color:var(--green)">tiers dinámicos</strong> calculados con tus ventas reales.
@@ -2391,14 +2427,20 @@
                 <div id="top-groups-ranking"></div>
             </div>
 
-            <div class="card">
+                        <div class="card">
                 <div class="card-title" style="margin-bottom:16px;">📅 Ventas por día de la semana</div>
                 <div id="weekday-chart" style="display:flex;flex-direction:column;gap:6px;"></div>
+            </div>
+
+            <div class="card">
+                <div class="card-title" style="margin-bottom:16px;">🏷 Marcas más vendidas</div>
+                <div id="brands-chart" style="display:flex;flex-direction:column;gap:6px;"></div>
             </div>
 
         </div>
 
         <!-- ================ TAB DATOS ================ -->
+        
         <div class="tab-panel" id="panel-datos">
 
             <div class="card">
@@ -2627,6 +2669,16 @@ Inbox o WhatsApp 🙌"></textarea>
                         <option value="">-- Ninguno específico --</option>
                     </select>
                 </div>
+                
+                                <div class="form-group">
+                    <label>Tallas que le interesan</label>
+                    <label style="display:flex;align-items:center;gap:8px;font-size:0.85rem;color:var(--text);text-transform:none;letter-spacing:0;cursor:pointer;margin-bottom:6px;">
+                        <input type="checkbox" id="ct-anysize" onchange="toggleAnySize()" style="width:18px;height:18px;cursor:pointer;">
+                        Le interesa cualquier talla
+                    </label>
+                    <div id="ct-sizes-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(58px,1fr));gap:6px;max-height:160px;overflow-y:auto;padding:8px;background:var(--surface2);border-radius:10px;border:1.5px solid var(--border);"></div>
+                </div>
+                
 
                 <div class="form-group">
                     <label>Estado</label>
@@ -2696,6 +2748,28 @@ Inbox o WhatsApp 🙌"></textarea>
             </form>
         </div>
     </div>
+    
+        <!-- =========================================
+         MODAL: SELECTOR DE MODO
+    ========================================= -->
+    <div class="modal-overlay" id="mode-modal">
+        <div class="modal big">
+            <div class="modal-title">
+                <span>🎯 Elige modo de publicación</span>
+                <button class="modal-close" onclick="closeModeModal()">✕</button>
+            </div>
+
+            <div id="mode-list" style="display:flex;flex-direction:column;gap:10px;"></div>
+
+            <div id="mode-extra-config" style="margin-top:16px;"></div>
+
+            <div class="modal-actions">
+                <button type="button" class="btn btn-ghost" onclick="closeModeModal()">Cancelar</button>
+                <button type="button" class="btn btn-primary" id="mode-go-btn" onclick="runSelectedMode()">🚀 Generar sesión</button>
+            </div>
+        </div>
+    </div>
+    
 
     <!-- =========================================
          MODAL: CONFIRM
@@ -2752,6 +2826,8 @@ let data = {
     groupMetrics: {},
     hourMetrics: {},
     weekdayMetrics: {},
+    postLog: {},
+    postHistory: {},
 };
 
 let inventoryFilter = 'all';
@@ -2824,11 +2900,13 @@ function loadData() {
         if (!data.groups || data.groups.length === 0) data.groups = [...defaultGroups];
         if (!data.groupMetrics)   data.groupMetrics = {};
         if (!data.hourMetrics)    data.hourMetrics  = {};
-        if (!data.weekdayMetrics) data.weekdayMetrics = {};
+              if (!data.weekdayMetrics) data.weekdayMetrics = {};
         if (!data.selectedForToday) data.selectedForToday = [];
         if (!data.sales)    data.sales = [];
         if (!data.contacts) data.contacts = [];
         if (!data.inventory) data.inventory = [];
+        if (!data.postLog) data.postLog = {};
+        if (!data.postHistory) data.postHistory = {};
     } catch (e) {
         console.error('Error cargando data:', e);
     }
@@ -3453,6 +3531,9 @@ function renderInventory() {
         const profit    = (item.priceAsk || 0) - totalCost;
         const margin    = totalCost > 0 ? ((profit / totalCost) * 100).toFixed(0) : '—';
         const isSelected = data.selectedForToday.includes(item.id);
+        
+                const matchContacts = getMatchingContactsForItem(item);
+                
         const meta = [
             item.brand && `<span>🏷 ${item.brand}</span>`,
             item.size  && `<span>📏 T: ${item.size}</span>`,
@@ -3471,9 +3552,12 @@ function renderInventory() {
                     </div>
                 </div>
                 <div class="inv-body">
-                    <div class="inv-top-row">
+                                     <div class="inv-top-row">
                         <div class="inv-name">${escapeHtml(item.name)} <span style="margin-left:4px;">${prLabel}</span></div>
                     </div>
+                    ${matchContacts.length > 0 ? `<span class="inv-match-badge" onclick="event.stopPropagation();showMatchContacts('${item.id}')">😛 ${matchContacts.length} cliente(s) · T:${escapeHtml(item.size||'')}</span>` : ''}
+                    
+                        
                     ${meta ? `<div class="inv-meta">${meta}</div>` : ''}
                     <div class="inv-prices">
                         <div class="inv-price-item">
@@ -4132,6 +4216,11 @@ function toggleStep(taskId, stepId) {
     const step = task.steps.find(s => s.id === stepId);
     if (!step) return;
     step.done = !step.done;
+        if (step.type === 'publish') {
+        if (step.done) logPostCompleted();
+        else logPostUndone();
+    }
+    
     saveData();
     renderChecklist();
 }
@@ -4241,10 +4330,19 @@ function openContactModal(contactId = null) {
         document.getElementById('ct-item').value   = c.itemId || '';
         document.getElementById('ct-status').value = c.status || 'active';
         document.getElementById('ct-notes').value  = c.notes || '';
-    } else {
+                document.getElementById('ct-anysize').checked = !!c.anySize;
+        let preSizes = Array.isArray(c.sizes) ? c.sizes : [];
+        if (preSizes.length === 0) preSizes = parseSizesFromText(c.notes || '');
+        renderSizeGrid(preSizes);
+        toggleAnySize();
+        
+       } else {
         title.textContent = '➕ Nuevo contacto';
         document.querySelector('#contact-modal form').reset();
         document.getElementById('ct-status').value = 'active';
+        document.getElementById('ct-anysize').checked = false;
+        renderSizeGrid([]);
+        toggleAnySize();
     }
 
     document.getElementById('contact-modal').classList.add('open');
@@ -4259,15 +4357,19 @@ function saveContact() {
     const name = document.getElementById('ct-name').value.trim();
     if (!name) { showToast('❌', 'Falta el nombre.'); return; }
 
-    const payload = {
+    
+        const payload = {
         name,
         phone:         document.getElementById('ct-phone').value.trim(),
         sourceGroupId: document.getElementById('ct-source').value || null,
         itemId:        document.getElementById('ct-item').value || null,
         status:        document.getElementById('ct-status').value,
         notes:         document.getElementById('ct-notes').value.trim(),
+        sizes:         getSelectedSizes(),
+        anySize:       document.getElementById('ct-anysize').checked,
         lastMessage:   Date.now(),
     };
+    
 
     if (editingContactId) {
         const idx = data.contacts.findIndex(c => c.id === editingContactId);
@@ -4651,7 +4753,11 @@ async function quickPost(taskId) {
 
     const groupUrl = (group?.url || task.groupUrl || '').trim();
 
-    let text = (item?.copyText || '').trim();
+        let text = (task.packCopy || item?.copyText || '').trim();
+    if (task.groupId && task.groupId !== 'historia') {
+        logItemPostedInGroup(task.itemId, task.groupId);
+    }
+    
 
     if (!text) {
         const parts = [];
@@ -4799,6 +4905,9 @@ function renderStats() {
             </div>
         `;
     }).join('');
+    
+        renderBrandsChart();
+        
 }
 
 /* ============================================================
@@ -5012,6 +5121,499 @@ if ('serviceWorker' in navigator) {
 }
 
                 
+/* ============================================================
+   ★★★ ADICIONES NUEVAS ★★★
+============================================================ */
+
+/* ---------- TALLAS (18 a 32 con medios) ---------- */
+const SIZE_LIST = (() => {
+    const arr = [];
+    for (let n = 18; n <= 32; n += 0.5) {
+        arr.push(Number.isInteger(n) ? String(n) : n.toFixed(1));
+    }
+    return arr;
+})();
+
+function renderSizeGrid(selected = []) {
+    const grid = document.getElementById('ct-sizes-grid');
+    if (!grid) return;
+    grid.innerHTML = SIZE_LIST.map(sz => {
+        const on = selected.includes(sz);
+        return `<div class="filter-chip ${on ? 'active' : ''}" data-size="${sz}"
+            style="justify-content:center;padding:6px 4px;"
+            onclick="toggleSizeChip('${sz}')">${sz}</div>`;
+    }).join('');
+}
+
+function toggleSizeChip(sz) {
+    const chip = document.querySelector(`#ct-sizes-grid [data-size="${sz}"]`);
+    if (!chip) return;
+    chip.classList.toggle('active');
+}
+
+function getSelectedSizes() {
+    return Array.from(document.querySelectorAll('#ct-sizes-grid .filter-chip.active'))
+        .map(c => c.dataset.size);
+}
+
+function toggleAnySize() {
+    const any = document.getElementById('ct-anysize').checked;
+    const grid = document.getElementById('ct-sizes-grid');
+    if (grid) grid.style.opacity = any ? '0.4' : '1';
+    if (grid) grid.style.pointerEvents = any ? 'none' : 'auto';
+}
+
+/* Parser: lee notas viejas y saca tallas tipo 27 o 27.5 */
+function parseSizesFromText(text) {
+    if (!text) return [];
+    const found = new Set();
+    const regex = /\b(1[89]|2[0-9]|3[0-2])(\.5)?\b/g;
+    let m;
+    while ((m = regex.exec(text)) !== null) {
+        let val = m[1] + (m[2] || '');
+        if (SIZE_LIST.includes(val)) found.add(val);
+    }
+    return Array.from(found);
+}
+
+/* ---------- CONTADOR DE POSTS DEL DÍA ---------- */
+function getTodayKey() {
+    const d = new Date();
+    return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+function logPostCompleted() {
+    if (!data.postLog) data.postLog = {};
+    const key = getTodayKey();
+    data.postLog[key] = (data.postLog[key] || 0) + 1;
+    saveData();
+    renderPostCounter();
+}
+function logPostUndone() {
+    if (!data.postLog) data.postLog = {};
+    const key = getTodayKey();
+    data.postLog[key] = Math.max(0, (data.postLog[key] || 0) - 1);
+    saveData();
+    renderPostCounter();
+}
+function renderPostCounter() {
+    const key = getTodayKey();
+    const count = (data.postLog && data.postLog[key]) || 0;
+    const el = document.getElementById('post-counter-num');
+    if (el) el.textContent = count;
+}
+
+/* ---------- HISTORIAL: última vez publicado item+grupo ---------- */
+function logItemPostedInGroup(itemId, groupId) {
+    if (!data.postHistory) data.postHistory = {};
+    const key = itemId + '__' + groupId;
+    data.postHistory[key] = Date.now();
+    saveData();
+}
+function getLastPostedAgo(itemId, groupId) {
+    if (!data.postHistory) return null;
+    const key = itemId + '__' + groupId;
+    const ts = data.postHistory[key];
+    if (!ts) return null;
+    const diff = Date.now() - ts;
+    const mins = Math.floor(diff / 60000);
+    if (mins < 1) return 'hace <1 min';
+    if (mins < 60) return `hace ${mins} min`;
+    const hrs = Math.floor(mins / 60);
+    if (hrs < 24) return `hace ${hrs}h`;
+    const days = Math.floor(hrs / 24);
+    return `hace ${days}d`;
+}
+
+/* ---------- MATCH DE CONTACTOS POR TALLA ---------- */
+function getContactInterestedSizes(c) {
+    if (c.anySize) return 'ANY';
+    let sizes = Array.isArray(c.sizes) ? [...c.sizes] : [];
+    // también parsea las notas viejas por si no tiene tallas guardadas
+    const parsed = parseSizesFromText(c.notes || '');
+    parsed.forEach(s => { if (!sizes.includes(s)) sizes.push(s); });
+    return sizes;
+}
+
+function getMatchingContactsForItem(item) {
+    if (!item || !item.size) return [];
+    const itemSize = String(item.size).trim();
+    return data.contacts.filter(c => {
+        if (c.status === 'lost' || c.status === 'converted') return false;
+        const sizes = getContactInterestedSizes(c);
+        if (sizes === 'ANY') return true;
+        return sizes.includes(itemSize);
+    });
+}
+
+/* ---------- MODAL DE MODOS ---------- */
+const PUB_MODES = [
+    { id: 'distro',  icon: '🌀', name: 'Distro',          desc: 'El de toda la vida. El algoritmo reparte tus items marcados "a hoy" en los mejores grupos según tu historial real.' },
+    { id: 'oneshot', icon: '🆙', name: 'One-shot',        desc: 'Eliges UN solo par y lo manda a TODOS los grupos ordenados por score. Máxima exposición para un par específico.' },
+    { id: 'vaciado', icon: '📦', name: 'Vaciado de Stock', desc: 'Prioriza los items más estancados (los que llevan más días en inventario). Para mover lo que no sale.' },
+    { id: 'historias', icon: '📸', name: 'Historias',     desc: 'Ideal 1 vez al día. Te arma checklist de grabar video / subir foto a estados, según lo que tengas marcado "a hoy".' },
+    { id: 'pack',    icon: '🎁', name: 'Pack',            desc: 'Junta un par con visibilidad + uno estancado. Tú eliges cuántos pares lleva el pack y pones tu copy personalizado.' },
+    { id: 'explora', icon: '🧭', name: 'Exploración',     desc: 'Manda items a grupos con poca data para recabar información. Vende menos hoy, hace tu algoritmo más listo mañana.' },
+];
+let selectedMode = 'distro';
+
+function openModeModal() {
+    selectedMode = 'distro';
+    renderModeList();
+    renderModeExtraConfig();
+    document.getElementById('mode-modal').classList.add('open');
+}
+function closeModeModal() {
+    document.getElementById('mode-modal').classList.remove('open');
+}
+function renderModeList() {
+    const el = document.getElementById('mode-list');
+    el.innerHTML = PUB_MODES.map(m => {
+        const on = m.id === selectedMode;
+        return `
+            <div onclick="selectMode('${m.id}')" style="cursor:pointer;background:var(--surface2);border:2px solid ${on ? 'var(--green)' : 'var(--border)'};border-radius:12px;padding:14px;transition:all 0.2s;${on ? 'box-shadow:0 0 0 3px rgba(29,185,84,0.15);' : ''}">
+                <div style="display:flex;align-items:center;gap:10px;">
+                    <span style="font-size:1.5rem;">${m.icon}</span>
+                    <span style="font-family:'Montserrat',sans-serif;font-weight:900;font-size:1rem;${on ? 'color:var(--green);' : ''}">${m.name}</span>
+                    ${on ? '<span style="margin-left:auto;color:var(--green);font-weight:900;">✓</span>' : ''}
+                </div>
+                <div style="font-size:0.78rem;color:var(--text-muted);margin-top:6px;line-height:1.45;">${m.desc}</div>
+            </div>
+        `;
+    }).join('');
+}
+function selectMode(id) {
+    selectedMode = id;
+    renderModeList();
+    renderModeExtraConfig();
+}
+
+function renderModeExtraConfig() {
+    const box = document.getElementById('mode-extra-config');
+    const avail = data.inventory.filter(i => i.status === 'available' || i.status === 'reserved');
+
+    if (selectedMode === 'oneshot') {
+        box.innerHTML = `
+            <div class="form-group">
+                <label>¿Qué par enfocar?</label>
+                <select id="mode-oneshot-item" class="inp">
+                    ${avail.map(i => `<option value="${i.id}">${escapeHtml(i.name)}${i.size ? ' · T:'+escapeHtml(i.size) : ''}</option>`).join('')}
+                </select>
+            </div>`;
+    } else if (selectedMode === 'pack') {
+        box.innerHTML = `
+            <div class="form-group">
+                <label>¿De cuántos pares es el pack?</label>
+                <input type="number" id="mode-pack-num" class="inp" value="2" min="2" max="5">
+            </div>
+            <div id="mode-pack-suggestion" style="font-size:0.8rem;color:var(--text-muted);margin:8px 0;"></div>
+            <div class="form-group">
+                <label>Copy personalizado del pack</label>
+                <textarea id="mode-pack-copy" class="inp" placeholder="Pack especial 🔥&#10;Llévate los 2 pares por $XXX&#10;Inbox o WhatsApp"></textarea>
+            </div>`;
+        renderPackSuggestion();
+    } else if (selectedMode === 'vaciado') {
+        box.innerHTML = `
+            <div class="form-group">
+                <label>Mínimo de días estancado</label>
+                <input type="number" id="mode-vaciado-days" class="inp" value="15" min="0">
+            </div>
+            <div class="form-group" style="min-width:140px;max-width:180px;">
+                <label>¿Cuántos posts?</label>
+                <input type="number" id="mode-vaciado-posts" class="inp" value="5" min="1" max="30">
+            </div>`;
+    } else if (selectedMode === 'explora') {
+        box.innerHTML = `
+            <div class="form-group" style="min-width:140px;max-width:180px;">
+                <label>¿Cuántos posts?</label>
+                <input type="number" id="mode-explora-posts" class="inp" value="5" min="1" max="30">
+            </div>
+            <p style="font-size:0.78rem;color:var(--text-muted);">Se priorizan grupos con menos historial para generar datos.</p>`;
+    } else if (selectedMode === 'historias') {
+        const items = data.inventory.filter(i => data.selectedForToday.includes(i.id) && (i.status==='available'||i.status==='reserved'));
+        box.innerHTML = `<p style="font-size:0.8rem;color:var(--text-muted);">Se generará checklist de historias para los <strong style="color:var(--green)">${items.length}</strong> par(es) marcados "a hoy".</p>`;
+    } else {
+        box.innerHTML = `<p style="font-size:0.78rem;color:var(--text-muted);">Modo clásico. Usa el número de posts que pusiste en el card de "Generar sesión".</p>`;
+    }
+}
+
+function renderPackSuggestion() {
+    const el = document.getElementById('mode-pack-suggestion');
+    if (!el) return;
+    const profiles = computeGroupProfiles();
+    const avail = data.inventory.filter(i => i.status === 'available' || i.status === 'reserved');
+    // visibilidad = item con marca que más se vende; estancado = más viejo
+    const brandSales = {};
+    data.sales.forEach(s => { if (s.itemBrand) brandSales[s.itemBrand] = (brandSales[s.itemBrand]||0)+1; });
+    const conVis = [...avail].sort((a,b) => (brandSales[b.brand]||0) - (brandSales[a.brand]||0))[0];
+    const estancado = [...avail].sort((a,b) => (a.dateAdded||0) - (b.dateAdded||0))[0];
+    if (conVis && estancado) {
+        el.innerHTML = `💡 Sugerencia: junta <strong style="color:var(--green)">${escapeHtml(conVis.name)}</strong> (jala) + <strong style="color:var(--yellow)">${escapeHtml(estancado.name)}</strong> (estancado).`;
+    }
+}
+
+function runSelectedMode() {
+    closeModeModal();
+    switch (selectedMode) {
+        case 'distro':    generateSession(); break;
+        case 'oneshot':   generateOneShot(); break;
+        case 'vaciado':   generateVaciado(); break;
+        case 'historias': generateHistorias(); break;
+        case 'pack':      generatePack(); break;
+        case 'explora':   generateExploracion(); break;
+        default:          generateSession();
+    }
+}
+
+/* ---------- HELPER: arma una tarea estándar ---------- */
+function buildTask(item, group, slot, reason, scoreInfo = {}) {
+    const taskId = Date.now() + slot * 10 + Math.floor(Math.random()*9);
+    return {
+        id: taskId,
+        groupId: group.id,
+        groupName: group.name,
+        groupTier: group.tier,
+        groupUrl: group.url || '',
+        itemId: item.id,
+        itemName: item.name,
+        itemPriority: item.priority,
+        itemPhoto: item.photo || null,
+        itemPrice: item.priceAsk || 0,
+        algoScore: scoreInfo.score || 0,
+        affinity: scoreInfo.affinity || 0,
+        confidence: scoreInfo.confidence || 0,
+        reason: reason,
+        steps: [
+            { id: taskId + 1, type: 'publish', label: `Publica [${item.name}] en "${group.name}"`, done: false },
+            { id: taskId + 2, type: 'boost', label: `Boostea con cuenta secundaria`, done: false },
+        ]
+    };
+}
+
+function commitSession(tasks, momentReason) {
+    const moment = computeMomentScore();
+    data.session = { tasks, generatedAt: Date.now(), moment, horarioLabel: momentReason || moment.reason };
+    saveData();
+    renderChecklist();
+    showToast('🎯', `Sesión generada: ${tasks.length} publicaciones.`);
+    setTimeout(() => {
+        const c = document.getElementById('checklist-card');
+        if (c) c.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 200);
+}
+
+/* ---------- MODO ONE-SHOT ---------- */
+function generateOneShot() {
+    const sel = document.getElementById('mode-oneshot-item');
+    const itemId = sel ? sel.value : null;
+    const item = data.inventory.find(i => i.id === itemId);
+    if (!item) { showToast('⚠️', 'Elige un par primero.'); return; }
+
+    const profiles = computeGroupProfiles();
+    const scores = computeGroupScores(profiles);
+    const ordered = [...data.groups].sort((a,b) => {
+        const sa = scores[a.id] ? scores[a.id].score : 0;
+        const sb = scores[b.id] ? scores[b.id].score : 0;
+        return sb - sa;
+    });
+
+    const tasks = ordered.map((g, i) => {
+        const sc = scores[g.id];
+        return buildTask(item, g, i, `One-shot · grupo #${i+1} por score`, {
+            score: sc ? Math.round(sc.score) : 0,
+            confidence: sc ? sc.confidence : 0,
+        });
+    });
+    commitSession(tasks, '🎯 One-shot: 1 par en todos los grupos');
+}
+
+/* ---------- MODO VACIADO ---------- */
+function generateVaciado() {
+    const minDays = parseInt(document.getElementById('mode-vaciado-days').value) || 0;
+    const numPosts = Math.max(1, parseInt(document.getElementById('mode-vaciado-posts').value) || 5);
+    const now = Date.now();
+
+    let stagnant = data.inventory
+        .filter(i => (i.status === 'available' || i.status === 'reserved'))
+        .map(i => ({ item: i, days: i.dateAdded ? Math.floor((now - i.dateAdded)/86400000) : 0 }))
+        .filter(x => x.days >= minDays)
+        .sort((a,b) => b.days - a.days);
+
+    if (stagnant.length === 0) {
+        showToast('⚠️', `No hay items con +${minDays} días estancados.`);
+        return;
+    }
+
+    const profiles = computeGroupProfiles();
+    const scores = computeGroupScores(profiles);
+    const ordered = [...data.groups].sort((a,b) => {
+        const sa = scores[a.id] ? scores[a.id].score : 0;
+        const sb = scores[b.id] ? scores[b.id].score : 0;
+        return sb - sa;
+    });
+
+    const tasks = [];
+    for (let slot = 0; slot < numPosts; slot++) {
+        const entry = stagnant[slot % stagnant.length];
+        const g = ordered[slot % ordered.length];
+        const sc = scores[g.id];
+        tasks.push(buildTask(entry.item, g, slot, `Vaciado · estancado ${entry.days}d`, {
+            score: sc ? Math.round(sc.score) : 0,
+            confidence: sc ? sc.confidence : 0,
+        }));
+    }
+    commitSession(tasks, '📦 Vaciado de stock');
+}
+
+/* ---------- MODO EXPLORACIÓN ---------- */
+function generateExploracion() {
+    const numPosts = Math.max(1, parseInt(document.getElementById('mode-explora-posts').value) || 5);
+    const todayItems = data.inventory.filter(i =>
+        data.selectedForToday.includes(i.id) && (i.status==='available'||i.status==='reserved'));
+    const pool = todayItems.length > 0 ? todayItems
+        : data.inventory.filter(i => i.status==='available'||i.status==='reserved');
+
+    if (pool.length === 0) { showToast('⚠️', 'No hay items disponibles.'); return; }
+
+    const profiles = computeGroupProfiles();
+    // ordena grupos por MENOS ventas (menos data)
+    const ordered = [...data.groups].sort((a,b) => {
+        const pa = profiles[a.id] ? profiles[a.id].sales : 0;
+        const pb = profiles[b.id] ? profiles[b.id].sales : 0;
+        return pa - pb;
+    });
+
+    const tasks = [];
+    for (let slot = 0; slot < numPosts; slot++) {
+        const item = pool[slot % pool.length];
+        const g = ordered[slot % ordered.length];
+        const sales = profiles[g.id] ? profiles[g.id].sales : 0;
+        tasks.push(buildTask(item, g, slot, `Exploración · grupo con ${sales} ventas (recabando data)`));
+    }
+    commitSession(tasks, '🧭 Exploración de grupos');
+}
+
+/* ---------- MODO PACK ---------- */
+function generatePack() {
+    const num = Math.max(2, parseInt(document.getElementById('mode-pack-num').value) || 2);
+    const customCopy = (document.getElementById('mode-pack-copy').value || '').trim();
+    const avail = data.inventory.filter(i => i.status==='available'||i.status==='reserved');
+    if (avail.length < num) { showToast('⚠️', `Necesitas al menos ${num} pares disponibles.`); return; }
+
+    const brandSales = {};
+    data.sales.forEach(s => { if (s.itemBrand) brandSales[s.itemBrand] = (brandSales[s.itemBrand]||0)+1; });
+    const sorted = [...avail].sort((a,b) => (brandSales[b.brand]||0) - (brandSales[a.brand]||0));
+    const conVis = sorted.slice(0, Math.ceil(num/2));
+    const estancados = [...avail].sort((a,b) => (a.dateAdded||0)-(b.dateAdded||0))
+        .filter(i => !conVis.includes(i)).slice(0, num - conVis.length);
+    const packItems = [...conVis, ...estancados].slice(0, num);
+
+    const profiles = computeGroupProfiles();
+    const scores = computeGroupScores(profiles);
+    const bestGroup = [...data.groups].sort((a,b) => {
+        const sa = scores[a.id] ? scores[a.id].score : 0;
+        const sb = scores[b.id] ? scores[b.id].score : 0;
+        return sb - sa;
+    })[0];
+
+    const packName = 'PACK: ' + packItems.map(i => i.name).join(' + ');
+    const taskId = Date.now();
+    const task = {
+        id: taskId,
+        groupId: bestGroup.id,
+        groupName: bestGroup.name,
+        groupTier: bestGroup.tier,
+        groupUrl: bestGroup.url || '',
+        itemId: packItems[0].id,
+        itemName: packName,
+        itemPriority: 'high',
+        itemPhoto: packItems[0].photo || null,
+        itemPrice: packItems.reduce((a,i)=>a+(i.priceAsk||0),0),
+        algoScore: 0, affinity: 0, confidence: 0,
+        packCopy: customCopy,
+        packItemIds: packItems.map(i => i.id),
+        reason: `Pack de ${packItems.length} pares`,
+        steps: [
+            { id: taskId+1, type:'publish', label:`Publica el PACK en "${bestGroup.name}"`, done:false },
+            { id: taskId+2, type:'boost', label:`Boostea con cuenta secundaria`, done:false },
+        ]
+    };
+    commitSession([task], '🎁 Pack combo');
+}
+
+/* ---------- MODO HISTORIAS ---------- */
+function generateHistorias() {
+    const items = data.inventory.filter(i =>
+        data.selectedForToday.includes(i.id) && (i.status==='available'||i.status==='reserved'));
+    if (items.length === 0) {
+        showToast('⚠️', 'Marca items "a hoy" primero.');
+        switchTab('inventario');
+        return;
+    }
+    const tasks = items.map((item, i) => {
+        const taskId = Date.now() + i*10;
+        return {
+            id: taskId,
+            groupId: 'historia',
+            groupName: 'Historia / Estado de Facebook',
+            groupTier: '★',
+            groupUrl: '',
+            itemId: item.id,
+            itemName: item.name,
+            itemPriority: item.priority,
+            itemPhoto: item.photo || null,
+            itemPrice: item.priceAsk || 0,
+            algoScore: 0, affinity: 0, confidence: 0,
+            reason: 'Contenido para tu audiencia caliente (1 vez/día)',
+            steps: [
+                { id: taskId+1, type:'publish', label:`Graba un video corto de [${item.name}]`, done:false },
+                { id: taskId+2, type:'publish', label:`Sube foto/video de [${item.name}] a tus estados`, done:false },
+            ]
+        };
+    });
+    commitSession(tasks, '📸 Historias del día');
+}
+
+/* ---------- GRÁFICA DE MARCAS ---------- */
+function renderBrandsChart() {
+    const el = document.getElementById('brands-chart');
+    if (!el) return;
+    const brandSales = {};
+    data.sales.forEach(s => {
+        const b = s.itemBrand || 'Sin marca';
+        brandSales[b] = (brandSales[b] || 0) + 1;
+    });
+    const entries = Object.entries(brandSales).sort((a,b) => b[1]-a[1]);
+    if (entries.length === 0) {
+        el.innerHTML = '<div class="empty-state"><span class="empty-icon">🏷</span>Sin ventas todavía para mostrar marcas.</div>';
+        return;
+    }
+    const max = Math.max(...entries.map(e => e[1]), 1);
+    el.innerHTML = entries.map(([brand, count]) => {
+        const pct = (count / max) * 100;
+        return `
+            <div style="display:flex;align-items:center;gap:8px;font-size:0.8rem;">
+                <span style="min-width:90px;font-family:'Montserrat',sans-serif;font-weight:700;color:var(--text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${escapeHtml(brand)}</span>
+                <div style="flex:1;height:16px;background:var(--surface2);border-radius:4px;overflow:hidden;">
+                    <div style="width:${pct}%;height:100%;background:var(--purple);"></div>
+                </div>
+                <span style="min-width:32px;text-align:right;font-weight:700;">${count}</span>
+            </div>
+        `;
+    }).join('');
+}
+
+function showMatchContacts(itemId) {
+    const item = data.inventory.find(i => i.id === itemId);
+    if (!item) return;
+    const matches = getMatchingContactsForItem(item);
+    if (matches.length === 0) return;
+    const names = matches.map(c => `• ${c.name}${c.phone ? ' ('+c.phone+')' : ''}`).join('\n');
+    showConfirm(
+        `🙏🏻 ${matches.length} cliente(s) para "${item.name}" (T:${item.size})`,
+        `Estos contactos buscan esta talla:\n\n${names}\n\nVe al tab Contactos para escribirles.`,
+        () => switchTab('contactos')
+    );
+}
 
     </script>
 </body>
