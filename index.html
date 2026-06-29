@@ -2113,6 +2113,33 @@
     color: #000;
 }
 
+
+.boost-zone {
+    padding: 8px 0 10px 32px;
+    border-bottom: 1px solid var(--border);
+}
+.boost-input-row, .boost-link-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+.boost-input { flex: 1; min-width: 160px; font-size: 0.82rem; padding: 8px 10px; }
+.boost-input-row .btn, .boost-link-row .btn { flex-shrink: 0; padding: 8px 12px; font-size: 0.7rem; }
+.boost-link-text {
+    flex: 1;
+    min-width: 140px;
+    font-size: 0.75rem;
+    color: var(--blue);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    background: var(--bg);
+    padding: 7px 10px;
+    border-radius: 8px;
+}
+.checklist-step.boost-step { border-bottom: none; }
+
     </style>
 </head>
 <body>
@@ -4107,7 +4134,8 @@ function generateSession() {
             reason: reasons.join(' · '),
             steps: [
                 { id: taskId + 1, type: 'publish', label: `Publica [${item.name}] en "${chosen.group.name}"`, done: false },
-                { id: taskId + 2, type: 'boost', label: `Boostea con cuenta secundaria`, done: false },
+                { id: taskId + 2, type: 'boost', label: `Boostea con cuenta secundaria`, done: false, boostUrl: '' },
+                
             ]
         });
     }
@@ -4195,19 +4223,48 @@ function renderChecklist() {
                     </button>
                 </div>
                 <div class="checklist-steps">
-                    ${task.steps.map(step => `
-                        <div class="checklist-step${step.done ? ' done' : ''}"
-                             onclick="toggleStep(${task.id}, ${step.id})">
-                            <div class="step-checkbox"><span class="step-checkmark">✓</span></div>
-                            <span class="step-label">${escapeHtml(step.label)}</span>
-                            <span class="step-type-badge type-${step.type}">${step.type === 'publish' ? 'Publicar' : 'Boost'}</span>
-                        </div>
-                    `).join('')}
+                    ${task.steps.map(step => {
+                        // step normal (publish)
+                        if (step.type !== 'boost') {
+                            return `
+                                <div class="checklist-step${step.done ? ' done' : ''}"
+                                     onclick="toggleStep(${task.id}, ${step.id})">
+                                    <div class="step-checkbox"><span class="step-checkmark">✓</span></div>
+                                    <span class="step-label">${escapeHtml(step.label)}</span>
+                                    <span class="step-type-badge type-${step.type}">Publicar</span>
+                                </div>
+                            `;
+                        }
+                        // step de BOOST (migrado de Vaultifyer + mejorado)
+                        const tieneLink = !!(step.boostUrl && step.boostUrl.trim());
+                        return `
+                            <div class="checklist-step boost-step${step.done ? ' done' : ''}">
+                                <div class="step-checkbox" onclick="toggleStep(${task.id}, ${step.id})"><span class="step-checkmark">✓</span></div>
+                                <span class="step-label" onclick="toggleStep(${task.id}, ${step.id})">${escapeHtml(step.label)}</span>
+                                <span class="step-type-badge type-${step.type}">Boost</span>
+                            </div>
+                            <div class="boost-zone">
+                                ${tieneLink ? `
+                                    <div class="boost-link-row">
+                                        <span class="boost-link-text" title="${escapeHtml(step.boostUrl)}">🔗 ${escapeHtml(step.boostUrl)}</span>
+                                        <button class="btn btn-blue" onclick="goBoost(${task.id}, ${step.id})">🚀 Ir a boostear</button>
+                                        <button class="btn btn-ghost btn-icon" onclick="clearBoostLink(${task.id}, ${step.id})" title="Quitar link">✕</button>
+                                    </div>
+                                ` : `
+                                    <div class="boost-input-row">
+                                        <input type="url" class="inp boost-input" id="boost-inp-${step.id}" placeholder="Pega aquí el link de tu publicación...">
+                                        <button class="btn btn-yellow" onclick="saveBoostLink(${task.id}, ${step.id})">💾 Guardar</button>
+                                    </div>
+                                `}
+                            </div>
+                        `;
+                    }).join('')}
                 </div>
             </div>
         `;
     }).join('');
 }
+
 
 function toggleStep(taskId, stepId) {
     if (!data.session) return;
@@ -4231,6 +4288,45 @@ function clearSession() {
     renderChecklist();
     showToast('🧹', 'Sesión limpiada.');
 }
+
+/* ============================================================
+   BOOST (migrado de Vaultifyer, integrado a la sesión)
+============================================================ */
+function _findStep(taskId, stepId) {
+    if (!data.session) return null;
+    const task = data.session.tasks.find(t => t.id === taskId);
+    if (!task) return null;
+    return task.steps.find(s => s.id === stepId) || null;
+}
+
+function saveBoostLink(taskId, stepId) {
+    const step = _findStep(taskId, stepId);
+    if (!step) return;
+    const inp = document.getElementById(`boost-inp-${stepId}`);
+    const val = (inp?.value || '').trim();
+    if (!val) { showToast('❌', 'Pega el link primero we.'); return; }
+    step.boostUrl = val;
+    saveData();
+    renderChecklist();
+    showToast('💾', 'Link guardado pa boostear.');
+}
+
+function clearBoostLink(taskId, stepId) {
+    const step = _findStep(taskId, stepId);
+    if (!step) return;
+    step.boostUrl = '';
+    saveData();
+    renderChecklist();
+    showToast('🗑', 'Link quitado.');
+}
+
+function goBoost(taskId, stepId) {
+    const step = _findStep(taskId, stepId);
+    if (!step || !step.boostUrl) { showToast('⚠️', 'No hay link guardado.'); return; }
+    showToast('🚀', 'Abriendo publicación pa boostear...');
+    setTimeout(() => openInFacebook(step.boostUrl), 200);
+}
+
 
 /* ============================================================
    METRICS (legacy, mantenido para compatibilidad)
