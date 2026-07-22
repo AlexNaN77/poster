@@ -2114,6 +2114,30 @@
 }
 
 
+/* toggle de boost en generar sesión */
+.boost-toggle {
+    display: inline-flex; align-items: center; gap: 8px;
+    cursor: pointer; user-select: none; align-self: flex-end;
+    padding: 8px 10px; border: 1px solid var(--border); border-radius: 8px;
+    background: var(--surface2);
+}
+.boost-toggle input { display: none; }
+.boost-toggle-track {
+    width: 34px; height: 18px; border-radius: 10px;
+    background: var(--surface3); border: 1px solid var(--border);
+    position: relative; transition: background 0.2s;
+    flex-shrink: 0;
+}
+.boost-toggle-thumb {
+    position: absolute; top: 1px; left: 2px;
+    width: 14px; height: 14px; border-radius: 50%;
+    background: var(--text-muted); transition: all 0.2s;
+}
+.boost-toggle input:checked + .boost-toggle-track { background: rgba(179,106,255,0.35); border-color: var(--purple); }
+.boost-toggle input:checked + .boost-toggle-track .boost-toggle-thumb { left: 16px; background: var(--purple); }
+.boost-toggle-label { font-size: 0.72rem; font-weight: 700; color: var(--text-muted); }
+.boost-toggle input:checked ~ .boost-toggle-label { color: var(--purple); }
+
 .boost-zone {
     padding: 8px 0 10px 32px;
     border-bottom: 1px solid var(--border);
@@ -2266,6 +2290,11 @@
                     <div class="time-indicator" id="session-time-indicator">
                         <span id="session-badge-preview">🟢 Buen horario</span>
                     </div>
+                    <label class="boost-toggle" id="boost-toggle" title="Si está apagado, las sesiones nuevas ya no incluyen el paso de boostear">
+                        <input type="checkbox" id="boost-toggle-inp" onchange="toggleBoostEnabled(this.checked)">
+                        <span class="boost-toggle-track"><span class="boost-toggle-thumb"></span></span>
+                        <span class="boost-toggle-label">🚀 Boost</span>
+                    </label>
                                         <button class="btn btn-yellow" onclick="openModeModal()" style="flex-shrink:0; align-self:flex-end;">
                         🎯 Generar
                     </button>
@@ -2367,6 +2396,11 @@
                         <div class="big-stat-value" id="stat-avg-days">0</div>
                         <div class="big-stat-sub">Para venderse</div>
                     </div>
+                    <div class="big-stat-card blue">
+                        <div class="big-stat-label">Posts promedio</div>
+                        <div class="big-stat-value" id="stat-avg-posts">—</div>
+                        <div class="big-stat-sub" id="stat-avg-posts-sub">Para venderse</div>
+                    </div>
                 </div>
 
                 <div class="card-header" style="margin-top: 10px;">
@@ -2462,6 +2496,24 @@
             <div class="card">
                 <div class="card-title" style="margin-bottom:16px;">🏷 Marcas más vendidas</div>
                 <div id="brands-chart" style="display:flex;flex-direction:column;gap:6px;"></div>
+            </div>
+
+            <div class="card">
+                <div class="card-title" style="margin-bottom:6px;">🛒 Qué comprar (rotación real)</div>
+                <p style="font-size:0.8rem;color:var(--text-muted);margin-bottom:16px;line-height:1.5;">
+                    Días promedio que tarda en venderse cada marca y talla, con tus ventas reales. <strong style="color:var(--green)">Verde = rota rápido, compra más de eso.</strong>
+                </p>
+                <div id="rotation-brands" style="display:flex;flex-direction:column;gap:6px;margin-bottom:18px;"></div>
+                <div style="font-size:0.7rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--text-muted);font-weight:700;margin-bottom:10px;">📏 Por talla</div>
+                <div id="rotation-sizes" style="display:flex;flex-direction:column;gap:6px;"></div>
+            </div>
+
+            <div class="card">
+                <div class="card-title" style="margin-bottom:6px;">👍 Interacción por grupo</div>
+                <p style="font-size:0.8rem;color:var(--text-muted);margin-bottom:16px;line-height:1.5;">
+                    Likes y comentarios que registraste por par, sumados por grupo. Te dice de dónde viene la atención de verdad (no solo las ventas).
+                </p>
+                <div id="engagement-groups-chart" style="display:flex;flex-direction:column;gap:6px;"></div>
             </div>
 
         </div>
@@ -2590,6 +2642,7 @@
                         </div>
                     </div>
                     <div id="inv-margin-preview" style="font-size:0.8rem;color:var(--text-muted);text-align:center;"></div>
+                    <div id="inv-price-suggestion" style="font-size:0.78rem;color:var(--text-muted);line-height:1.5;background:var(--surface);border:1px dashed var(--border);border-radius:8px;padding:10px;display:none;"></div>
                 </div>
                 
                 <div class="form-group">
@@ -2618,6 +2671,36 @@ Inbox o WhatsApp 🙌"></textarea>
                     <button type="submit" class="btn btn-primary">💾 Guardar</button>
                 </div>
             </form>
+        </div>
+    </div>
+
+    <!-- =========================================
+         MODAL: INTERACCIONES (likes/comentarios por par y grupo)
+    ========================================= -->
+    <div class="modal-overlay" id="engagement-modal">
+        <div class="modal">
+            <div class="modal-title">
+                <span>👍 Registrar interacción</span>
+                <button class="modal-close" onclick="closeEngagementModal()">✕</button>
+            </div>
+            <div class="modal-form">
+                <div id="eng-item-info" style="background:var(--surface2);padding:12px;border-radius:10px;font-size:0.9rem;"></div>
+
+                <div class="form-group">
+                    <label>¿En qué grupo fue?</label>
+                    <select id="eng-group" class="inp" onchange="renderEngagementCounters()"></select>
+                </div>
+
+                <div id="eng-counters" style="display:flex;gap:12px;"></div>
+
+                <p style="font-size:0.72rem;color:var(--text-muted);line-height:1.5;margin:0;">
+                    Cuando cheques tu publicación, registra aquí los likes y comentarios que trae en ese grupo. Pon el número total que ves (no lo sumes tú, el sistema guarda el último número).
+                </p>
+
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-primary" onclick="closeEngagementModal()">Listo</button>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -2855,6 +2938,10 @@ let data = {
     weekdayMetrics: {},
     postLog: {},
     postHistory: {},
+    itemPostCount: {},
+    itemRounds: {},
+    engagement: {},
+    settings: { boostEnabled: true },
 };
 
 let inventoryFilter = 'all';
@@ -2934,6 +3021,11 @@ function loadData() {
         if (!data.inventory) data.inventory = [];
         if (!data.postLog) data.postLog = {};
         if (!data.postHistory) data.postHistory = {};
+        if (!data.itemPostCount) data.itemPostCount = {};
+        if (!data.itemRounds) data.itemRounds = {};
+        if (!data.engagement) data.engagement = {};
+        if (!data.settings) data.settings = { boostEnabled: true };
+        if (typeof data.settings.boostEnabled === 'undefined') data.settings.boostEnabled = true;
     } catch (e) {
         console.error('Error cargando data:', e);
     }
@@ -3398,6 +3490,7 @@ function openInventoryModal(itemId = null) {
     }
     renderPhotoPreview();
     updateMarginPreview();
+    updatePriceSuggestion();
     modal.classList.add('open');
 }
 
@@ -3560,10 +3653,13 @@ function renderInventory() {
         const isSelected = data.selectedForToday.includes(item.id);
         
                 const matchContacts = getMatchingContactsForItem(item);
-                
+        const engTotal = getItemEngagementTotal(item.id);
+        const hasEng = engTotal.likes > 0 || engTotal.comments > 0;
+
         const meta = [
             item.brand && `<span>🏷 ${item.brand}</span>`,
             item.size  && `<span>📏 T: ${item.size}</span>`,
+            hasEng && `<span title="Likes y comentarios registrados">👍 ${engTotal.likes} · 💬 ${engTotal.comments}</span>`,
         ].filter(Boolean).join('');
 
         return `
@@ -3609,6 +3705,7 @@ function renderInventory() {
                                 ${isSelected ? '✓ En hoy' : '+ A hoy'}
                             </button>
                             <button class="btn btn-yellow" onclick="openSellModal('${item.id}')">💰 Vender</button>
+                            <button class="btn btn-ghost btn-icon" onclick="openEngagementModal('${item.id}')" title="Registrar likes/comentarios por grupo">👍</button>
                         ` : ''}
                         <button class="btn btn-ghost" onclick="openInventoryModal('${item.id}')">✏️</button>
                         <button class="btn btn-red btn-icon" onclick="deleteInventoryItem('${item.id}')">✕</button>
@@ -3774,6 +3871,8 @@ function confirmSale() {
         costBuy:    item.costBuy || 0,
         costRestore:item.costRestore || 0,
         profit, roi, daysToSell,
+        postsToSell: (data.itemPostCount && data.itemPostCount[item.id]) || 0,
+        roundsToSell: getItemRoundCount(item.id),
         contactId,
     };
     data.sales.push(sale);
@@ -4134,8 +4233,7 @@ function generateSession() {
             reason: reasons.join(' · '),
             steps: [
                 { id: taskId + 1, type: 'publish', label: `Publica [${item.name}] en "${chosen.group.name}"`, done: false },
-                { id: taskId + 2, type: 'boost', label: `Boostea con cuenta secundaria`, done: false, boostUrl: '' },
-                
+                ...(isBoostEnabled() ? [{ id: taskId + 2, type: 'boost', label: `Boostea con cuenta secundaria`, done: false, boostUrl: '' }] : []),
             ]
         });
     }
@@ -4204,6 +4302,15 @@ function renderChecklist() {
         const tierColor   = tierColors[task.groupTier] || 'var(--text-muted)';
         const [pClass, pLabel] = priorityInfo[task.itemPriority] || ['', ''];
 
+        // contador acumulado de posts + rondas de este item (historial de por vida)
+        const postCount = task.groupId !== 'historia' ? getItemPostCount(task.itemId) : null;
+        const roundCount = task.groupId !== 'historia' ? getItemRoundCount(task.itemId) : 0;
+        // teoría del cliente: ~3 rondas (~24 posts con 8 grupos) para concretar venta
+        const countColor = roundCount >= 3 ? 'var(--red)' : roundCount >= 2 ? 'var(--yellow)' : 'var(--blue)';
+        const countBadge = postCount !== null
+            ? `<span class="item-post-count" style="margin-left:6px;font-size:0.6rem;font-weight:700;color:${countColor};background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:2px 7px;white-space:nowrap;" title="Acumulado de este par: rondas completas y posts (todas las sesiones)">🏁 R${roundCount} · 📢 ${postCount}</span>`
+            : '';
+
         return `
             <div class="checklist-group${allTaskDone ? ' completed' : ''}">
                 <div class="checklist-group-header">
@@ -4211,6 +4318,7 @@ function renderChecklist() {
                     <div class="post-info">
                         <div class="post-item-name">${escapeHtml(task.itemName)}
                             <span class="priority-tag ${pClass}" style="margin-left:6px;font-size:0.58rem;">${pLabel}</span>
+                            ${countBadge}
                         </div>
                         <div class="post-group-name">
                             <span style="color:${tierColor}; font-weight:700;">Tier ${task.groupTier}</span>
@@ -4276,6 +4384,11 @@ function toggleStep(taskId, stepId) {
         if (step.type === 'publish') {
         if (step.done) logPostCompleted();
         else logPostUndone();
+        // contador acumulado de posts por item (no cuenta historias)
+        if (task.itemId && task.groupId !== 'historia') {
+            logItemPost(task.itemId, step.done ? 1 : -1);
+        }
+        checkRoundCompletion();
     }
     
     saveData();
@@ -4287,6 +4400,29 @@ function clearSession() {
     saveData();
     renderChecklist();
     showToast('🧹', 'Sesión limpiada.');
+}
+
+/* ---------- DETECCIÓN DE RONDA COMPLETADA (one-shot) ---------- */
+function checkRoundCompletion() {
+    const session = data.session;
+    if (!session || session.mode !== 'oneshot' || !session.roundItemId) return;
+
+    const publishSteps = [];
+    session.tasks.forEach(t => t.steps.forEach(s => { if (s.type === 'publish') publishSteps.push(s); }));
+    const allPublished = publishSteps.length > 0 && publishSteps.every(s => s.done);
+
+    if (allPublished && !session.roundLogged) {
+        logRoundCompleted(session.roundItemId);
+        session.roundLogged = true;
+        const item = data.inventory.find(i => i.id === session.roundItemId);
+        const n = getItemRoundCount(session.roundItemId);
+        showToast('🏁', `Ronda ${n} completada de [${item ? item.name : 'este par'}]. Deja pasar ~30 min y tira la siguiente.`);
+    } else if (!allPublished && session.roundLogged) {
+        // desmarcaron un paso: revertimos la ronda para no inflar el dato
+        const rounds = getItemRounds(session.roundItemId);
+        if (rounds.length > 0) rounds.pop();
+        session.roundLogged = false;
+    }
 }
 
 /* ============================================================
@@ -4625,6 +4761,25 @@ function renderSales() {
     document.getElementById('stat-month-sales').textContent      = `${monthSales.length} venta${monthSales.length !== 1 ? 's' : ''}`;
     document.getElementById('stat-avg-days').textContent         = avgDays;
 
+    // posts promedio hasta venderse (solo ventas que ya traen el dato registrado)
+    const withPosts = data.sales.filter(s => typeof s.postsToSell === 'number' && s.postsToSell > 0);
+    const avgPostsEl = document.getElementById('stat-avg-posts');
+    const avgPostsSub = document.getElementById('stat-avg-posts-sub');
+    if (avgPostsEl) {
+        if (withPosts.length > 0) {
+            const avgPosts = (withPosts.reduce((a, s) => a + s.postsToSell, 0) / withPosts.length).toFixed(1);
+            const withRounds = withPosts.filter(s => typeof s.roundsToSell === 'number');
+            const avgRounds = withRounds.length > 0
+                ? (withRounds.reduce((a, s) => a + s.roundsToSell, 0) / withRounds.length).toFixed(1)
+                : null;
+            avgPostsEl.textContent = avgPosts;
+            if (avgPostsSub) avgPostsSub.textContent = `Para venderse${avgRounds !== null ? ` · ${avgRounds} rondas prom.` : ''} (${withPosts.length} con dato) · teoría: 24`;
+        } else {
+            avgPostsEl.textContent = '—';
+            if (avgPostsSub) avgPostsSub.textContent = 'Marca posts en sesiones para medirlo';
+        }
+    }
+
     if (data.sales.length === 0) {
         list.innerHTML = '';
         empty.style.display = 'block';
@@ -4644,7 +4799,7 @@ function renderSales() {
                 <div class="sale-thumb">${s.itemPhoto ? `<img src="${s.itemPhoto}">` : '👟'}</div>
                 <div class="sale-body">
                     <div class="sale-name">${escapeHtml(s.itemName)}</div>
-                    <div class="sale-meta">📅 ${dateStr} ${timeStr} · 👥 ${escapeHtml(s.groupName)} (Tier ${s.groupTier}) · ⏱ ${s.daysToSell}d</div>
+                    <div class="sale-meta">📅 ${dateStr} ${timeStr} · 👥 ${escapeHtml(s.groupName)} (Tier ${s.groupTier}) · ⏱ ${s.daysToSell}d${typeof s.postsToSell === 'number' ? ` · 📢 ${s.postsToSell} posts${typeof s.roundsToSell === 'number' ? ` (${s.roundsToSell} rondas)` : ''}` : ''}</div>
                     <div class="sale-numbers">
                         <span class="sale-number-chip">Venta: <strong>$${s.priceFinal}</strong></span>
                         <span class="sale-number-chip">Costo: $${(s.costBuy||0) + (s.costRestore||0)}</span>
@@ -5003,7 +5158,8 @@ function renderStats() {
     }).join('');
     
         renderBrandsChart();
-        
+        renderRotation();
+        renderEngagementByGroup();
 }
 
 /* ============================================================
@@ -5161,6 +5317,7 @@ window.addEventListener('DOMContentLoaded', () => {
     renderGroups();
     renderContacts();
     renderSales();
+    renderBoostToggle();
     updateClock();
     updateStorageInfo();
     setInterval(updateClock, 1000);
@@ -5168,6 +5325,10 @@ window.addEventListener('DOMContentLoaded', () => {
     ['inv-cost-buy','inv-cost-restore','inv-price-ask'].forEach(id => {
         const el = document.getElementById(id);
         if (el) el.addEventListener('input', updateMarginPreview);
+    });
+    ['inv-brand','inv-price-ask'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.addEventListener('input', updatePriceSuggestion);
     });
 });
 
@@ -5298,6 +5459,131 @@ function renderPostCounter() {
     if (el) el.textContent = count;
 }
 
+/* ---------- TOGGLE DE BOOST ---------- */
+function isBoostEnabled() {
+    return !!(data.settings && data.settings.boostEnabled);
+}
+function toggleBoostEnabled(on) {
+    if (!data.settings) data.settings = {};
+    data.settings.boostEnabled = !!on;
+    saveData();
+    showToast(on ? '🚀' : '😴', on ? 'Boost activado: las sesiones nuevas incluyen el paso de boostear.' : 'Boost apagado: las sesiones nuevas salen sin paso de boost.');
+}
+function renderBoostToggle() {
+    const inp = document.getElementById('boost-toggle-inp');
+    if (inp) inp.checked = isBoostEnabled();
+}
+
+/* ---------- CONTADOR DE POSTS POR ITEM (acumulado de por vida) ---------- */
+function getItemPostCount(itemId) {
+    return (data.itemPostCount && data.itemPostCount[itemId]) || 0;
+}
+function logItemPost(itemId, delta) {
+    if (!data.itemPostCount) data.itemPostCount = {};
+    data.itemPostCount[itemId] = Math.max(0, (data.itemPostCount[itemId] || 0) + delta);
+}
+
+/* ---------- INTERACCIONES (likes/comentarios) POR ITEM Y GRUPO ----------
+   data.engagement[itemId][groupId] = { likes, comments, updatedAt }
+   Se registra manualmente cuando el cliente checa sus publicaciones.
+   Sirve para saber de DONDE viene la atencion, no solo las ventas. */
+let engagementItemId = null;
+
+function getEngagement(itemId, groupId) {
+    const e = data.engagement || {};
+    return (e[itemId] && e[itemId][groupId]) || { likes: 0, comments: 0 };
+}
+function setEngagement(itemId, groupId, likes, comments) {
+    if (!data.engagement) data.engagement = {};
+    if (!data.engagement[itemId]) data.engagement[itemId] = {};
+    data.engagement[itemId][groupId] = {
+        likes: Math.max(0, parseInt(likes) || 0),
+        comments: Math.max(0, parseInt(comments) || 0),
+        updatedAt: Date.now(),
+    };
+    saveData();
+}
+function getItemEngagementTotal(itemId) {
+    const e = (data.engagement && data.engagement[itemId]) || {};
+    let likes = 0, comments = 0;
+    Object.values(e).forEach(v => { likes += v.likes || 0; comments += v.comments || 0; });
+    return { likes, comments };
+}
+
+function openEngagementModal(itemId) {
+    const item = data.inventory.find(i => i.id === itemId);
+    if (!item) return;
+    engagementItemId = itemId;
+
+    const total = getItemEngagementTotal(itemId);
+    document.getElementById('eng-item-info').innerHTML =
+        `<strong>${escapeHtml(item.name)}</strong>${item.size ? ' · T:' + escapeHtml(item.size) : ''}<br>` +
+        `<span style="font-size:0.78rem;color:var(--text-muted);">Acumulado: 👍 ${total.likes} · 💬 ${total.comments}</span>`;
+
+    const sel = document.getElementById('eng-group');
+    sel.innerHTML = data.groups.map(g => `<option value="${g.id}">${escapeHtml(g.name)} (Tier ${g.tier})</option>`).join('');
+    renderEngagementCounters();
+    document.getElementById('engagement-modal').classList.add('open');
+}
+function closeEngagementModal() {
+    document.getElementById('engagement-modal').classList.remove('open');
+    engagementItemId = null;
+    renderInventory();
+}
+function renderEngagementCounters() {
+    const groupId = document.getElementById('eng-group').value;
+    if (!engagementItemId || !groupId) return;
+    const cur = getEngagement(engagementItemId, groupId);
+    document.getElementById('eng-counters').innerHTML = `
+        <div class="form-group" style="flex:1;">
+            <label>👍 Likes en este grupo</label>
+            <input type="number" class="inp" id="eng-likes" min="0" value="${cur.likes}" onchange="saveEngagementFromInputs()">
+        </div>
+        <div class="form-group" style="flex:1;">
+            <label>💬 Comentarios</label>
+            <input type="number" class="inp" id="eng-comments" min="0" value="${cur.comments}" onchange="saveEngagementFromInputs()">
+        </div>
+    `;
+}
+function saveEngagementFromInputs() {
+    const groupId = document.getElementById('eng-group').value;
+    if (!engagementItemId || !groupId) return;
+    setEngagement(
+        engagementItemId, groupId,
+        document.getElementById('eng-likes').value,
+        document.getElementById('eng-comments').value
+    );
+    showToast('👍', 'Interacción guardada.');
+}
+
+/* ---------- RONDAS POR ITEM ----------
+   Una ronda = una pasada completa por los grupos (típicamente un one-shot).
+   Teoría del cliente: ~3 rondas x 8 grupos = ~24 posts para concretar venta. */
+function getItemRounds(itemId) {
+    return (data.itemRounds && data.itemRounds[itemId]) || [];
+}
+function getItemRoundCount(itemId) {
+    return getItemRounds(itemId).length;
+}
+function logRoundCompleted(itemId) {
+    if (!data.itemRounds) data.itemRounds = {};
+    if (!data.itemRounds[itemId]) data.itemRounds[itemId] = [];
+    data.itemRounds[itemId].push(Date.now());
+}
+function getLastRoundAgoMins(itemId) {
+    const rounds = getItemRounds(itemId);
+    if (rounds.length === 0) return null;
+    return Math.floor((Date.now() - rounds[rounds.length - 1]) / 60000);
+}
+function formatAgoMins(mins) {
+    if (mins === null) return null;
+    if (mins < 1) return 'hace <1 min';
+    if (mins < 60) return `hace ${mins} min`;
+    const hrs = Math.floor(mins / 60);
+    if (hrs < 24) return `hace ${hrs}h`;
+    return `hace ${Math.floor(hrs / 24)}d`;
+}
+
 /* ---------- HISTORIAL: última vez publicado item+grupo ---------- */
 function logItemPostedInGroup(itemId, groupId) {
     if (!data.postHistory) data.postHistory = {};
@@ -5344,7 +5630,7 @@ function getMatchingContactsForItem(item) {
 /* ---------- MODAL DE MODOS ---------- */
 const PUB_MODES = [
     { id: 'distro',  icon: '🌀', name: 'Distro',          desc: 'El de toda la vida. El algoritmo reparte tus items marcados "a hoy" en los mejores grupos según tu historial real.' },
-    { id: 'oneshot', icon: '🆙', name: 'One-shot',        desc: 'Eliges UN solo par y lo manda a TODOS los grupos ordenados por score. Máxima exposición para un par específico.' },
+    { id: 'oneshot', icon: '🆙', name: 'One-shot',        desc: 'Eliges UN solo par y lo manda a TODOS los grupos ordenados por score. Cada one-shot completado = 1 ronda. Teoría: ~3 rondas espaciadas ~30 min y se vende.' },
     { id: 'vaciado', icon: '📦', name: 'Vaciado de Stock', desc: 'Prioriza los items más estancados (los que llevan más días en inventario). Para mover lo que no sale.' },
     { id: 'historias', icon: '📸', name: 'Historias',     desc: 'Ideal 1 vez al día. Te arma checklist de grabar video / subir foto a estados, según lo que tengas marcado "a hoy".' },
     { id: 'pack',    icon: '🎁', name: 'Pack',            desc: 'Junta un par con visibilidad + uno estancado. Tú eliges cuántos pares lleva el pack y pones tu copy personalizado.' },
@@ -5383,18 +5669,53 @@ function selectMode(id) {
     renderModeExtraConfig();
 }
 
+function renderOneShotRoundInfo() {
+    const el = document.getElementById('oneshot-round-info');
+    const sel = document.getElementById('mode-oneshot-item');
+    if (!el || !sel || !sel.value) { if (el) el.innerHTML = ''; return; }
+    const itemId = sel.value;
+    const rounds = getItemRoundCount(itemId);
+    const posts = getItemPostCount(itemId);
+    const agoMins = getLastRoundAgoMins(itemId);
+    const numGroups = data.groups.length;
+
+    let status;
+    if (rounds === 0) {
+        status = `🆕 Primera ronda de este par. Meta teórica: 3 rondas × ${numGroups} grupos ≈ ${3 * numGroups} posts.`;
+    } else if (rounds < 3) {
+        status = `🏁 Lleva <strong style="color:var(--blue)">${rounds} de 3</strong> rondas (${posts} posts). Va por la ${rounds + 1}.`;
+    } else {
+        status = `⚠️ <strong style="color:var(--yellow)">Ya lleva ${rounds} rondas</strong> (${posts} posts) y sigue sin venderse. Según tu teoría ya debería haber salido — considera bajarle el precio, cambiar fotos/copy, o meterlo a un Pack.`;
+    }
+
+    let cooldown = '';
+    if (agoMins !== null) {
+        if (agoMins < 30) cooldown = `<br>⏳ Última ronda ${formatAgoMins(agoMins)} — <strong style="color:var(--yellow)">espera ~${30 - agoMins} min</strong> pa' agarrar gente nueva.`;
+        else cooldown = `<br>✅ Última ronda ${formatAgoMins(agoMins)} — buen momento para otra.`;
+    }
+
+    el.innerHTML = status + cooldown;
+}
+
 function renderModeExtraConfig() {
     const box = document.getElementById('mode-extra-config');
     const avail = data.inventory.filter(i => i.status === 'available' || i.status === 'reserved');
 
     if (selectedMode === 'oneshot') {
+        // ordena el pool: primero los que menos rondas llevan (los más abandonados)
+        const sortedAvail = [...avail].sort((a, b) => getItemRoundCount(a.id) - getItemRoundCount(b.id));
         box.innerHTML = `
             <div class="form-group">
                 <label>¿Qué par enfocar?</label>
-                <select id="mode-oneshot-item" class="inp">
-                    ${avail.map(i => `<option value="${i.id}">${escapeHtml(i.name)}${i.size ? ' · T:'+escapeHtml(i.size) : ''}</option>`).join('')}
+                <select id="mode-oneshot-item" class="inp" onchange="renderOneShotRoundInfo()">
+                    ${sortedAvail.map(i => {
+                        const r = getItemRoundCount(i.id);
+                        return `<option value="${i.id}">${escapeHtml(i.name)}${i.size ? ' · T:'+escapeHtml(i.size) : ''} · ${r} ronda${r === 1 ? '' : 's'}</option>`;
+                    }).join('')}
                 </select>
-            </div>`;
+            </div>
+            <div id="oneshot-round-info" style="font-size:0.78rem;color:var(--text-muted);margin-top:8px;line-height:1.5;"></div>`;
+        renderOneShotRoundInfo();
     } else if (selectedMode === 'pack') {
         box.innerHTML = `
             <div class="form-group">
@@ -5480,14 +5801,14 @@ function buildTask(item, group, slot, reason, scoreInfo = {}) {
         reason: reason,
         steps: [
             { id: taskId + 1, type: 'publish', label: `Publica [${item.name}] en "${group.name}"`, done: false },
-            { id: taskId + 2, type: 'boost', label: `Boostea con cuenta secundaria`, done: false },
+            ...(isBoostEnabled() ? [{ id: taskId + 2, type: 'boost', label: `Boostea con cuenta secundaria`, done: false }] : []),
         ]
     };
 }
 
-function commitSession(tasks, momentReason) {
+function commitSession(tasks, momentReason, extra = {}) {
     const moment = computeMomentScore();
-    data.session = { tasks, generatedAt: Date.now(), moment, horarioLabel: momentReason || moment.reason };
+    data.session = { tasks, generatedAt: Date.now(), moment, horarioLabel: momentReason || moment.reason, ...extra };
     saveData();
     renderChecklist();
     showToast('🎯', `Sesión generada: ${tasks.length} publicaciones.`);
@@ -5504,6 +5825,20 @@ function generateOneShot() {
     const item = data.inventory.find(i => i.id === itemId);
     if (!item) { showToast('⚠️', 'Elige un par primero.'); return; }
 
+    // aviso de cooldown: si la última ronda de este par fue hace <30 min, sugerimos esperar
+    const agoMins = getLastRoundAgoMins(itemId);
+    if (agoMins !== null && agoMins < 30) {
+        showConfirm(
+            '⏳ Muy pronto para otra ronda',
+            `La última ronda de [${item.name}] fue ${formatAgoMins(agoMins)}.\n\nLa idea es espaciar ~30 min entre rondas para agarrar gente nueva entrando a Facebook.\n\n¿Generar de todos modos?`,
+            () => doGenerateOneShot(item)
+        );
+        return;
+    }
+    doGenerateOneShot(item);
+}
+
+function doGenerateOneShot(item) {
     const profiles = computeGroupProfiles();
     const scores = computeGroupScores(profiles);
     const ordered = [...data.groups].sort((a,b) => {
@@ -5512,14 +5847,19 @@ function generateOneShot() {
         return sb - sa;
     });
 
+    const roundNum = getItemRoundCount(item.id) + 1;
     const tasks = ordered.map((g, i) => {
         const sc = scores[g.id];
-        return buildTask(item, g, i, `One-shot · grupo #${i+1} por score`, {
+        return buildTask(item, g, i, `One-shot · ronda ${roundNum} · grupo #${i+1} por score`, {
             score: sc ? Math.round(sc.score) : 0,
             confidence: sc ? sc.confidence : 0,
         });
     });
-    commitSession(tasks, '🎯 One-shot: 1 par en todos los grupos');
+    commitSession(tasks, `🎯 One-shot: ronda ${roundNum} de [${item.name}]`, {
+        mode: 'oneshot',
+        roundItemId: item.id,
+        roundLogged: false,
+    });
 }
 
 /* ---------- MODO VACIADO ---------- */
@@ -5630,7 +5970,7 @@ function generatePack() {
         reason: `Pack de ${packItems.length} pares`,
         steps: [
             { id: taskId+1, type:'publish', label:`Publica el PACK en "${bestGroup.name}"`, done:false },
-            { id: taskId+2, type:'boost', label:`Boostea con cuenta secundaria`, done:false },
+            ...(isBoostEnabled() ? [{ id: taskId+2, type:'boost', label:`Boostea con cuenta secundaria`, done:false }] : []),
         ]
     };
     commitSession([task], '🎁 Pack combo');
@@ -5667,6 +6007,148 @@ function generateHistorias() {
         };
     });
     commitSession(tasks, '📸 Historias del día');
+}
+
+/* ---------- PRECIO DE SALIDA SUGERIDO ----------
+   Con las ventas propias: a qué precio se vendió RAPIDO (<=2 dias) esa marca.
+   Si esta muy caro por ambicionar, no hay ventas; esto ancla el precio a la realidad. */
+function suggestPrice(brand) {
+    const norm = (s) => (s || '').trim().toLowerCase();
+    const b = norm(brand);
+    if (!b) return null;
+
+    const brandSales = data.sales.filter(s => norm(s.itemBrand) === b);
+    if (brandSales.length === 0) return null;
+
+    const fast = brandSales.filter(s => (s.daysToSell || 0) <= 2);
+    const pool = fast.length > 0 ? fast : brandSales;
+    const avg  = pool.reduce((a, s) => a + (s.priceFinal || 0), 0) / pool.length;
+    const min  = Math.min(...pool.map(s => s.priceFinal || 0));
+    const max  = Math.max(...pool.map(s => s.priceFinal || 0));
+
+    return {
+        avg: Math.round(avg / 10) * 10,
+        min, max,
+        fastCount: fast.length,
+        totalCount: brandSales.length,
+        basedOnFast: fast.length > 0,
+    };
+}
+
+function updatePriceSuggestion() {
+    const el = document.getElementById('inv-price-suggestion');
+    if (!el) return;
+    const brand = document.getElementById('inv-brand').value;
+    const sug = suggestPrice(brand);
+
+    if (!sug) { el.style.display = 'none'; return; }
+    el.style.display = 'block';
+
+    const ask = parseFloat(document.getElementById('inv-price-ask').value) || 0;
+    let warn = '';
+    if (ask > 0 && sug.basedOnFast && ask > sug.max * 1.25) {
+        warn = `<br>⚠️ <strong style="color:var(--yellow)">Tu precio pedido ($${ask}) está arriba de lo que te han pagado rápido.</strong> Riesgo de que se estanque.`;
+    }
+
+    el.innerHTML = sug.basedOnFast
+        ? `💡 <strong style="color:var(--green)">${escapeHtml(brand)}</strong> se te ha vendido en ≤2 días a <strong style="color:var(--green)">~$${sug.avg}</strong> (rango $${sug.min}–$${sug.max}, ${sug.fastCount} venta${sug.fastCount !== 1 ? 's' : ''} rápida${sug.fastCount !== 1 ? 's' : ''}). Precio de salida sugerido para vender en 1 día.${warn}`
+        : `💡 ${escapeHtml(brand)}: has vendido a ~$${sug.avg} (${sug.totalCount} venta${sug.totalCount !== 1 ? 's' : ''}, ninguna en ≤2 días todavía).${warn}`;
+}
+
+/* ---------- ROTACIÓN: QUÉ COMPRAR (días para venderse por marca/talla) ---------- */
+function renderRotation() {
+    const brandsEl = document.getElementById('rotation-brands');
+    const sizesEl  = document.getElementById('rotation-sizes');
+    if (!brandsEl || !sizesEl) return;
+
+    const salesWithDays = data.sales.filter(s => typeof s.daysToSell === 'number');
+    if (salesWithDays.length === 0) {
+        brandsEl.innerHTML = '<div class="empty-state"><span class="empty-icon">🛒</span>Sin ventas todavía para calcular rotación.</div>';
+        sizesEl.innerHTML = '';
+        return;
+    }
+
+    const groupBy = (keyFn) => {
+        const acc = {};
+        salesWithDays.forEach(s => {
+            const k = keyFn(s);
+            if (!k) return;
+            if (!acc[k]) acc[k] = { totalDays: 0, count: 0 };
+            acc[k].totalDays += s.daysToSell;
+            acc[k].count++;
+        });
+        return Object.entries(acc)
+            .map(([k, v]) => ({ key: k, avg: v.totalDays / v.count, count: v.count }))
+            .sort((a, b) => a.avg - b.avg);
+    };
+
+    const rotBar = (label, avg, count) => {
+        // 0-2 días = verde (compra más), 3-6 = amarillo, 7+ = rojo (evita)
+        const color = avg <= 2 ? 'var(--green)' : avg <= 6 ? 'var(--yellow)' : 'var(--red)';
+        const hint  = avg <= 2 ? '🔥 compra más' : avg <= 6 ? 'ok' : '🐌 evita';
+        const pct   = Math.max(6, Math.min(100, 100 - (avg / 15) * 100));
+        return `
+            <div style="display:flex;align-items:center;gap:8px;font-size:0.78rem;">
+                <span style="min-width:90px;font-family:'Montserrat',sans-serif;font-weight:700;color:var(--text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${escapeHtml(label)}</span>
+                <div style="flex:1;height:16px;background:var(--surface2);border-radius:4px;overflow:hidden;">
+                    <div style="width:${pct}%;height:100%;background:${color};"></div>
+                </div>
+                <span style="min-width:110px;text-align:right;"><strong style="color:${color};">${avg.toFixed(1)}d</strong> · ${count}v · <span style="font-size:0.68rem;">${hint}</span></span>
+            </div>
+        `;
+    };
+
+    const byBrand = groupBy(s => s.itemBrand || null);
+    const bySize  = groupBy(s => s.itemSize ? 'T:' + s.itemSize : null);
+
+    brandsEl.innerHTML = byBrand.length
+        ? byBrand.map(r => rotBar(r.key, r.avg, r.count)).join('')
+        : '<div style="font-size:0.8rem;color:var(--text-muted);">Ventas sin marca registrada.</div>';
+    sizesEl.innerHTML = bySize.length
+        ? bySize.map(r => rotBar(r.key, r.avg, r.count)).join('')
+        : '<div style="font-size:0.8rem;color:var(--text-muted);">Ventas sin talla registrada.</div>';
+}
+
+/* ---------- INTERACCIÓN POR GRUPO (suma de likes/comentarios registrados) ---------- */
+function renderEngagementByGroup() {
+    const el = document.getElementById('engagement-groups-chart');
+    if (!el) return;
+
+    const perGroup = {};
+    Object.values(data.engagement || {}).forEach(groups => {
+        Object.entries(groups).forEach(([gid, v]) => {
+            if (!perGroup[gid]) perGroup[gid] = { likes: 0, comments: 0 };
+            perGroup[gid].likes    += v.likes || 0;
+            perGroup[gid].comments += v.comments || 0;
+        });
+    });
+
+    const entries = Object.entries(perGroup)
+        .map(([gid, v]) => {
+            const g = data.groups.find(x => x.id === gid);
+            return { name: g ? g.name : 'Grupo borrado', tier: g ? g.tier : '?', total: v.likes + v.comments, ...v };
+        })
+        .filter(e => e.total > 0)
+        .sort((a, b) => b.total - a.total);
+
+    if (entries.length === 0) {
+        el.innerHTML = '<div class="empty-state"><span class="empty-icon">👍</span>Sin interacciones registradas. Usa el botón 👍 de cada par en el inventario.</div>';
+        return;
+    }
+
+    const max = Math.max(...entries.map(e => e.total), 1);
+    el.innerHTML = entries.map(e => {
+        const pct = (e.total / max) * 100;
+        return `
+            <div style="display:flex;align-items:center;gap:8px;font-size:0.78rem;">
+                <span style="min-width:130px;font-family:'Montserrat',sans-serif;font-weight:700;color:var(--text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="${escapeHtml(e.name)}">${escapeHtml(e.name)}</span>
+                <div style="flex:1;height:16px;background:var(--surface2);border-radius:4px;overflow:hidden;">
+                    <div style="width:${pct}%;height:100%;background:var(--blue);"></div>
+                </div>
+                <span style="min-width:96px;text-align:right;">👍 <strong>${e.likes}</strong> · 💬 <strong>${e.comments}</strong></span>
+            </div>
+        `;
+    }).join('');
 }
 
 /* ---------- GRÁFICA DE MARCAS ---------- */
